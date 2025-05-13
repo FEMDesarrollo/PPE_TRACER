@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+
+class VerifyCsrfToken extends Middleware
+{
+    /**
+     * The URIs that should be excluded from CSRF verification.
+     *
+     * @var array<int, string>
+     */
+    protected $except = [
+    //Aqui coloca las rutas que deseas verificar en Postman 'nombre_ruta/*' ejemplo 'perfil/*'
+    'perfil/*',
+    'estacion/*',
+    'subestacion/*',
+    'usuario','usuario/*',
+    'permiso','permiso/*',
+    'inspeccion','inspeccion/*',
+    'controlInspeccion','controlInspeccion/*',
+    'SubestacionEquipo','SubestacionEquipo/*',
+    ];
+}

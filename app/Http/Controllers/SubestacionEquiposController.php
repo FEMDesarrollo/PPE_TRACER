@@ -2,105 +2,148 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use App\Models\subestacionEquipos;
+use App\Models\equipos;
+use App\Models\estaciones;
+use App\Models\subEstacion;
+use Carbon\Carbon;
 
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\SubestacionEquiposService;
-use App\Http\Requests\Services\SubestacionEquiposService as RulesRequest;
-
-class SubestacionEquiposController extends Controller
+class SubEstacionEquiposController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\SubestacionEquiposService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Subestación Equipos: LISTA.....
+    public function subestacion_equipos(Request $request)
     {
-        $this->service = new SubestacionEquiposService();
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        $estacionFilter = $request->input('estacion_filter');
+        $subestacionFilter = $request->input('subestacion_filter');
+        
+        $subestacionEquipos = subestacionEquipos::with(['equipo', 'estacion', 'subEstacion'])
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search)
+                          ->orWhere('no_traje', $search);
+                } else {
+                    $query->where('no_traje', 'like', "%$search%")
+                          ->orWhereHas('equipo', function($q) use ($search) {
+                              $q->where('equipo', 'like', "%$search%");
+                          })
+                          ->orWhereHas('estacion', function($q) use ($search) {
+                              $q->where('nombre', 'like', "%$search%");
+                          })
+                          ->orWhereHas('subEstacion', function($q) use ($search) {
+                              $q->where('nombre', 'like', "%$search%");
+                          });
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                }
+            })
+            ->when($estacionFilter, function($query) use ($estacionFilter) {
+                $query->where('id_estacion', $estacionFilter);
+            })
+            ->when($subestacionFilter, function($query) use ($subestacionFilter) {
+                $query->where('id_subestacion', $subestacionFilter);
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter,
+                'estacion_filter' => $estacionFilter,
+                'subestacion_filter' => $subestacionFilter
+            ]);
+            
+        return view('Dashboard.SubestacionEquipos.subestacionEquipos', [
+            'subestacionEquipos' => $subestacionEquipos,
+            'equipos' => equipos::all(),
+            'estaciones' => estaciones::all(),
+            'subEstacion' => subEstacion::all()
+        ]);
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\SubestacionEquiposService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
-    {
-        $indexSubestacionEquipos = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexSubestacionEquipos);
+    //.....................................................Subestación Equipos: REGISTRAR.....
+
+    public function subestacion_equipos_registrar(Request $request){
+        subestacionEquipos::create(array(
+            'no_traje' => $request->input('no_traje'),
+            'id_equipo' => $request->input('id_equipo'),
+            'id_estacion' => $request->input('id_estacion'),
+            'id_subestacion' => $request->input('id_subestacion')
+
+        ));
+
+        return redirect()->route('subestacion_equipos');
+    }
+
+    //....................................................Subestación Equipos: DETALLE.....
+    public function subestacion_equipos_detalle($id){
+            $query = subestacionEquipos::find($id);
+            return view("Dashboard.SubestacionEquipos.subestacionEquipos")
+                ->with(['subestacionEquipos' => $query]);
+    }
+
+    //.....................................................Subestación Equipos: EDITAR.....
+
+
+    public function subestacion_equipos_editar($id){
+                $query = subestacionEquipos::find($id);
+                return view("Dashboard.SubestacionEquipos.subestacionEquipos")
+                    ->with(['subestacionEquipos' => $query]);
+    }
+
+
+    //.....................................................Subestación Equipos: SALVAR.....
+
+    public function subestacion_equipos_salvar(subestacionEquipos $id, Request $request){
+
+        //dd($request->all());
+        $query = subestacionEquipos::find($id->id);
+            $query -> no_traje = $request -> no_traje;
+            $query -> id_equipo = $request -> id_equipo;
+            $query -> id_estacion = $request -> id_estacion;
+            $query -> id_subestacion = $request -> id_subestacion;
+        $query -> save();
+
+        return redirect()->route("subestacion_equipos", ['id' => $id->id]);
         }
-        return view('SubestacionEquipos.inicio',compact('indexSubestacionEquipos'));
-    }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\SubestacionEquiposService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
-    {
-        $storeSubestacionEquipos = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeSubestacionEquipos, "Se guardó correctamente");
-        }
-        return view('SubestacionEquipos.inicio',compact('storeSubestacionEquipos'))->with("Se guardo correctamente");
-    }
-
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\SubestacionEquiposService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
-    {
-        $showSubestacionEquipos = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showSubestacionEquipos);
-        }
-        return view('SubestacionEquipos.inicio',compact('showSubestacionEquipos'));
-    }
-
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\SubestacionEquiposService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
-    {
-        $updateSubestacionEquipos = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateSubestacionEquipos, "Se actualizó correctamente");
-        }
-        return view('SubestacionEquipos.inicio', compact('updateSubestacionEquipos'))->with("Se actualizó correctamente");
-    }
-
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\SubestacionEquiposService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
-    {
-        $destroySubestacionEquipos = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroySubestacionEquipos, "Se eliminó correctamente");
-        }
-        return view('SubestacionEquipos.inicio', compact('destroySubestacionEquipos'))->with("Se eliminó correctamente");
-    }
+    //.....................................................Subestación Equipos: BORRAR.....
+        public function subestacion_equipos_borrar (subestacionEquipos $id){
+            $id->delete();
+            return redirect()->route('subestacion_equipos');
+            }
 }

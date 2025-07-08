@@ -2,105 +2,150 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\EstacionProveedoresService;
-use App\Http\Requests\Services\EstacionProveedoresService as RulesRequest;
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
+use App\Models\Proveedores;
+use App\Models\Estaciones;
+use App\Models\EstacionProveedores;
+use Carbon\Carbon;
 
 class EstacionProveedoresController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\EstacionProveedoresService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function estacion_proveedores(Request $request)
     {
-        $this->service = new EstacionProveedoresService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $estacionProveedores = EstacionProveedores::with('estacion', 'proveedor')
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search)
+                          ->orWhere('id_proveedor', $search)
+                          ->orWhere('id_estacion', $search);
+                } else {
+                    $query->whereHas('estacion', function($q) use ($search) {
+                              $q->where('nombre', 'like', "%$search%");
+                          })
+                          ->orWhereHas('proveedor', function($q) use ($search) {
+                              $q->where('nombre', 'like', "%$search%");
+                          });
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.EstacionProveedores.estacion_proveedores', [
+            'estacion_proveedores' => $estacionProveedores,
+            'proveedores' => Proveedores::all(),
+            'estaciones' => Estaciones::all()
+        ]);
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\EstacionProveedoresService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function estacion_proveedores_registrar(Request $request)
     {
-        $indexEstacionProveedores = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexEstacionProveedores);
-        }
-        return view('',compact('indexEstacionProveedores'));
+        $this->validate($request, [
+            'id_proveedor' => 'required|exists:proveedores,id',
+            'id_estacion' => 'required|exists:estaciones,id'
+        ]);
+
+        EstacionProveedores::create([
+            'id_proveedor' => $request->id_proveedor,
+            'id_estacion' => $request->id_estacion
+        ]);
+
+        return redirect()->route('estacion_proveedores')->with('success', 'Relación estación-proveedor registrada correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\EstacionProveedoresService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Grupo: detalle.....
+    public function estacion_proveedores_detalle($id)
     {
-        $storeEstacionProveedores = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeEstacionProveedores, "Se guardó correctamente");
-        }
-        return view('',compact('storeEstacionProveedores'))->with("Se guardo correctamente");
+        $query = EstacionProveedores::with('estacion', 'proveedor')->findOrFail($id);
+        return view("Dashboard.EstacionProveedores.estacion_proveedores_detalle")
+            ->with(['estacion_proveedor' => $query]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstacionProveedoresService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: EDITAR.....
+    public function estacion_proveedores_editar($id)
     {
-        $showEstacionProveedores = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showEstacionProveedores);
-        }
-        return view('',compact('showEstacionProveedores'));
+        $query = EstacionProveedores::with('estacion', 'proveedor')->findOrFail($id);
+        return view("Dashboard.EstacionProveedores.estacion_proveedores_editar", [
+            'estacion_proveedor' => $query,
+            'proveedores' => Proveedores::all(),
+            'estaciones' => Estaciones::all()
+        ]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstacionProveedoresService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Grupos: SALVAR.....
+    public function estacion_proveedores_salvar(EstacionProveedores $id, Request $request)
     {
-        $updateEstacionProveedores = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateEstacionProveedores, "Se actualizó correctamente");
-        }
-        return view('', compact('updateEstacionProveedores'))->with("Se actualizó correctamente");
+        $this->validate($request, [
+            'id_proveedor' => 'required|exists:proveedores,id',
+            'id_estacion' => 'required|exists:estaciones,id'
+        ]);
+
+        $query = EstacionProveedores::find($id->id);
+        $query->id_proveedor = $request->id_proveedor;
+        $query->id_estacion = $request->id_estacion;
+        $query->save();
+
+        return redirect()->route("estacion_proveedores")->with('success', 'Relación estación-proveedor actualizada correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstacionProveedoresService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //..................................................Grupo: Borrar.....
+    public function estacion_proveedores_borrar(EstacionProveedores $id)
     {
-        $destroyEstacionProveedores = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyEstacionProveedores, "Se eliminó correctamente");
-        }
-        return view('', compact('destroyEstacionProveedores'))->with("Se eliminó correctamente");
+        $id->delete();
+        return redirect()->route('estacion_proveedores')->with('success', 'Relación estación-proveedor eliminada correctamente');
     }
 }

@@ -30,7 +30,6 @@
         </div>
         <section class="section">
             @yield('content')
-            ÑÑÑÑÑÑÑÑ
         </section>
     </main>
 

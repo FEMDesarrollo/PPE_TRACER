@@ -2,105 +2,166 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\ProveedoresService;
-use App\Http\Requests\Services\ProveedoresService as RulesRequest;
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
+use App\Models\Proveedores;
+use Carbon\Carbon;
 
 class ProveedoresController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\ProveedoresService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function proveedores(Request $request)
     {
-        $this->service = new ProveedoresService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $proveedores = Proveedores::query()
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where(function($q) use ($search) {
+                        $q->where('nombre', 'like', "%$search%")
+                          ->orWhere('direccion', 'like', "%$search%")
+                          ->orWhere('telefono', 'like', "%$search%");
+                    });
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.Proveedores.proveedores', compact('proveedores'));
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\ProveedoresService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function proveedores_registrar(Request $request)
     {
-        $indexProveedores = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexProveedores);
-        }
-        return view('Proveedores.inicio',compact('indexProveedores'));
+        $this->validate($request, [
+            'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
+            'direccion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
+            'telefono' => ['required', 'regex:/^[0-9]{10}$/'],
+        ],[
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
+            'nombre.max' => 'El nombre no debe exceder los 30 caracteres.',
+
+            'direccion.required' => 'la dirección es obligatoria.',
+            'direccion.regex' => 'La dirección solo puede contener letras, números y espacios.',
+            'direccion.max' => 'La dirección no debe exceder los 30 caracteres.',
+
+            'telefono.required' => 'El telefono es obligatorio',
+            'direccion.regex' => 'EL telefono solo puede contener números',
+            'direccion.max' => 'EL telefono solo tine 10 digitos.',
+        ]);
+
+        Proveedores::create([
+            'nombre' => $request->nombre,
+            'direccion' => $request->direccion,
+            'telefono' => $request->telefono
+        ]);
+
+        return redirect()->route('proveedores')->with('success', 'Proveedor registrado correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\ProveedoresService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Grupo: detalle.....
+    public function proveedores_detalle($id)
     {
-        $storeProveedores = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeProveedores, "Se guardó correctamente");
-        }
-        return view('Proveedores.inicio',compact('storeProveedores'))->with("Se guardo correctamente");
+        $query = Proveedores::find($id);
+        return view("Dashboard.Proveedores.proveedores")
+            ->with(['proveedores' => $query]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ProveedoresService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: EDITAR.....
+    public function proveedores_editar($id)
     {
-        $showProveedores = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showProveedores);
-        }
-        return view('Proveedores.inicio',compact('showProveedores'));
+        $query = Proveedores::find($id);
+        return view("Dashboard.Proveedores.proveedores_editar")
+            ->with(['proveedores' => $query]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ProveedoresService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Grupos: SALVAR.....
+    public function proveedores_salvar(Proveedores $id, Request $request)
     {
-        $updateProveedores = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateProveedores, "Se actualizó correctamente");
-        }
-        return view('Proveedores.inicio', compact('updateProveedores'))->with("Se actualizó correctamente");
+       $this->validate($request, [
+            'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
+            'direccion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
+            'telefono' => ['required', 'regex:/^[0-9]{10}$/'],
+        ],[
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
+            'nombre.max' => 'El nombre no debe exceder los 30 caracteres.',
+
+            'direccion.required' => 'la dirección es obligatoria.',
+            'direccion.regex' => 'La dirección solo puede contener letras, números y espacios.',
+            'direccion.max' => 'La dirección no debe exceder los 30 caracteres.',
+
+            'telefono.required' => 'El telefono es obligatorio',
+            'direccion.regex' => 'EL telefono solo puede contener números',
+            'direccion.max' => 'EL telefono solo tine 10 digitos.',
+        ]);
+
+        $query = Proveedores::find($id->id);
+        $query->nombre = $request->nombre;
+        $query->direccion = $request->direccion;
+        $query->telefono = $request->telefono;
+        $query->save();
+
+        return redirect()->route("proveedores")->with('success', 'Proveedor actualizado correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ProveedoresService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //..................................................Grupo: Borrar.....
+    public function proveedores_borrar(Proveedores $id)
     {
-        $destroyProveedores = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyProveedores, "Se eliminó correctamente");
-        }
-        return view('Proveedores.inicio', compact('destroyProveedores'))->with("Se eliminó correctamente");
+        $id->delete();
+        return redirect()->route('proveedores')->with('success', 'Proveedor eliminado correctamente');
     }
 }

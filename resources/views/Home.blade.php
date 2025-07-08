@@ -43,7 +43,7 @@
   <nav class="navbar navbar-expand-lg transparent">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <img src="{{ asset('img/logo.png') }}" alt="Logo" />
+        <img src="{{ asset('img/logow.png') }}" alt="Logo" style="width: 21%; height: auto;" />
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,8 +87,22 @@
       </h1>
       <div class="red-line h-2 w-70 my-5" style="max-width: 600px;"></div>
       <p class="subtitle">Control eficiente, operaciones confiables.</p>
-     <div class="btn-container">
-      <a href="..\login" class="btn btn-red mt-10 mb-1 mx-auto d-block text-decoration-none">
+     <div class="btn-container mt-5">
+  <a href="..\login" 
+     class="btn mx-auto text-decoration-none py-2 px-4" 
+     style="
+       background-color: #cf0a2c; 
+       color: white; 
+       border: none; 
+       border-radius: 30px; 
+       font-weight: 600; 
+       font-family: 'Montserrat', sans-serif; 
+       text-transform: uppercase; 
+       letter-spacing: 0.5px; 
+       transition: all 0.3s ease; 
+       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+       min-width: 180px;
+     ">
     Iniciar sesión
   </a>
 </div>

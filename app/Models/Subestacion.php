@@ -2,55 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\Models\WithCustomScopes;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Subestacion extends Model
+class subEstacion extends Model
 {
-    use HasFactory, WithCustomScopes, SoftDeletes;
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
+    use HasFactory;
     protected $table = 'subestaciones';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
     protected $primaryKey = 'id';
-
-    /**
-     * Timestamps
-     *
-     * @var string
-     */
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'nombre',
         'direccion',
         'telefono',
-        'id_estacion'
-    ];
+        'id_estacion',
+        ];
 
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
-     */
-    public function estacion()
+        public function estacion(): mixed
     {
-        return $this->belongsTo(Estacion::class,'id_estacion', 'id');
+        return $this->belongsTo(estaciones::class, 'id_estacion');
     }
 }

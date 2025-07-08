@@ -2,105 +2,130 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\EstatusEquiposService;
-use App\Http\Requests\Services\EstatusEquiposService as RulesRequest;
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
+use App\Models\EstatusEquipos;
+use Carbon\Carbon;
 
 class EstatusEquiposController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\EstatusEquiposService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function estatus_equipos(Request $request)
     {
-        $this->service = new EstatusEquiposService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $estatusEquipos = EstatusEquipos::query()
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where('estado', 'like', "%$search%");
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('createdated_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.EstatusEquipo.estatus_equipos', compact('estatusEquipos'));
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\EstatusEquiposService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function estatus_equipos_registrar(Request $request)
     {
-        $indexEstatusEquipos = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexEstatusEquipos);
-        }
-        return view('',compact('indexEstatusEquipos'));
+        $this->validate($request, [
+            'estado' => 'required|string|max:255',
+        ]);
+
+        EstatusEquipos::create([
+            'estado' => $request->estado
+        ]);
+
+        return redirect()->route('estatus_equipos')->with('success', 'Estado de equipo registrado correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\EstatusEquiposService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Grupo: detalle.....
+    public function estatus_equipos_detalle($id)
     {
-        $storeEstatusEquipos = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeEstatusEquipos, "Se guardó correctamente");
-        }
-        return view('',compact('storeEstatusEquipos'))->with("Se guardo correctamente");
+        $query = EstatusEquipos::find($id);
+        return view("Dashboard.EstatusEquipo.estatus_equipos")
+            ->with(['estatusEquipos' => $query]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstatusEquiposService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: EDITAR.....
+    public function estatus_equipos_editar($id)
     {
-        $showEstatusEquipos = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showEstatusEquipos);
-        }
-        return view('',compact('showEstatusEquipos'));
+        $query = EstatusEquipos::find($id);
+        return view("Dashboard.EstatusEquipo.estatus_equipos_editar")
+            ->with(['estatusEquipos' => $query]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstatusEquiposService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Grupos: SALVAR.....
+    public function estatus_equipos_salvar(EstatusEquipos $id, Request $request)
     {
-        $updateEstatusEquipos = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateEstatusEquipos, "Se actualizó correctamente");
-        }
-        return view('', compact('updateEstatusEquipos'))->with("Se actualizó correctamente");
+        $this->validate($request, [
+            'estado' => 'required|string|max:255',
+        ]);
+
+        $query = EstatusEquipos::find($id->id);
+        $query->estado = $request->estado;
+        $query->save();
+
+        return redirect()->route("estatus_equipos")->with('success', 'Estado de equipo actualizado correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstatusEquiposService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //..................................................Grupo: Borrar.....
+    public function estatus_equipos_borrar(EstatusEquipos $id)
     {
-        $destroyEstatusEquipos = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyEstatusEquipos, "Se eliminó correctamente");
-        }
-        return view('', compact('destroyEstatusEquipos'))->with("Se eliminó correctamente");
+        $id->delete();
+        return redirect()->route('estatus_equipos')->with('success', 'Estado de equipo eliminado correctamente');
     }
 }

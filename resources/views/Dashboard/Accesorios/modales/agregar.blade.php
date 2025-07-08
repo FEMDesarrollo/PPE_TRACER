@@ -1,124 +1,94 @@
- <!--Modal de Añadir -->
- <div class="modal fade" id="modalAñadir" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-     <div class="modal-dialog modal-dialog-centered modal-lg">
-         <div class="modal-content">
-             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
-                 <h5 class="modal-title text-center fw-bold" id="staticBackdropLabel" style="color: #222944;">Agregar
-                     Nuevo Accesorio</h5>
-                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-             </div>
-             <div class="modal-body">
 
-                 <form class="row g-3 " action="{{ route('accesorios.store') }}" id="modalAgregar" method="POST"
-                     enctype="multipart/form-data">
-                     @csrf
-                     <div class="col-12 col-md-4 form-floating">
-                         <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre"
-                             value="{{ old('nombre') }}">
-                         <label for="nombre" class="ps-4">Nombre</label>
-                         <div class="invalid-feedback" id="error-nombre"></div>
-
-                     </div>
-                     <div class="col-12 col-md-4 form-floating">
-                         <input type="text" class="form-control" id="marca" name="marca" placeholder="Marca"
-                             value="{{ old('marca') }}">
-                         <label for="marca" class="ps-4">Marca</label>
-                         <div class="invalid-feedback" id="error-marca"></div>
-                     </div>
-                     <div class="col-12 col-md-4 form-floating">
-                         <input type="text" class="form-control" id="modelo" name="modelo" placeholder="Modelo"
-                             value="{{ old('modelo') }}">
-                         <label for="modelo" class="ps-4">Modelo</label>
-                         <div class="invalid-feedback" id="error-modelo"></div>
-                     </div>
-                     <div class="col-12">
-                         <label for="imagen">Foto del accesorio</label>
-                         <input class="form-control" type="file" name="imagen" id="imagen">
-                     </div>
-                     <div class="col-12">
-                         <label for="equipo" class="form-label">Equipo</label>
-                         <select id="equipo" class="form-select" name="id_equipo">
-                             <option selected>Seleccione uno...</option>
-                             @foreach ($equipos as $equipo)
-                                 <option value={{ $equipo->id }}>{{ $equipo->equipo }}</option>
-                             @endforeach
-                         </select>
-                     </div>
-                     <div class="col-12">
-                         <div class="form-floating">
-                             <textarea class="form-control" placeholder="Descripción" id="floatingTextarea" style="height: 100px"
-                             name="detalle_descripcion" value="{{ old('detalle_descripcion') }}"></textarea>
-                             <label for="floatingTextarea">Descripción del Accesorio</label>
-                             <div class="invalid-feedback" id="error-floatingTextarea"></div>
-                         </div>
-                     </div>
-
-                 </form>
-
-                 <div class="modal-footer d-flex justify-content-center w-100">
-                    <button type="submit" class="btn btn-primary" form="modalAgregar"
-                        style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
-                    <button type="button" class="btn" data-bs-dismiss="modal"
-                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+    <!--Modal de Añadir -->
+    <div class="modal fade" id="modalAñadir" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
+                    <h5 class="modal-title text-center fw-bold" id="staticBackdropLabel" style="color: #222944;">Agregar Nuevo Accesorio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-             </div>
+                <div class="modal-body">
+                    <form action="{{ route('accesorios_registrar') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+                        {{ csrf_field() }}
 
-         </div>
-     </div>
- </div>
+                        <div class="col-12 col-sm-6 col-md-6 form-floating">
+                            <input type="text" name="nombre" class="form-control pe-5 @error('nombre') is-invalid @enderror" id="nombreAccesorio" placeholder="Accesorio" value="{{ old('nombre') }}">
+                            <label for="nombreAccesorio" class="ps-4">Accesorio</label>
+                            @error('nombre')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
 
- <script>
-$(document).ready(function () {
-    $("#modalAgregar").submit(function (event) {
-        event.preventDefault(); 
+                        <div class="col-12 col-sm-6 col-md-6 form-floating">
+                            <input type="file" name="imagen" class="form-control" id="imagen" accept=".jpg,.png,.bmp" value="{{ old('imagen') }}">
+                            <label for="nombreAccesorio" class="ps-4">Accesorio</label>
+                            <label for="imagen" class="ps-4">Imagen</label>
+                             <div id="fotoHelp" class="form-text">Suba una foto para el accesorio (<i>Formatos</i>: jpg/png/bmp)</div>
+                        </div>
 
-        let formData = new FormData(this);
+                        <div class="col-12 col-sm-6 col-md-6 form-floating">
+                            <input type="text" name="marca" class="form-control @error('marca') is-invalid @enderror" id="marca" placeholder="Marca" value="{{ old('marca') }}">
+                            <label for="marca" class="ps-4">Marca</label>
+                            @error('marca')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        $.ajax({
-            url: "{{ route('accesorios.store') }}", 
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                "X-CSRF-TOKEN": $('input[name="_token"]').val()
-            },
-            success: function (response) {
-                if (response.success) {
+                        <div class="col-12 col-sm-6 col-md-6 form-floating">
+                            <input type="text" name="modelo" class="form-control @error('modelo') is-invalid @enderror" id="modelo" placeholder="Modelo" value="{{ old('modelo') }}">
+                            <label for="modelo" class="ps-4">Modelo</label>
+                            @error('modelo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    $("#modalAñadir").modal("hide");
+                        <div class="col-12 col-sm-6 col-md-6 form-floating">
+                            <input type="text" name="detalle_descripcion" class="form-control @error('detalle_descripcion') is-invalid @enderror"  id="detalle_descripcion" placeholder="Descripción" value="{{ old('detalle_descripcion') }}">
+                            <label for="detalle_descripcion" class="ps-4">Descripción</label>
+                            @error('detalle_descripcion')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    formData.reset();
+                        <div class="col-12 col-sm-6 col-md-6">
+                            <div class="form-floating">
+                                <select name="id_equipo" class="form-select @error('id_equipo') is-invalid @enderror" id="id_equipo" required>
+                                    <option disabled selected>Selecciona una opción...</option>
+                                    @foreach($equipos as $equip)
+                                        <option value="{{ $equip->id }}" {{ old('id_equipo') == $equip->id ? 'selected' : '' }}>
+                                            {{ $equip->equipo }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <label for="id_equipo">Equipo</label>
+                                @error('id_equipo')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="modal-footer d-flex justify-content-center w-100">
+                            <button type="submit" class="btn" data-bs-dismiss="modal"
+                                style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
+                            <button type="button" class="btn" data-bs-dismiss="modal"
+                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Fin de Añadir -->
 
-                    actualizarTabla();
 
-                } else {
-                    alert("Hubo un error al guardar el accesorio.");
-                }
-            },
-            error: function (xhr) {
-                console.error("Error en la petición AJAX:", xhr);
-                alert("Ocurrió un error. Revisa la consola.");
-            }
-        });
-    });
-
-    // Función para actualizar la tabla 
-    function actualizarTabla() {
-        $.ajax({
-            url: "{{ route('accesorios.index') }}",
-            type: "GET",
-            success: function (data) {
-                $("#tablaAccesorios").html(data); // Actualiza los datos de la tabla
-            },
-            error: function (xhr) {
-                console.error("Error al actualizar la tabla:", xhr);
-            }
-        });
-    }
-});
-
-</script>
-
- <!--Fin de Añadir -->
+    <!--Redirección de formulario si hay errores en las validaciones -->
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+                myModal.show();
+            }); 
+        </script>
+    @endif
+    <!--Fin de redirección de formulario si hay errores en las validaciones -->

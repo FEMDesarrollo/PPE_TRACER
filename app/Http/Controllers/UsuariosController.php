@@ -2,105 +2,238 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\UsuariosService;
-use App\Http\Requests\Services\UsuariosService as RulesRequest;
+use App\Models\usuarios;
+use App\Models\estaciones;
+use App\Models\subEstacion;
+use App\Models\perfiles;
 
 class UsuariosController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\UsuariosService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function usuarios(Request $request)
     {
-        $this->service = new UsuariosService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $usuarios = usuarios::with('perfil', 'estacion', 'subEstacion')
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where(function($q) use ($search) {
+                        $q->where('nombre', 'like', "%$search%")
+                          ->orWhere('app', 'like', "%$search%")
+                          ->orWhere('apm', 'like', "%$search%")
+                          ->orWhere('correo', 'like', "%$search%")
+                          ->orWhere('telefono', 'like', "%$search%");
+                    });
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.Usuario.usuarios', [
+            'usuarios' => $usuarios,
+            'estaciones' => estaciones::all(),
+            'perfiles' => perfiles::all(),
+            'subestaciones' => subEstacion::all()
+        ]);
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\UsuariosService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function usuarios_registrar(Request $request)
     {
-        $indexUsuarios = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexUsuarios);
+        $request->validate([
+            'nombre' => 'required',
+            'app' => 'required',
+            'apm' => 'required',
+            'telefono' => 'required',
+            'correo' => 'required|email|unique:usuarios,correo',
+            'password' => 'required',
+            'id_estacion' => 'required',
+            'id_subestacion' => 'required',
+            'id_perfil' => 'required',
+            'foto' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ], [
+            'correo.unique' => 'El correo electrónico ya está registrado en el sistema',
+            'foto.image' => 'El archivo debe ser una imagen válida',
+            'foto.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg o gif',
+            'foto.max' => 'La imagen no debe pesar más de 2MB'
+        ]);
+
+        try {
+            $img2 = "foto.jpg"; 
+            
+            if($request->hasFile('foto')) {
+                $file = $request->file('foto');
+                $img = $file->getClientOriginalName();
+                $ldate = date('Ymd_His_');
+                $img2 = $ldate . $img;
+                Storage::disk('public')->put($img2, file_get_contents($file));
+            }
+
+            $usuario = usuarios::create([
+                'nombre' => $request->nombre,
+                'app' => $request->app,
+                'apm' => $request->apm,
+                'telefono' => $request->telefono,
+                'correo' => $request->correo,
+                'password' => $request->password, // Se recomienda encriptar la contraseña
+                'foto' => $img2,
+                'id_estacion' => $request->id_estacion,
+                'id_subestacion' => $request->id_subestacion,
+                'id_perfil' => $request->id_perfil
+            ]);
+
+            return redirect()->route('usuarios')
+                ->with('success', 'Usuario creado correctamente');
+
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al registrar el usuario: ' . $e->getMessage());
         }
-        return view('Dashboard.Usuarios.inicio',compact('indexUsuarios'));
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\UsuariosService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //.....................................................Grupos: EDITAR.....
+    public function usuarios_editar($id)
     {
-        $storeUsuarios = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeUsuarios, "Se guardó correctamente");
-        }
-        return view('Dashboard.Usuarios.inicio',compact('storeUsuarios'))->with("Se guardo correctamente");
+        $usuario = usuarios::with(['perfil', 'estacion', 'subEstacion'])->findOrFail($id);
+        
+        return view("Dashboard.Usuario.usuarios_editar", [
+            'usuario' => $usuario,
+            'estaciones' => estaciones::all(),
+            'perfiles' => perfiles::all(),
+            'subestaciones' => subEstacion::where('id_estacion', $usuario->id_estacion)->get()
+        ]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\UsuariosService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: SALVAR.....
+    public function usuarios_salvar(usuarios $id, Request $request)
     {
-        $showUsuarios = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showUsuarios);
+        $request->validate([
+            'nombre' => 'required',
+            'app' => 'required',
+            'apm' => 'required',
+            'telefono' => 'required',
+            'correo' => 'required|email|unique:usuarios,correo,'.$id->id,
+            'password' => 'sometimes|required',
+            'id_estacion' => 'required',
+            'id_subestacion' => 'required',
+            'id_perfil' => 'required',
+            'foto1' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        try {
+            $fot2 = $id->foto; // Mantener la foto actual por defecto
+            
+            if($request->hasFile('foto1')) {
+                // Eliminar la foto anterior si no es la por defecto
+                if($id->foto != 'foto.jpg') {
+                    Storage::disk('public')->delete($id->foto);
+                }
+                
+                $file = $request->file('foto1');
+                $foto = $file->getClientOriginalName();
+                $ldate = date('Ymd_His_');
+                $fot2 = $ldate . $foto;
+                Storage::disk('public')->put($fot2, file_get_contents($file));
+            }
+
+            $id->update([
+                'nombre' => $request->nombre,
+                'app' => $request->app,
+                'apm' => $request->apm,
+                'telefono' => $request->telefono,
+                'correo' => $request->correo,
+                'password' => $request->password ? $request->password : $id->password,
+                'foto' => $fot2,
+                'id_estacion' => $request->id_estacion,
+                'id_subestacion' => $request->id_subestacion,
+                'id_perfil' => $request->id_perfil
+            ]);
+
+            return redirect()->route("usuarios")
+                ->with('success', 'Usuario actualizado correctamente');
+
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al actualizar el usuario: ' . $e->getMessage());
         }
-        return view('Dashboard.Usuarios.inicio',compact('showUsuarios'));
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\UsuariosService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //..................................................Grupo: Borrar.....
+    public function usuarios_borrar(usuarios $id)
     {
-        $updateUsuarios = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateUsuarios, "Se actualizó correctamente");
+        try {
+            // Eliminar la foto asociada si no es la por defecto
+            if($id->foto != 'foto.jpg') {
+                Storage::disk('public')->delete($id->foto);
+            }
+            
+            $id->delete();
+            
+            return redirect()->route('usuarios')
+                ->with('success', 'Usuario eliminado correctamente');
+                
+        } catch (\Exception $e) {
+            return redirect()->route('usuarios')
+                ->with('error', 'Ocurrió un error al eliminar el usuario: ' . $e->getMessage());
         }
-        return view('Dashboard.Usuarios.inicio', compact('updateUsuarios'))->with("Se actualizó correctamente");
-    }
-
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\UsuariosService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
-    {
-        $destroyUsuarios = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyUsuarios, "Se eliminó correctamente");
-        }
-        return view('Dashboard.Usuarios.inicio', compact('destroyUsuarios'))->with("Se eliminó correctamente");
     }
 }

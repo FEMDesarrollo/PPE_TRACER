@@ -2,105 +2,147 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\EstacionesService;
-use App\Http\Requests\Services\EstacionesService as RulesRequest;
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
+use App\Models\Estaciones;
+use Carbon\Carbon;
 
 class EstacionesController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\EstacionesService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function estaciones(Request $request)
     {
-        $this->service = new EstacionesService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $estaciones = Estaciones::query()
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where(function($q) use ($search) {
+                        $q->where('nombre', 'like', "%$search%")
+                          ->orWhere('direccion', 'like', "%$search%")
+                          ->orWhere('telefono', 'like', "%$search%")
+                          ->orWhere('total_trajes', 'like', "%$search%");
+                    });
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.Estaciones.estaciones', compact('estaciones'));
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\EstacionesService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function estaciones_registrar(Request $request)
     {
-        $indexEstaciones = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexEstaciones);
-        }
-        return view('Estaciones.inicio',compact('indexEstaciones'));
+        $this->validate($request, [
+            'nombre' => 'required',
+            'direccion' => 'required',
+            'telefono' => 'required',
+            'total_trajes' => 'required'
+        ]);
+
+        Estaciones::create([
+            'nombre' => $request->nombre,
+            'direccion' => $request->direccion,
+            'telefono' => $request->telefono,
+            'total_trajes' => $request->total_trajes
+        ]);
+
+        return redirect()->route('estaciones')->with('success', 'Estación registrada correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\EstacionesService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Grupo: detalle.....
+    public function estaciones_detalle($id)
     {
-        $storeEstaciones = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeEstaciones, "Se guardó correctamente");
-        }
-        return view('Estaciones.inicio',compact('storeEstaciones'))->with("Se guardo correctamente");
+        $query = Estaciones::find($id);
+        return view("Dashboard.Estaciones.estaciones")
+            ->with(['estaciones' => $query]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstacionesService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: EDITAR.....
+    public function estaciones_editar($id)
     {
-        $showEstaciones = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showEstaciones);
-        }
-        return view('Estaciones.inicio',compact('showEstaciones'));
+        $query = Estaciones::find($id);
+        return view("Dashboard.Estaciones.estaciones_editar")
+            ->with(['estaciones' => $query]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstacionesService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Grupos: SALVAR.....
+    public function estaciones_salvar(Estaciones $id, Request $request)
     {
-        $updateEstaciones = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateEstaciones, "Se actualizó correctamente");
-        }
-        return view('Estaciones.inicio', compact('updateEstaciones'))->with("Se actualizó correctamente");
+        $this->validate($request, [
+            'nombre' => 'required',
+            'direccion' => 'required',
+            'telefono' => 'required',
+            'total_trajes' => 'required'
+        ]);
+
+        $query = Estaciones::find($id->id);
+        $query->nombre = $request->nombre;
+        $query->direccion = $request->direccion;
+        $query->telefono = $request->telefono;
+        $query->total_trajes = $request->total_trajes;
+        $query->save();
+
+        return redirect()->route("estaciones")->with('success', 'Estación actualizada correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\EstacionesService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //..................................................Grupo: Borrar.....
+    public function estaciones_borrar(Estaciones $id)
     {
-        $destroyEstaciones = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyEstaciones, "Se eliminó correctamente");
-        }
-        return view('Estaciones.inicio', compact('destroyEstaciones'))->with("Se eliminó correctamente");
+        $id->delete();
+        return redirect()->route('estaciones')->with('success', 'Estación eliminada correctamente');
     }
 }

@@ -2,105 +2,138 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\CategoriasService;
-use App\Http\Requests\Services\CategoriasService as RulesRequest;
+use Illuminate\Http\Request;
+use App\Models\equipos;
+use App\Models\categorias;
+use Carbon\Carbon;
 
 class CategoriasController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\CategoriasService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Categorías: LISTA.....
+    public function categorias(Request $request)
     {
-        $this->service = new CategoriasService();
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        $equipoFilter = $request->input('equipo_filter');
+        
+        $categorias = categorias::with(['equipo'])
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where('categoria', 'like', "%$search%")
+                          ->orWhereHas('equipo', function($q) use ($search) {
+                              $q->where('equipo', 'like', "%$search%");
+                          });
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                }
+            })
+            ->when($equipoFilter, function($query) use ($equipoFilter) {
+                $query->where('id_equipo', $equipoFilter);
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter,
+                'equipo_filter' => $equipoFilter
+            ]);
+            
+        return view('Dashboard.Categorias.categorias', [
+            'categorias' => $categorias,
+            'equipos' => equipos::all()
+        ]);
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\CategoriasService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Categorías: REGISTRAR.....
+    public function categorias_registrar(Request $request)
     {
-        $indexCategorias = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexCategorias);
-        }
-        return view('',compact('indexCategorias'));
+        $request->validate([
+            'categoria' => 'required|string|max:255|unique:categorias',
+            'id_equipo' => 'required|exists:equipos,id'
+        ]);
+
+        categorias::create([
+            'categoria' => $request->categoria,
+            'id_equipo' => $request->id_equipo
+        ]);
+
+        return redirect()->route('categorias')->with('success', 'Categoría registrada correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\CategoriasService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Categorías: DETALLE.....
+    public function categorias_detalle($id)
     {
-        $storeCategorias = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeCategorias, "Se guardó correctamente");
-        }
-        return view('',compact('storeCategorias'))->with("Se guardo correctamente");
+        $query = categorias::with(['equipo'])->findOrFail($id);
+        return view("Dashboard.Categorias.categorias_detalle")
+            ->with(['categoria' => $query]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\CategoriasService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Categorías: EDITAR.....
+    public function categorias_editar($id)
     {
-        $showCategorias = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showCategorias);
-        }
-        return view('',compact('showCategorias'));
+        $query = categorias::with(['equipo'])->findOrFail($id);
+        return view("Dashboard.Categorias.categorias_editar")
+            ->with([
+                'categoria' => $query,
+                'equipos' => equipos::all()
+            ]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\CategoriasService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Categorías: SALVAR.....
+    public function categorias_salvar(categorias $id, Request $request)
     {
-        $updateCategorias = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateCategorias, "Se actualizó correctamente");
-        }
-        return view('', compact('updateCategorias'))->with("Se actualizó correctamente");
+        $request->validate([
+            'categoria' => 'required|string|max:255|unique:categorias,categoria,'.$id->id,
+            'id_equipo' => 'required|exists:equipos,id'
+        ]);
+
+        $query = categorias::find($id->id);
+        $query->categoria = $request->categoria;
+        $query->id_equipo = $request->id_equipo;
+        $query->save();
+
+        return redirect()->route("categorias")->with('success', 'Categoría actualizada correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\CategoriasService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //.....................................................Categorías: BORRAR.....
+    public function categorias_borrar(categorias $id)
     {
-        $destroyCategorias = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyCategorias, "Se eliminó correctamente");
-        }
-        return view('', compact('destroyCategorias'))->with("Se eliminó correctamente");
+        $id->delete();
+        return redirect()->route('categorias')->with('success', 'Categoría eliminada correctamente');
     }
 }

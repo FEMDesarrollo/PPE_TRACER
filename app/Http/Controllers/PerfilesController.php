@@ -2,105 +2,130 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\PerfilesService;
-use App\Http\Requests\Services\PerfilesService as RulesRequest;
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
+use App\Models\Perfiles;
+use Carbon\Carbon;
 
 class PerfilesController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\PerfilesService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function perfiles(Request $request)
     {
-        $this->service = new PerfilesService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $perfiles = Perfiles::query()
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where('nombre', 'like', "%$search%");
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.Perfiles.perfiles', compact('perfiles'));
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\PerfilesService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function perfiles_registrar(Request $request)
     {
-        $indexPerfiles = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexPerfiles);
-        }
-        return view('Perfiles.inicio',compact('indexPerfiles'));
+        $this->validate($request, [
+            'nombre' => 'required'
+        ]);
+
+        Perfiles::create([
+            'nombre' => $request->nombre
+        ]);
+
+        return redirect()->route('perfiles')->with('success', 'Perfil registrado correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\PerfilesService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Grupo: detalle.....
+    public function perfiles_detalle($id)
     {
-        $storePerfiles = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storePerfiles, "Se guardó correctamente");
-        }
-        return view('Perfiles.inicio',compact('storePerfiles'))->with("Se guardo correctamente");
+        $query = Perfiles::find($id);
+        return view("Dashboard.Perfiles.perfiles")
+            ->with(['perfiles' => $query]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\PerfilesService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: EDITAR.....
+    public function perfiles_editar($id)
     {
-        $showPerfiles = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showPerfiles);
-        }
-        return view('Perfiles.inicio',compact('showPerfiles'));
+        $query = Perfiles::find($id);
+        return view("Dashboard.Perfiles.perfiles_editar")
+            ->with(['perfiles' => $query]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\PerfilesService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Grupos: SALVAR.....
+    public function perfiles_salvar(Perfiles $id, Request $request)
     {
-        $updatePerfiles = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updatePerfiles, "Se actualizó correctamente");
-        }
-        return view('Perfiles.inicio', compact('updatePerfiles'))->with("Se actualizó correctamente");
+        $this->validate($request, [
+            'nombre' => 'required'
+        ]);
+
+        $query = Perfiles::find($id->id);
+        $query->nombre = $request->nombre;
+        $query->save();
+
+        return redirect()->route("perfiles")->with('success', 'Perfil actualizado correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\PerfilesService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //..................................................Grupo: Borrar.....
+    public function perfiles_borrar(Perfiles $id)
     {
-        $destroyPerfiles = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyPerfiles, "Se eliminó correctamente");
-        }
-        return view('Perfiles.inicio', compact('destroyPerfiles'))->with("Se eliminó correctamente");
+        $id->delete();
+        return redirect()->route('perfiles')->with('success', 'Perfil eliminado correctamente');
     }
 }

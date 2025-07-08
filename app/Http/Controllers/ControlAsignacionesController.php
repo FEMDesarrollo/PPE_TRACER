@@ -2,105 +2,168 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\ControlAsignacionesService;
-use App\Http\Requests\Services\ControlAsignacionesService as RulesRequest;
+use App\Models\controlAsignaciones;
+use App\Models\usuariosEquipos;
+use App\Models\estatusCritico;
 
 class ControlAsignacionesController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\ControlAsignacionesService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function control_asignaciones(Request $request)
     {
-        $this->service = new ControlAsignacionesService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $controlAsignaciones = controlAsignaciones::with(['usuarioEquipo', 'estatusCritico'])
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where('observaciones', 'like', "%$search%")
+                        ->orWhereHas('usuarioEquipo', function($q) use ($search) {
+                            $q->where('fecha_estatus', 'like', "%$search%");
+                        })
+                        ->orWhereHas('estatusCritico', function($q) use ($search) {
+                            $q->where('estatus', 'like', "%$search%");
+                        });
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('fecha_asignacion', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('fecha_asignacion', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('fecha_asignacion', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('fecha_asignacion', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('fecha_asignacion', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('fecha_asignacion', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('fecha_asignacion', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('fecha_asignacion', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.controlAsignacion.control_asignaciones', [
+            'control_asignaciones' => $controlAsignaciones,
+            'usuarios_equipos' => usuariosEquipos::all(),
+            'estatus_critico' => estatusCritico::all()
+        ]);
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\ControlAsignacionesService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function control_asignaciones_registrar(Request $request)
     {
-        $indexControlAsignaciones = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexControlAsignaciones);
-        }
-        return view('ControlAsignaciones.inicio',compact('indexControlAsignaciones'));
+        $request->validate([
+            'observaciones' => 'required',
+            'fecha_asignacion' => 'required|date',
+            'fecha_devolucion' => 'required|date|after_or_equal:fecha_asignacion',
+            'id_usuario_equipo' => 'required|exists:usuarios_equipos,id',
+            'id_estatus_critico' => 'required|exists:estatus_critico,id'
+        ]);
+
+        controlAsignaciones::create([
+            'observaciones' => $request->input("observaciones"),
+            'fecha_asignacion' => $request->input("fecha_asignacion"),
+            'fecha_devolucion' => $request->input("fecha_devolucion"),
+            'id_usuario_equipo' => $request->input("id_usuario_equipo"),
+            'id_estatus_critico' => $request->input("id_estatus_critico")
+        ]);
+
+        return redirect()->route('control_asignaciones')->with('success', 'El control de asignaciones fue creado correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\ControlAsignacionesService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Grupo: detalle.....
+    public function control_asignaciones_detalle($id)
     {
-        $storeControlAsignaciones = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeControlAsignaciones, "Se guardó correctamente");
-        }
-        return view('ControlAsignaciones.inicio',compact('storeControlAsignaciones'))->with("Se guardo correctamente");
+        $query = controlAsignaciones::with(['usuarioEquipo', 'estatusCritico'])->find($id);
+        return view("Dashboard.controlAsignacion.control_asignaciones_detalle")
+            ->with([
+                'control_asignacion' => $query,
+                'usuarios_equipos' => usuariosEquipos::all(),
+                'estatus_critico' => estatusCritico::all()
+            ]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ControlAsignacionesService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: EDITAR.....
+    public function control_asignaciones_editar($id)
     {
-        $showControlAsignaciones = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showControlAsignaciones);
-        }
-        return view('ControlAsignaciones.inicio',compact('showControlAsignaciones'));
+        $query = controlAsignaciones::with(['usuarioEquipo', 'estatusCritico'])->find($id);
+        return view("Dashboard.controlAsignacion.control_asignaciones_editar")
+            ->with([
+                'control_asignacion' => $query,
+                'usuarios_equipos' => usuariosEquipos::all(),
+                'estatus_critico' => estatusCritico::all()
+            ]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ControlAsignacionesService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Grupos: SALVAR.....
+    public function control_asignaciones_salvar(controlAsignaciones $id, Request $request)
     {
-        $updateControlAsignaciones = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateControlAsignaciones, "Se actualizó correctamente");
-        }
-        return view('ControlAsignaciones.inicio', compact('updateControlAsignaciones'))->with("Se actualizó correctamente");
+        $request->validate([
+            'observaciones' => 'required',
+            'fecha_asignacion' => 'required|date',
+            'fecha_devolucion' => 'required|date|after_or_equal:fecha_asignacion',
+            'id_usuario_equipo' => 'required|exists:usuarios_equipos,id',
+            'id_estatus_critico' => 'required|exists:estatus_critico,id'
+        ]);
+
+        $query = controlAsignaciones::find($id->id);
+        $query->observaciones = $request->observaciones;
+        $query->fecha_asignacion = $request->fecha_asignacion;
+        $query->fecha_devolucion = $request->fecha_devolucion;
+        $query->id_usuario_equipo = $request->id_usuario_equipo;
+        $query->id_estatus_critico = $request->id_estatus_critico;
+        $query->save();
+
+        return redirect()->route("control_asignaciones")->with('success', 'Control de asignaciones actualizado correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ControlAsignacionesService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //..................................................Grupo: Borrar.....
+    public function control_asignaciones_borrar(controlAsignaciones $id)
     {
-        $destroyControlAsignaciones = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyControlAsignaciones, "Se eliminó correctamente");
-        }
-        return view('ControlAsignaciones.inicio', compact('destroyControlAsignaciones'))->with("Se eliminó correctamente");
+        $id->delete();
+        return redirect()->route('control_asignaciones')->with('success', 'Control de asignaciones eliminado correctamente');
     }
 }

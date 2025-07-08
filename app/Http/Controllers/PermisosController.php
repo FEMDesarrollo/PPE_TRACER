@@ -2,121 +2,147 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\PermisosService;
-use App\Http\Requests\Services\PermisosService as RulesRequest;
+use Illuminate\Http\Request;
+use App\Models\Permisos;
+use Carbon\Carbon;
 
 class PermisosController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\PermisosService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function permisos(Request $request)
     {
-        $this->service = new PermisosService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $permisos = Permisos::query()
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where(function($q) use ($search) {
+                        $q->where('permiso', 'like', "%$search%")
+                          ->orWhere('url', 'like', "%$search%");
+                    });
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.Permiso.permisos', compact('permisos'));
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\PermisosService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function permisos_registrar(Request $request)
     {
-        $indexPermisos = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexPermisos);
-        }
-        return view('welcome', compact('indexPermisos'));
+        $this->validate($request, [
+            'permiso' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
+            'url' => 'required'
+        ],[
+            'permiso.required' => 'El permiso es obligatorio.',
+            'permiso.regex' => 'El permiso solo puede contener letras y espacios.',
+            'permiso.max' => 'El permiso no debe exceder los 20 caracteres.',
+            
+            'url.required' => 'La URL es obligatoria.',
+        ]);
+
+        Permisos::create([
+            'permiso' => $request->permiso,
+            'url' => $request->url
+        ]);
+
+        return redirect()->route('permisos')->with('success', 'Permiso registrado correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\PermisosService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Grupo: detalle.....
+    public function permisos_detalle($id)
     {
-        $storePermisos = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storePermisos, "Se guardó correctamente");
-        }
-        return view('Permisos.inicio',compact('storePermisos'))->with("Se guardo correctamente");
+        $query = Permisos::find($id);
+        return view("Dashboard.Permiso.permisos")
+            ->with(['permisos' => $query]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\PermisosService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: EDITAR.....
+    public function permisos_editar($id)
     {
-        $showPermisos = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showPermisos);
-        }
-        return view('Permisos.inicio',compact('showPermisos'));
+        $query = Permisos::find($id);
+        return view("Dashboard.Permiso.permisos_editar")
+            ->with(['permisos' => $query]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\PermisosService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Grupos: SALVAR.....
+    public function permisos_salvar(Permisos $id, Request $request)
     {
-        $updatePermisos = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updatePermisos, "Se actualizó correctamente");
-        }
-        return view('Permisos.inicio', compact('updatePermisos'))->with("Se actualizó correctamente");
+        $this->validate($request, [
+            'permiso' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
+            'url' => 'required'
+        ],[
+            'permiso.required' => 'El permiso es obligatorio.',
+            'permiso.regex' => 'El permiso solo puede contener letras y espacios.',
+            'permiso.max' => 'El permiso no debe exceder los 20 caracteres.',
+            
+            'url.required' => 'La URL es obligatoria.',
+        ]);
+
+        $query = Permisos::find($id->id);
+        $query->permiso = $request->permiso;
+        $query->url = $request->url;
+        $query->save();
+
+        return redirect()->route("permisos")->with('success', 'Permiso actualizado correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\PermisosService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //..................................................Grupo: Borrar.....
+    public function permisos_borrar(Permisos $id)
     {
-        $destroyPermisos = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyPermisos, "Se eliminó correctamente");
-        }
-        return view('Permisos.inicio', compact('destroyPermisos'))->with("Se eliminó correctamente");
-    }
-
-    /**
-     * Muestra un recurso en especifico dependiendo del id del usuario
-     *
-     * @param  \App\Http\Requests\Services\PermisosService\ShowUsusario  $request
-     * param  int  $idUsuario
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function ShowUsusario(RulesRequest\ShowUsusario $request)
-    {
-        $showPerfil = $this->service->ShowUsusario($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showPerfil);
-      }
-      return view('Permisos.inicio', compact('showPerfil'));
+        $id->delete();
+        return redirect()->route('permisos')->with('success', 'Permiso eliminado correctamente');
     }
 }

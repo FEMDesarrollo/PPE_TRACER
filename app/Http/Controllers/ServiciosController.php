@@ -2,105 +2,130 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Controller;
-use App\Helpers\ResponseHelper;
-use App\Services\ServiciosService;
-use App\Http\Requests\Services\ServiciosService as RulesRequest;
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
+use App\Models\servicios;
+use Carbon\Carbon;
 
 class ServiciosController extends Controller
 {
-    /**
-     * My Service
-     *
-     * @var \App\Services\ServiciosService
-     */
-    protected $service;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct()
+    //.....................................................Grupo: Lista.....
+    public function servicios(Request $request)
     {
-        $this->service = new ServiciosService();
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $timeFilter = $request->input('time_filter');
+        
+        $servicios = servicios::query()
+            ->when($search, function($query) use ($search) {
+                if (is_numeric($search) && ctype_digit($search)) {
+                    $query->where('id', $search);
+                } else {
+                    $query->where('servicio', 'like', "%$search%");
+                }
+            })
+            ->when($timeFilter, function($query) use ($timeFilter) {
+                $now = Carbon::now();
+                
+                switch ($timeFilter) {
+                    case 'today':
+                        $query->whereDate('created_at', $now->toDateString());
+                        break;
+                    case 'this_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'this_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_week':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
+                            $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [
+                            $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
+                            $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
+                        ]);
+                        break;
+                    case 'last_3_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        break;
+                    case 'last_6_months':
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        break;
+                    case 'last_year':
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
+                        break;
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'per_page' => $perPage,
+                'time_filter' => $timeFilter
+            ]);
+            
+        return view('Dashboard.Servicios.servicios', compact('servicios'));
     }
 
-     /**
-     * Retorna una lista de los recursos
-     *
-     * @param  \App\Http\Requests\Services\ServiciosService\Index  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(RulesRequest\Index $request)
+    //.....................................................Grupos: REGISTRAR.....
+    public function servicio_registrar(Request $request)
     {
-        $indexServicios = $this->service->index($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($indexServicios);
-        }
-        return view('Servicios.inicio',compact('indexServicios'));
+        $this->validate($request, [
+            'servicio' => 'required'
+        ]);
+
+        servicios::create([
+            'servicio' => $request->servicio
+        ]);
+
+        return redirect()->route('servicios')->with('success', 'Servicio registrado correctamente');
     }
 
-
- /**
-     * Guarda un nuevo recurso
-     *
-     * @param  \App\Http\Requests\Services\ServiciosService\Store  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RulesRequest\Store $request)
+    //....................................................Grupo: detalle.....
+    public function servicio_detalle($id)
     {
-        $storeServicios = $this->service->store($request->validated(), false, false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($storeServicios, "Se guardó correctamente");
-        }
-        return view('Servicios.inicio',compact('storeServicios'))->with("Se guardo correctamente");
+        $query = servicios::find($id);
+        return view("Dashboard.Servicios.servicios")
+            ->with(['servicios' => $query]);
     }
 
-    /**
-     * Muestra un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ServiciosService\Show  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(RulesRequest\Show $request)
+    //.....................................................Grupos: EDITAR.....
+    public function servicio_editar($id)
     {
-        $showServicios = $this->service->show($request->validated(), false);
-        if(request()->wantsJson()){
-            return ResponseHelper::json($showServicios);
-        }
-        return view('Servicios.inicio',compact('showServicios'));
+        $query = servicios::find($id);
+        return view("Dashboard.Servicios.servicio_editar")
+            ->with(['servicio' => $query]);
     }
 
-     /**
-     * Actualiza un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ServiciosService\Update  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(RulesRequest\Update $request)
+    //.....................................................Grupos: SALVAR.....
+    public function servicio_salvar(servicios $id, Request $request)
     {
-        $updateServicios = $this->service->update($request->validated(), false, false);
-         if(request()->wantsJson()){
-             return ResponseHelper::json($updateServicios, "Se actualizó correctamente");
-        }
-        return view('Servicios.inicio', compact('updateServicios'))->with("Se actualizó correctamente");
+        $this->validate($request, [
+            'servicio' => 'required'
+        ]);
+
+        $query = servicios::find($id->id);
+        $query->servicio = $request->servicio;
+        $query->save();
+
+        return redirect()->route("servicios")->with('success', 'Servicio actualizado correctamente');
     }
 
-   /**
-     * Elimina un recurso en especifico
-     *
-     * @param  \App\Http\Requests\Services\ServiciosService\Destroy  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(RulesRequest\Destroy $request)
+    //..................................................Grupo: Borrar.....
+    public function servicio_borrar(servicios $id)
     {
-        $destroyServicios = $this->service->destroy($request->validated(), false, false);
-         if(request()->wantsJson()){
-              return ResponseHelper::json($destroyServicios, "Se eliminó correctamente");
-        }
-        return view('Servicios.inicio', compact('destroyServicios'))->with("Se eliminó correctamente");
+        $id->delete();
+        return redirect()->route('servicios')->with('success', 'Servicio eliminado correctamente');
     }
 }

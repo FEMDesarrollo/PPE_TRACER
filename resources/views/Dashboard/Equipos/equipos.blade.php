@@ -78,7 +78,7 @@
                                 <thead class="border-0 border-bottom-0">
                                     <tr>
                                         <th>ID</th>
-                                        <th>Equiposssssss</th>
+                                        <th>Equipo</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>

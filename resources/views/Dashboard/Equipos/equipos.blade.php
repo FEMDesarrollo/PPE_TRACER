@@ -79,7 +79,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Equipo</th>
-                                        <th>Acciones</th>
+                                        <th>Accionessssss</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table">

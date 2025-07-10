@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\EstatusCriticoImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -10,7 +12,7 @@ use Carbon\Carbon;
 
 class EstatusCriticoController extends Controller
 {
-   //.....................................................Grupo: Lista.....
+   //.....................................................Estatus critico: LISTA.....
 public function estatus_critico(Request $request)
 {
     $perPage = $request->input('per_page', 5);
@@ -78,7 +80,7 @@ public function estatus_critico(Request $request)
     return view('Dashboard.EstatusCritico.estatus_critico', compact('estatusCritico'));
 }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Estatus critico: REGISTRAR.....
     public function estatus_critico_registrar(Request $request)
     {
         $this->validate($request, [
@@ -98,7 +100,7 @@ public function estatus_critico(Request $request)
         return redirect()->route('estatus_critico')->with('success', 'Estatus crítico registrado correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Estatus critico: detalle.....
     public function estatus_critico_detalle($id)
     {
         $query = EstatusCritico::find($id);
@@ -106,7 +108,7 @@ public function estatus_critico(Request $request)
             ->with(['estatus_critico' => $query]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Estatus critico: EDITAR.....
     public function estatus_critico_editar($id)
     {
         $query = EstatusCritico::find($id);
@@ -114,7 +116,7 @@ public function estatus_critico(Request $request)
             ->with(['estatus_critico' => $query]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Estatus critico: SALVAR.....
     public function estatus_critico_salvar(EstatusCritico $id, Request $request)
     {
         $this->validate($request, [
@@ -134,10 +136,24 @@ public function estatus_critico(Request $request)
         return redirect()->route("estatus_critico")->with('success', 'Estatus crítico actualizado correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Estatus critico: BORRAR.....
     public function estatus_critico_borrar(EstatusCritico $id)
     {
         $id->delete();
         return redirect()->route('estatus_critico')->with('success', 'Estatus crítico eliminado correctamente');
     }
+
+
+    //..................................................Servicios: Importar.....
+    public function estatus_critico_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new EstatusCriticoImport, $request->file('archivo_excel'));
+
+        return redirect()->route('estatus_critico')->with('success', 'Estatus críticos importados correctamente.');
+    }
 }
+

@@ -13,4 +13,21 @@ class Equipos extends Model
     protected $fillable = [
         'equipo'
         ];
+
+
+        public static function validationRules(): array
+    {
+        return [
+            'equipo' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
+        ];
+    }
+
+     public static function validationMessages(): array
+    {
+        return [
+            'equipo.required' => 'El equipo es obligatorio.',
+            'equipo.regex'    => 'El equipo solo puede contener letras y espacios.',
+            'equipo.max'      => 'El equipo no debe exceder los 30 caracteres.'
+        ];
+    }
 }

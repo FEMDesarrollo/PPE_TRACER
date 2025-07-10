@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\GestionInspeccionesImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\gestionInspecciones;
 use Carbon\Carbon;
 
 class GestionInspeccionesController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Gestión de inspecciones: Lista.....
     public function gestion_inspecciones(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -76,7 +80,7 @@ class GestionInspeccionesController extends Controller
         return view('Dashboard.GestionInspeccion.gestion_inspecciones', compact('gestion_inspecciones'));
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Gestión de inspecciones: REGISTRAR.....
     public function gestion_inspecciones_registrar(Request $request)
     {
         $this->validate($request, [
@@ -96,7 +100,7 @@ class GestionInspeccionesController extends Controller
         return redirect()->route('gestion_inspecciones')->with('success', 'Inspección registrada correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Gestión de inspecciones: detalle.....
     public function gestion_inspecciones_detalle($id)
     {
         $query = gestionInspecciones::find($id);
@@ -105,7 +109,7 @@ class GestionInspeccionesController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Gestión de inspecciones: EDITAR.....
     public function gestion_inspecciones_editar($id)
     {
         $query = gestionInspecciones::find($id);
@@ -114,7 +118,7 @@ class GestionInspeccionesController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Gestión de inspecciones: SALVAR.....
     public function gestion_inspecciones_salvar(gestionInspecciones $id, Request $request)
     {
         $this->validate($request, [
@@ -134,10 +138,11 @@ class GestionInspeccionesController extends Controller
         return redirect()->route('gestion_inspecciones')->with('success', 'Inspección actualizada correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Gestión de inspecciones: BORRAR.....
     public function gestion_inspecciones_borrar(gestionInspecciones $id)
     {
         $id->delete();
         return redirect()->route('gestion_inspecciones')->with('success', 'Inspección eliminada correctamente');
     }
 }
+

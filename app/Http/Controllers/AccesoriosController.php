@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\AccesoriosImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\Equipos;
 use App\Models\Accesorios;
@@ -218,4 +220,17 @@ class AccesoriosController extends Controller
        return back()->with('error', 'Ocurrió un error al procesar la solicitud.');
     }
 
+
+    //.....................................................Accesorios: Importar.....
+    public function accesorios_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new AccesoriosImport, $request->file('archivo_excel'));
+
+        return redirect()->route('accesorios')->with('success', 'Accesorios importados correctamente.');
+    }
 }
+

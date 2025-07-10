@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\EquiposImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -10,7 +12,7 @@ use Carbon\Carbon;
 
 class EquiposController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Equipo: LISTA.....
     public function equipos(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -78,18 +80,14 @@ class EquiposController extends Controller
         return view('Dashboard.Equipos.equipos', compact('equipos'));
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Equipo: REGISTRAR.....
     public function equipos_registrar(Request $request)
     {
-        $this->validate($request, [
-        'equipo' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
-
-        ], [
-            'equipo.required' => 'El equipo es obligatorio.',
-            'equipo.regex' => 'El equipo solo puede contener letras y espacios.',
-            'equipo.max' => 'El equipo no debe exceder los 30 caracteres.'
-
-        ]);
+           $this->validate(
+        $request,
+        Equipos::validationRules(),
+        Equipos::validationMessages()
+    );
 
         Equipos::create([
             'equipo' => $request->equipo
@@ -98,7 +96,7 @@ class EquiposController extends Controller
         return redirect()->route('equipos')->with('success', 'Equipo registrado correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Equipo: detalle.....
     public function equipos_detalle($id)
     {
         $query = Equipos::find($id);
@@ -106,7 +104,7 @@ class EquiposController extends Controller
             ->with(['equipos' => $query]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Equipo: EDITAR.....
     public function equipos_editar($id)
     {
         $query = Equipos::find($id);
@@ -114,18 +112,14 @@ class EquiposController extends Controller
             ->with(['equipos' => $query]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Equipo: SALVAR.....
     public function equipos_salvar(Equipos $id, Request $request)
     {
-        $this->validate($request, [
-        'equipo' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
-
-        ], [
-            'equipo.required' => 'El equipo es obligatorio.',
-            'equipo.regex' => 'El equipo solo puede contener letras y espacios.',
-            'equipo.max' => 'El equipo no debe exceder los 30 caracteres.'
-
-        ]);
+        $this->validate(
+        $request,
+        Equipos::validationRules(),
+        Equipos::validationMessages()
+    );
 
         $query = Equipos::find($id->id);
         $query->equipo = $request->equipo;
@@ -134,10 +128,39 @@ class EquiposController extends Controller
         return redirect()->route("equipos")->with('success', 'Equipo actualizado correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Equipo: Borrar.....
     public function equipos_borrar(Equipos $id)
     {
         $id->delete();
         return redirect()->route('equipos')->with('success', 'Equipo eliminado correctamente');
     }
+
+
+    //..................................................Servicios: Importar.....
+    public function equipos_importar(Request $request)
+{
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    try {
+        Excel::import(new EquiposImport, $request->file('archivo_excel'));
+        return redirect()->route('equipos')->with('success', 'Equipos importados correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
+
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('equipos')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('equipos')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+    }
 }
+}
+

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ServiciosImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -10,7 +12,7 @@ use Carbon\Carbon;
 
 class ServiciosController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Servicios: LISTA.....
     public function servicios(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -78,7 +80,7 @@ class ServiciosController extends Controller
         return view('Dashboard.Servicios.servicios', compact('servicios'));
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Servicios: REGISTRAR.....
     public function servicio_registrar(Request $request)
     {
         $this->validate($request, [
@@ -92,7 +94,7 @@ class ServiciosController extends Controller
         return redirect()->route('servicios')->with('success', 'Servicio registrado correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Servicios: DETALLE.....
     public function servicio_detalle($id)
     {
         $query = servicios::find($id);
@@ -100,7 +102,7 @@ class ServiciosController extends Controller
             ->with(['servicios' => $query]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //....................................................Servicios: EDITAR.....
     public function servicio_editar($id)
     {
         $query = servicios::find($id);
@@ -108,7 +110,7 @@ class ServiciosController extends Controller
             ->with(['servicio' => $query]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Servicios: SALVAR.....
     public function servicio_salvar(servicios $id, Request $request)
     {
         $this->validate($request, [
@@ -122,10 +124,23 @@ class ServiciosController extends Controller
         return redirect()->route("servicios")->with('success', 'Servicio actualizado correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Servicios: Borrar.....
     public function servicio_borrar(servicios $id)
     {
         $id->delete();
         return redirect()->route('servicios')->with('success', 'Servicio eliminado correctamente');
+    }
+
+
+    //..................................................Servicios: Importar.....
+    public function servicios_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new ServiciosImport, $request->file('archivo_excel'));
+
+        return redirect()->route('servicios')->with('success', 'Servicios importados correctamente.');
     }
 }

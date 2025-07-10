@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ControlInspeccionesImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -13,7 +15,7 @@ use Carbon\Carbon;
 
 class ControlInspeccionesController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Control_Inspecciones: LISTA.....
     public function control_inspecciones(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -86,7 +88,7 @@ class ControlInspeccionesController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Control_Inspecciones: REGISTRAR.....
     public function control_inspecciones_registrar(Request $request)
     {
         $request->validate([
@@ -124,7 +126,7 @@ class ControlInspeccionesController extends Controller
         }
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Control_Inspecciones: EDITAR.....
     public function control_inspecciones_editar($id)
     {
         $control = ControlInspecciones::with(['usuarios', 'gestionInspecciones'])->findOrFail($id);
@@ -135,7 +137,7 @@ class ControlInspeccionesController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Control_Inspecciones: SALVAR.....
     public function control_inspecciones_salvar(ControlInspecciones $id, Request $request)
     {
         $request->validate([
@@ -178,19 +180,22 @@ class ControlInspeccionesController extends Controller
         }
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Control_Inspecciones: BORRAR.....
     public function control_inspecciones_borrar(ControlInspecciones $id)
     {
-        try {
-            // Delete associated image if exists
-            if($id->imagen && $id->imagen != "imagen.jpg" && Storage::disk('public')->exists($id->imagen)) {
-                Storage::disk('public')->delete($id->imagen);
-            }
-            
-            $id->delete();
-            return redirect()->route('control_inspecciones')->with('success', 'Control de inspección eliminado correctamente');
-        } catch (\Exception $e) {
-            return redirect()->route('control_inspecciones')->with('error', 'Error al eliminar: ' . $e->getMessage());
-        }
+        $id->delete();
+        return redirect()->route('control_inspecciones')->with('success', 'Control de inspección eliminado correctamente');
+    }
+
+    //..................................................Servicios: Importar.....
+    public function control_inspecciones_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new ControlInspeccionesImport, $request->file('archivo_excel'));
+
+        return redirect()->route('control_inspecciones')->with('success', 'Control de inspecciones importados correctamente.');
     }
 }

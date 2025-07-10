@@ -16,7 +16,7 @@ class EquiposController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $equipos = Equipos::query()
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -27,7 +27,7 @@ class EquiposController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -74,7 +74,7 @@ class EquiposController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.Equipos.equipos', compact('equipos'));
     }
 
@@ -82,7 +82,13 @@ class EquiposController extends Controller
     public function equipos_registrar(Request $request)
     {
         $this->validate($request, [
-            'equipo' => 'required'
+        'equipo' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
+
+        ], [
+            'equipo.required' => 'El equipo es obligatorio.',
+            'equipo.regex' => 'El equipo solo puede contener letras y espacios.',
+            'equipo.max' => 'El equipo no debe exceder los 30 caracteres.'
+
         ]);
 
         Equipos::create([
@@ -112,7 +118,13 @@ class EquiposController extends Controller
     public function equipos_salvar(Equipos $id, Request $request)
     {
         $this->validate($request, [
-            'equipo' => 'required'
+        'equipo' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
+
+        ], [
+            'equipo.required' => 'El equipo es obligatorio.',
+            'equipo.regex' => 'El equipo solo puede contener letras y espacios.',
+            'equipo.max' => 'El equipo no debe exceder los 30 caracteres.'
+
         ]);
 
         $query = Equipos::find($id->id);

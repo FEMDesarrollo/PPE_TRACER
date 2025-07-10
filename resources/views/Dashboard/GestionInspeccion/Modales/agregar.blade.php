@@ -11,8 +11,11 @@
                     <form action="{{ route('gestion_inspecciones_registrar') }}" method="POST" class="row g-3">
                         @csrf
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" name="observaciones" class="form-control" id="observaciones" placeholder="Observaciones" required>
+                            <input type="text" name="observaciones" class="form-control @error('observaciones') is-invalid @enderror"" id="observaciones" placeholder="Observaciones" value="{{ old('observaciones') }}" required>
                             <label for="observaciones" class="ps-4">Observaciones</label>
+                            @error('observaciones')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="modal-footer d-flex justify-content-center w-100">
                             <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
@@ -28,3 +31,13 @@
             </div>
         </div>
     </div>
+ <!--Redirección de formulario si hay errores en las validaciones -->
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+                myModal.show();
+            });
+        </script>
+    @endif
+    <!--Fin de redirección de formulario si hay errores en las validaciones -->

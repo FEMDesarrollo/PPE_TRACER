@@ -19,7 +19,7 @@ class ControlInspeccionesController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $controlInspecciones = ControlInspecciones::with(['usuarios', 'gestionInspecciones'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -37,7 +37,7 @@ class ControlInspeccionesController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('fecha', $now->toDateString());
@@ -78,7 +78,7 @@ class ControlInspeccionesController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.ControlInspecciones.control_inspecciones', [
             'controlInspecciones' => $controlInspecciones,
             'usuarios' => usuarios::all(),
@@ -89,13 +89,24 @@ class ControlInspeccionesController extends Controller
     //.....................................................Grupos: REGISTRAR.....
     public function control_inspecciones_registrar(Request $request)
     {
-        $request->validate([
-            'respuestas' => 'required',
-            'fecha' => 'required|date',
-            'descripcion' => 'required',
-            'id_usuario' => 'required|exists:usuarios,id',
-            'id_gestion_inspeccion' => 'required|exists:gestion_inspecciones,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        $this->validate($request, [
+        'respuesta' => 'required',
+        'fecha' => 'required',
+        'descripcion' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:255'],
+        'id_usuario' => 'required',
+        'id_gestion_inspeccion' =>'required'
+        ], [
+            'respuesta.required' => 'Debes seleccionar unsi o un no.',
+
+            'fecha.required' => 'La fecha es obligatoria.',
+
+            'descripcion.required' => 'La descripción es obligatoria.',
+            'descripcion.regex' => 'La descripción solo puede contener letras, números y espacios.',
+            'descripcion.max' => 'La descripción no debe exceder los 255 caracteres.',
+
+            'id_usuario.required' => 'Debes seleccionar un usuario.',
+
+            'id_gestion_inspeccion.required' => 'Debes seleccionar una gestion de inspección.',
         ]);
 
         try {
@@ -138,13 +149,24 @@ class ControlInspeccionesController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function control_inspecciones_salvar(ControlInspecciones $id, Request $request)
     {
-        $request->validate([
-            'respuestas' => 'required',
-            'fecha' => 'required|date',
-            'descripcion' => 'required',
-            'id_usuario' => 'required|exists:usuarios,id',
-            'id_gestion_inspeccion' => 'required|exists:gestion_inspecciones,id',
-            'imagen1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        $this->validate($request, [
+        'respuesta' => 'required',
+        'fecha' => 'required',
+        'descripcion' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:255'],
+        'id_usuario' => 'required',
+        'id_gestion_inspeccion' =>'required'
+        ], [
+            'respuesta.required' => 'Debes seleccionar unsi o un no.',
+
+            'fecha.required' => 'La fecha es obligatoria.',
+
+            'descripcion.required' => 'La descripción es obligatoria.',
+            'descripcion.regex' => 'La descripción solo puede contener letras, números y espacios.',
+            'descripcion.max' => 'La descripción no debe exceder los 255 caracteres.',
+
+            'id_usuario.required' => 'Debes seleccionar un usuario.',
+
+            'id_gestion_inspeccion.required' => 'Debes seleccionar una gestion de inspección.',
         ]);
 
         try {
@@ -154,7 +176,7 @@ class ControlInspeccionesController extends Controller
                 if($img2 && $img2 != "imagen.jpg" && Storage::disk('public')->exists($img2)) {
                     Storage::disk('public')->delete($img2);
                 }
-                
+
                 $file = $request->file('imagen1');
                 $imagen = $file->getClientOriginalName();
                 $ldate = date('Ymd_His_');
@@ -186,7 +208,7 @@ class ControlInspeccionesController extends Controller
             if($id->imagen && $id->imagen != "imagen.jpg" && Storage::disk('public')->exists($id->imagen)) {
                 Storage::disk('public')->delete($id->imagen);
             }
-            
+
             $id->delete();
             return redirect()->route('control_inspecciones')->with('success', 'Control de inspección eliminado correctamente');
         } catch (\Exception $e) {

@@ -29,7 +29,7 @@
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="number" name="talla" class="form-control @error('talla') is-invalid @enderror" id="talla" placeholder="Talla" value="{{ old('talla') }}" required>
+                        <input type="text" name="talla" class="form-control @error('talla') is-invalid @enderror" id="talla" placeholder="Talla" value="{{ old('talla') }}" required>
                         <label for="talla" class="ps-4">Talla</label>
                         @error('talla')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -77,3 +77,14 @@
         </div>
     </div>
 </div>
+
+    <!--Redirección de formulario si hay errores en las validaciones -->
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+                myModal.show();
+            });
+        </script>
+    @endif
+    <!--Fin de redirección de formulario si hay errores en las validaciones -->

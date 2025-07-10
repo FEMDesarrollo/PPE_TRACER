@@ -18,7 +18,7 @@ class EstacionProveedoresController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $estacionProveedores = EstacionProveedores::with('estacion', 'proveedor')
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -36,7 +36,7 @@ class EstacionProveedoresController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -83,7 +83,7 @@ class EstacionProveedoresController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.EstacionProveedores.estacion_proveedores', [
             'estacion_proveedores' => $estacionProveedores,
             'proveedores' => Proveedores::all(),
@@ -95,8 +95,12 @@ class EstacionProveedoresController extends Controller
     public function estacion_proveedores_registrar(Request $request)
     {
         $this->validate($request, [
-            'id_proveedor' => 'required|exists:proveedores,id',
-            'id_estacion' => 'required|exists:estaciones,id'
+        'id_proveedor' => 'required',
+        'id_estacion' => 'required'
+        ], [
+            'id_proveedor.required' => 'Debes seleccionar un proveedor.',
+
+            'id_estacion.required' => 'Debes seleccionar una estacion.',
         ]);
 
         EstacionProveedores::create([
@@ -130,8 +134,12 @@ class EstacionProveedoresController extends Controller
     public function estacion_proveedores_salvar(EstacionProveedores $id, Request $request)
     {
         $this->validate($request, [
-            'id_proveedor' => 'required|exists:proveedores,id',
-            'id_estacion' => 'required|exists:estaciones,id'
+        'id_proveedor' => 'required',
+        'id_estacion' => 'required'
+        ], [
+            'id_proveedor.required' => 'Debes seleccionar un proveedor.',
+
+            'id_estacion.required' => 'Debes seleccionar una estacion.',
         ]);
 
         $query = EstacionProveedores::find($id->id);

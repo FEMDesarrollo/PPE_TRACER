@@ -25,7 +25,7 @@ class GestionInspeccionesController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -80,7 +80,13 @@ class GestionInspeccionesController extends Controller
     public function gestion_inspecciones_registrar(Request $request)
     {
         $this->validate($request, [
-            'observaciones' => 'required'
+        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
+
+        ], [
+            'observaciones.required' => 'La observaciones es obligatorio.',
+            'observaciones.regex' => 'La observaciones solo puede contener letras y espacios.',
+            'observaciones.max' => 'La observaciones no debe exceder los 30 caracteres.',
+
         ]);
 
         gestionInspecciones::create([
@@ -112,7 +118,13 @@ class GestionInspeccionesController extends Controller
     public function gestion_inspecciones_salvar(gestionInspecciones $id, Request $request)
     {
         $this->validate($request, [
-            'observaciones' => 'required'
+        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
+
+        ], [
+            'observaciones.required' => 'La observaciones es obligatorio.',
+            'observaciones.regex' => 'La observaciones solo puede contener letras y espacios.',
+            'observaciones.max' => 'La observaciones no debe exceder los 30 caracteres.',
+
         ]);
 
         $query = gestionInspecciones::find($id->id);

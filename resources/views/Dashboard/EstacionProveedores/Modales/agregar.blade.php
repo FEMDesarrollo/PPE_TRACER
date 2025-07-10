@@ -11,22 +11,29 @@
                 <form action="{{ route('estacion_proveedores_registrar') }}" method="POST" class="row g-3">
                     @csrf
                     <div class="col-md-6 form-floating">
-                        <select name="id_proveedor" class="form-select" id="id_proveedor" required>
+                        <select name="id_proveedor" class="form-select @error('id_proveedor') is-invalid @enderror" id="id_proveedor" required>
                             <option value="">Seleccione un proveedor</option>
                             @foreach($proveedores as $proveedor)
                                 <option value="{{ $proveedor->id }}">{{ $proveedor->nombre }}</option>
                             @endforeach
                         </select>
                         <label for="id_proveedor" class="ps-4">Proveedor</label>
+                        @error('id_proveedor')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                     </div>
+
                     <div class="col-md-6 form-floating">
-                        <select name="id_estacion" class="form-select" id="id_estacion" required>
+                        <select name="id_estacion" class="form-select @error('id_estacion') is-invalid @enderror" id="id_estacion"  required>
                             <option value="">Seleccione una estación</option>
                             @foreach($estaciones as $estacion)
                                 <option value="{{ $estacion->id }}">{{ $estacion->nombre }}</option>
                             @endforeach
                         </select>
                         <label for="id_estacion" class="ps-4">Estación</label>
+                        @error('id_estacion')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                     </div>
                     <div class="modal-footer d-flex justify-content-center w-100">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
@@ -42,3 +49,14 @@
         </div>
     </div>
 </div>
+
+  <!--Redirección de formulario si hay errores en las validaciones -->
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+                myModal.show();
+            });
+        </script>
+    @endif
+    <!--Fin de redirección de formulario si hay errores en las validaciones -->

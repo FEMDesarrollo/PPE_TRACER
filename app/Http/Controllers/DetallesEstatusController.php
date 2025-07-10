@@ -19,7 +19,7 @@ class DetallesEstatusController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $detallesEstatus = detallesEstatus::with(['estatus_critico', 'usuario'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -37,7 +37,7 @@ class DetallesEstatusController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -84,7 +84,7 @@ class DetallesEstatusController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.DetalleEstatu.detalles_estatus', [
             'detalles_estatus' => $detallesEstatus,
             'estatus_critico' => estatusCritico::all(),
@@ -96,10 +96,20 @@ class DetallesEstatusController extends Controller
     public function detalles_estatus_registrar(Request $request)
     {
         $request->validate([
-            'total_respuesta' => 'required|integer|min:0',
-            'id_estatus' => 'required|exists:estatus_critico,id',
-            'id_usuario' => 'required|exists:usuarios,id'
-        ]);
+            'total_respuesta' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:100'],
+
+            'id_estatus' => ['required'],
+
+            'id_usuario' => ['required'],
+        ], [
+            'total_respuesta.required' => 'El campo total de respuesta es obligatorio.',
+            'total_respuesta.regex' => 'Solo se permiten letras y números en el total de respuesta.',
+            'total_respuesta.max' => 'El total de respuesta no debe exceder los 100 caracteres.',
+
+            'id_estatus.required' => 'Debes seleccionar un estatus.',
+
+            'id_usuario.required' => 'Debes seleccionar un usuario.'
+                ]);
 
         detallesEstatus::create([
             'total_respuesta' => $request->total_respuesta,
@@ -134,10 +144,20 @@ class DetallesEstatusController extends Controller
     public function detalles_estatus_salvar(detallesEstatus $id, Request $request)
     {
         $request->validate([
-            'total_respuesta' => 'required|integer|min:0',
-            'id_estatus' => 'required|exists:estatus_critico,id',
-            'id_usuario' => 'required|exists:usuarios,id'
-        ]);
+            'total_respuesta' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:100'],
+
+            'id_estatus' => ['required'],
+
+            'id_usuario' => ['required'],
+        ], [
+            'total_respuesta.required' => 'El campo total de respuesta es obligatorio.',
+            'total_respuesta.regex' => 'Solo se permiten letras y números en el total de respuesta.',
+            'total_respuesta.max' => 'El total de respuesta no debe exceder los 100 caracteres.',
+
+            'id_estatus.required' => 'Debes seleccionar un estatus.',
+
+            'id_usuario.required' => 'Debes seleccionar un usuario.'
+                ]);
 
         $query = detallesEstatus::find($id->id);
         $query->total_respuesta = $request->total_respuesta;

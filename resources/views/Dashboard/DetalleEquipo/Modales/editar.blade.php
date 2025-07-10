@@ -31,7 +31,7 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="number" class="form-control w-100" name="talla" id="talla{{ $detallequi->id }}" placeholder="Talla" value="{{ $detallequi->talla }}">
+                                    <input type="text" class="form-control w-100" name="talla" id="talla{{ $detallequi->id }}" placeholder="Talla" value="{{ $detallequi->talla }}">
                                     <label for="talla{{ $detallequi->id }}">Talla</label>
                                 </div>
                             </div>

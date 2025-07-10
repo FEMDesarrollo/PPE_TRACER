@@ -67,7 +67,7 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="modal-footer d-flex justify-content-center w-100">
                             <button type="submit" class="btn" data-bs-dismiss="modal"
                                 style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
@@ -88,7 +88,7 @@
             document.addEventListener("DOMContentLoaded", function () {
                 var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
                 myModal.show();
-            }); 
+            });
         </script>
     @endif
     <!--Fin de redirección de formulario si hay errores en las validaciones -->

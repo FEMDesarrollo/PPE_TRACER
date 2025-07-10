@@ -18,7 +18,7 @@ class CategoriasController extends Controller
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
         $equipoFilter = $request->input('equipo_filter');
-        
+
         $categorias = categorias::with(['equipo'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -32,7 +32,7 @@ class CategoriasController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -74,7 +74,7 @@ class CategoriasController extends Controller
                 'time_filter' => $timeFilter,
                 'equipo_filter' => $equipoFilter
             ]);
-            
+
         return view('Dashboard.Categorias.categorias', [
             'categorias' => $categorias,
             'equipos' => equipos::all()
@@ -84,9 +84,15 @@ class CategoriasController extends Controller
     //.....................................................Categorías: REGISTRAR.....
     public function categorias_registrar(Request $request)
     {
-        $request->validate([
-            'categoria' => 'required|string|max:255|unique:categorias',
-            'id_equipo' => 'required|exists:equipos,id'
+        $this->validate($request, [
+        'categoria' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
+        'id_equipo' => 'required'
+        ], [
+        'categoria.required' => 'La categoría es obligatoria.',
+        'categoria.regex' => 'La categoría solo puede contener letras y espacios.',
+        'categoria.max' => 'La categoría no debe exceder los 100 caracteres.',
+
+        'id_equipo.required' => 'Debes seleccionar un equipo.',
         ]);
 
         categorias::create([
@@ -119,9 +125,15 @@ class CategoriasController extends Controller
     //.....................................................Categorías: SALVAR.....
     public function categorias_salvar(categorias $id, Request $request)
     {
-        $request->validate([
-            'categoria' => 'required|string|max:255|unique:categorias,categoria,'.$id->id,
-            'id_equipo' => 'required|exists:equipos,id'
+        $this->validate($request, [
+        'categoria' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
+        'id_equipo' => 'required'
+        ], [
+        'categoria.required' => 'La categoría es obligatoria.',
+        'categoria.regex' => 'La categoría solo puede contener letras y espacios.',
+        'categoria.max' => 'La categoría no debe exceder los 100 caracteres.',
+
+        'id_equipo.required' => 'Debes seleccionar un equipo.',
         ]);
 
         $query = categorias::find($id->id);
@@ -138,6 +150,7 @@ class CategoriasController extends Controller
         $id->delete();
         return redirect()->route('categorias')->with('success', 'Categoría eliminada correctamente');
     }
+
 
     //.....................................................Categorías: Importar.....
     public function categorias_importar(Request $request)

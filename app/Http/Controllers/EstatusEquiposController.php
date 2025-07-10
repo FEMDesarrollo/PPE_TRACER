@@ -18,7 +18,7 @@ class EstatusEquiposController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $estatusEquipos = EstatusEquipos::query()
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -29,7 +29,7 @@ class EstatusEquiposController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -76,7 +76,7 @@ class EstatusEquiposController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.EstatusEquipo.estatus_equipos', compact('estatusEquipos'));
     }
 
@@ -84,7 +84,13 @@ class EstatusEquiposController extends Controller
     public function estatus_equipos_registrar(Request $request)
     {
         $this->validate($request, [
-            'estado' => 'required|string|max:255',
+        'estado' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
+
+        ], [
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.regex' => 'El estado solo puede contener letras y espacios.',
+            'estado.max' => 'El estado no debe exceder los 50 caracteres.',
+
         ]);
 
         EstatusEquipos::create([
@@ -114,7 +120,13 @@ class EstatusEquiposController extends Controller
     public function estatus_equipos_salvar(EstatusEquipos $id, Request $request)
     {
         $this->validate($request, [
-            'estado' => 'required|string|max:255',
+        'estado' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
+
+        ], [
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.regex' => 'El estado solo puede contener letras y espacios.',
+            'estado.max' => 'El estado no debe exceder los 50 caracteres.',
+
         ]);
 
         $query = EstatusEquipos::find($id->id);
@@ -130,6 +142,7 @@ class EstatusEquiposController extends Controller
         $id->delete();
         return redirect()->route('estatus_equipos')->with('success', 'Estado de equipo eliminado correctamente');
     }
+
 
     //..................................................Grupo: Importar.....
     public function estatus_equipos_importar(Request $request)

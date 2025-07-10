@@ -54,3 +54,14 @@
         </div>
     </div>
 </div>
+
+    <!--Redirección de formulario si hay errores en las validaciones -->
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+                myModal.show();
+            });
+        </script>
+    @endif
+    <!--Fin de redirección de formulario si hay errores en las validaciones -->

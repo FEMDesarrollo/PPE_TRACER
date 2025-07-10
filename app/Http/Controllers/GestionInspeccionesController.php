@@ -29,7 +29,7 @@ class GestionInspeccionesController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -84,7 +84,13 @@ class GestionInspeccionesController extends Controller
     public function gestion_inspecciones_registrar(Request $request)
     {
         $this->validate($request, [
-            'observaciones' => 'required'
+        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
+
+        ], [
+            'observaciones.required' => 'La observaciones es obligatorio.',
+            'observaciones.regex' => 'La observaciones solo puede contener letras y espacios.',
+            'observaciones.max' => 'La observaciones no debe exceder los 30 caracteres.',
+
         ]);
 
         gestionInspecciones::create([
@@ -116,7 +122,13 @@ class GestionInspeccionesController extends Controller
     public function gestion_inspecciones_salvar(gestionInspecciones $id, Request $request)
     {
         $this->validate($request, [
-            'observaciones' => 'required'
+        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
+
+        ], [
+            'observaciones.required' => 'La observaciones es obligatorio.',
+            'observaciones.regex' => 'La observaciones solo puede contener letras y espacios.',
+            'observaciones.max' => 'La observaciones no debe exceder los 30 caracteres.',
+
         ]);
 
         $query = gestionInspecciones::find($id->id);
@@ -132,16 +144,5 @@ class GestionInspeccionesController extends Controller
         $id->delete();
         return redirect()->route('gestion_inspecciones')->with('success', 'Inspección eliminada correctamente');
     }
-
-    //..................................................Gestión de inspecciones: Importar.....
-    public function gestion_inspecciones_importar(Request $request)
-    {
-        $request->validate([
-            'archivo_excel' => 'required|file|mimes:xlsx,xls'
-        ]);
-
-        Excel::import(new GestionInspeccionesImport, $request->file('archivo_excel'));
-
-        return redirect()->route('gestion_inspecciones')->with('success', 'Gestión de inspecciones importados correctamente.');
-    }
 }
+

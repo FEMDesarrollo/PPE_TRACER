@@ -18,7 +18,7 @@ class EquiposController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $equipos = Equipos::query()
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -29,7 +29,7 @@ class EquiposController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -76,16 +76,18 @@ class EquiposController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.Equipos.equipos', compact('equipos'));
     }
 
     //.....................................................Equipo: REGISTRAR.....
     public function equipos_registrar(Request $request)
     {
-        $this->validate($request, [
-            'equipo' => 'required'
-        ]);
+           $this->validate(
+        $request,
+        Equipos::validationRules(),
+        Equipos::validationMessages()
+    );
 
         Equipos::create([
             'equipo' => $request->equipo
@@ -113,9 +115,11 @@ class EquiposController extends Controller
     //.....................................................Equipo: SALVAR.....
     public function equipos_salvar(Equipos $id, Request $request)
     {
-        $this->validate($request, [
-            'equipo' => 'required'
-        ]);
+        $this->validate(
+        $request,
+        Equipos::validationRules(),
+        Equipos::validationMessages()
+    );
 
         $query = Equipos::find($id->id);
         $query->equipo = $request->equipo;
@@ -131,15 +135,32 @@ class EquiposController extends Controller
         return redirect()->route('equipos')->with('success', 'Equipo eliminado correctamente');
     }
 
+
     //..................................................Servicios: Importar.....
     public function equipos_importar(Request $request)
-    {
-        $request->validate([
-            'archivo_excel' => 'required|file|mimes:xlsx,xls'
-        ]);
+{
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
 
+    try {
         Excel::import(new EquiposImport, $request->file('archivo_excel'));
-
         return redirect()->route('equipos')->with('success', 'Equipos importados correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
+
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('equipos')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('equipos')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
 }
+}
+

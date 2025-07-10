@@ -17,7 +17,7 @@ class AccesoriosController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $accesorios = Accesorios::query()
             ->with('equipo') // Carga la relación con equipos
             ->when($search, function($query) use ($search) {
@@ -37,7 +37,7 @@ class AccesoriosController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -84,7 +84,7 @@ class AccesoriosController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.Accesorios.accesorios', [
             'accesorios' => $accesorios,
             'equipos' => Equipos::all()
@@ -96,33 +96,33 @@ class AccesoriosController extends Controller
     {
         $this->validate($request, [
         'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-        'marca' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
+        'marca' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ.\s]+$/u', 'max:20'],
         'modelo' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
-        'detalle_descripcion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:255'],
+        'detalle_descripcion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s\-]+$/u', 'max:255'],
         'id_equipo' => 'required'
         ], [
             'nombre.required' => 'El nombre es obligatorio.',
             'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
             'nombre.max' => 'El nombre no debe exceder los 30 caracteres.',
-            
+
             'marca.required' => 'La marca es obligatoria.',
-            'marca.regex' => 'La marca solo puede contener letras, números y espacios.',
+            'marca.regex' => 'La marca solo puede contener letras, números, espacios y puntos.',
             'marca.max' => 'La marca no debe exceder los 20 caracteres.',
-            
+
             'modelo.required' => 'El modelo es obligatorio.',
             'modelo.regex' => 'El modelo solo puede contener letras, números y espacios.',
             'modelo.max' => 'El modelo no debe exceder los 20 caracteres.',
-            
+
             'detalle_descripcion.required' => 'La descripción es obligatoria.',
-            'detalle_descripcion.regex' => 'La descripción solo puede contener letras, números y espacios.',
+            'detalle_descripcion.regex' => 'La descripción solo puede contener letras, números, espacios y guiones.',
             'detalle_descripcion.max' => 'La descripción no debe exceder los 255 caracteres.',
-            
+
             'id_equipo.required' => 'Debes seleccionar un equipo.',
         ]);
 
 
         $img2 = "logotipo.png";
-        
+
         if($request->file('imagen') != '') {
             $file = $request->file('imagen');
             $img = $file->getClientOriginalName();
@@ -166,27 +166,27 @@ class AccesoriosController extends Controller
     {
         $this->validate($request, [
         'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-        'marca' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
+        'marca' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ.\s]+$/u', 'max:20'],
         'modelo' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
-        'detalle_descripcion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:255'],
+        'detalle_descripcion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s\-]+$/u', 'max:255'],
         'id_equipo' => 'required'
         ], [
             'nombre.required' => 'El nombre es obligatorio.',
             'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
             'nombre.max' => 'El nombre no debe exceder los 30 caracteres.',
-            
+
             'marca.required' => 'La marca es obligatoria.',
-            'marca.regex' => 'La marca solo puede contener letras, números y espacios.',
+            'marca.regex' => 'La marca solo puede contener letras, números, espacios y puntos.',
             'marca.max' => 'La marca no debe exceder los 20 caracteres.',
-            
+
             'modelo.required' => 'El modelo es obligatorio.',
             'modelo.regex' => 'El modelo solo puede contener letras, números y espacios.',
             'modelo.max' => 'El modelo no debe exceder los 20 caracteres.',
-            
+
             'detalle_descripcion.required' => 'La descripción es obligatoria.',
-            'detalle_descripcion.regex' => 'La descripción solo puede contener letras, números y espacios.',
+            'detalle_descripcion.regex' => 'La descripción solo puede contener letras, números, espacios y guiones.',
             'detalle_descripcion.max' => 'La descripción no debe exceder los 255 caracteres.',
-            
+
             'id_equipo.required' => 'Debes seleccionar un equipo.',
         ]);
 
@@ -219,7 +219,8 @@ class AccesoriosController extends Controller
        return redirect()->route('accesorios')->with('success', 'El accesorio se ha eliminado correctamente.');
        return back()->with('error', 'Ocurrió un error al procesar la solicitud.');
     }
-    
+
+
     //.....................................................Accesorios: Importar.....
     public function accesorios_importar(Request $request)
     {
@@ -232,3 +233,4 @@ class AccesoriosController extends Controller
         return redirect()->route('accesorios')->with('success', 'Accesorios importados correctamente.');
     }
 }
+

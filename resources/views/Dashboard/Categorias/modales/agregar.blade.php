@@ -12,8 +12,11 @@
                         {{ csrf_field() }}
 
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" name="categoria" class="form-control" id="categoria" placeholder="Categoria" required>
+                            <input type="text" name="categoria" class="form-control @error('categoria') is-invalid @enderror" id="categoria" placeholder="Categoria" value="{{ old('categoria') }}" required>
                             <label for="categoria" class="ps-4">Categoria</label>
+                            @error('categoria')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-sm-6 col-md-6">
@@ -25,9 +28,12 @@
                                     @endforeach
                                 </select>
                                 <label for="id_equipo">Equipo</label>
+                                @error('id_equipo')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                             </div>
                         </div>
-                        
+
                         <div class="modal-footer d-flex justify-content-center w-100">
                             <button type="submit" class="btn" data-bs-dismiss="modal"
                                 style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
@@ -40,3 +46,14 @@
         </div>
     </div>
     <!--Fin de Añadir -->
+
+    <!--Redirección de formulario si hay errores en las validaciones -->
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+                myModal.show();
+            });
+        </script>
+    @endif
+    <!--Fin de redirección de formulario si hay errores en las validaciones -->

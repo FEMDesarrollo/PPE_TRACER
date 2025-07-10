@@ -21,7 +21,7 @@ class ControlInspeccionesController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $controlInspecciones = ControlInspecciones::with(['usuarios', 'gestionInspecciones'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -39,7 +39,7 @@ class ControlInspeccionesController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('fecha', $now->toDateString());
@@ -80,7 +80,7 @@ class ControlInspeccionesController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.ControlInspecciones.control_inspecciones', [
             'controlInspecciones' => $controlInspecciones,
             'usuarios' => usuarios::all(),
@@ -156,7 +156,7 @@ class ControlInspeccionesController extends Controller
                 if($img2 && $img2 != "imagen.jpg" && Storage::disk('public')->exists($img2)) {
                     Storage::disk('public')->delete($img2);
                 }
-                
+
                 $file = $request->file('imagen1');
                 $imagen = $file->getClientOriginalName();
                 $ldate = date('Ymd_His_');

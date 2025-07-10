@@ -20,7 +20,7 @@ class ControlAsignacionesController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $controlAsignaciones = controlAsignaciones::with(['usuarioEquipo', 'estatusCritico'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -37,7 +37,7 @@ class ControlAsignacionesController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('fecha_asignacion', $now->toDateString());
@@ -84,7 +84,7 @@ class ControlAsignacionesController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.controlAsignacion.control_asignaciones', [
             'control_asignaciones' => $controlAsignaciones,
             'usuarios_equipos' => usuariosEquipos::all(),
@@ -95,12 +95,29 @@ class ControlAsignacionesController extends Controller
     //.....................................................Grupos: REGISTRAR.....
     public function control_asignaciones_registrar(Request $request)
     {
-        $request->validate([
-            'observaciones' => 'required',
-            'fecha_asignacion' => 'required|date',
-            'fecha_devolucion' => 'required|date|after_or_equal:fecha_asignacion',
-            'id_usuario_equipo' => 'required|exists:usuarios_equipos,id',
-            'id_estatus_critico' => 'required|exists:estatus_critico,id'
+         $this->validate($request, [
+        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
+            'fecha_asignacion' => ['required','date','before_or_equal:fecha_devolucion'],
+            'fecha_devolucion' => ['required','date','after_or_equal:fecha_asignacion'],
+            'id_usuario_equipo' => 'required',
+            'id_estatus_critico' => 'required'
+        ], [
+            'observaciones.required' => 'Las observaciones son obligatorias.',
+            'observaciones.regex' => 'Las observaciones solo pueden contener letras y espacios.',
+            'observaciones.max' => 'Las observaciones no deben exceder los 50 caracteres.',
+
+            'fecha_asignacion.required' => 'La fecha de asignación es obligatoria.',
+            'fecha_asignacion.date' => 'La fecha de asignación debe ser una fecha válida.',
+            'fecha_asignacion.before_or_equal' => 'La fecha de asignación debe ser igual o anterior a la fecha de devolución.',
+
+            'fecha_devolucion.required' => 'La fecha de devolución es obligatoria.',
+            'fecha_devolucion.date' => 'La fecha de devolución debe ser una fecha válida.',
+            'fecha_devolucion.after_or_equal' => 'La fecha de devolución debe ser igual o posterior a la fecha de asignación.',
+
+            'id_usuario_equipo.required' => 'Debe seleccionar un usuario de equipo.',
+
+            'id_estatus_critico.required' => 'Debe seleccionar un estatus crítico.'
+
         ]);
 
         controlAsignaciones::create([
@@ -141,12 +158,29 @@ class ControlAsignacionesController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function control_asignaciones_salvar(controlAsignaciones $id, Request $request)
     {
-        $request->validate([
-            'observaciones' => 'required',
-            'fecha_asignacion' => 'required|date',
-            'fecha_devolucion' => 'required|date|after_or_equal:fecha_asignacion',
-            'id_usuario_equipo' => 'required|exists:usuarios_equipos,id',
-            'id_estatus_critico' => 'required|exists:estatus_critico,id'
+        $this->validate($request, [
+        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
+            'fecha_asignacion' => ['required','date','before_or_equal:fecha_devolucion'],
+            'fecha_devolucion' => ['required','date','after_or_equal:fecha_asignacion'],
+            'id_usuario_equipo' => 'required',
+            'id_estatus_critico' => 'required'
+        ], [
+            'observaciones.required' => 'Las observaciones son obligatorias.',
+            'observaciones.regex' => 'Las observaciones solo pueden contener letras y espacios.',
+            'observaciones.max' => 'Las observaciones no deben exceder los 50 caracteres.',
+
+            'fecha_asignacion.required' => 'La fecha de asignación es obligatoria.',
+            'fecha_asignacion.date' => 'La fecha de asignación debe ser una fecha válida.',
+            'fecha_asignacion.before_or_equal' => 'La fecha de asignación debe ser igual o anterior a la fecha de devolución.',
+
+            'fecha_devolucion.required' => 'La fecha de devolución es obligatoria.',
+            'fecha_devolucion.date' => 'La fecha de devolución debe ser una fecha válida.',
+            'fecha_devolucion.after_or_equal' => 'La fecha de devolución debe ser igual o posterior a la fecha de asignación.',
+
+            'id_usuario_equipo.required' => 'Debe seleccionar un usuario de equipo.',
+
+            'id_estatus_critico.required' => 'Debe seleccionar un estatus crítico.'
+
         ]);
 
         $query = controlAsignaciones::find($id->id);

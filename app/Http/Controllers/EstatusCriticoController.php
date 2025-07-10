@@ -18,7 +18,7 @@ public function estatus_critico(Request $request)
     $perPage = $request->input('per_page', 5);
     $search = $request->input('search');
     $timeFilter = $request->input('time_filter');
-    
+
     $estatusCritico = EstatusCritico::query()
         ->when($search, function($query) use ($search) {
             if (is_numeric($search) && ctype_digit($search)) {
@@ -29,7 +29,7 @@ public function estatus_critico(Request $request)
         })
         ->when($timeFilter, function($query) use ($timeFilter) {
             $now = Carbon::now();
-            
+
             switch ($timeFilter) {
                 case 'today':
                     $query->whereDate('created_at', $now->toDateString());
@@ -76,7 +76,7 @@ public function estatus_critico(Request $request)
             'per_page' => $perPage,
             'time_filter' => $timeFilter
         ]);
-        
+
     return view('Dashboard.EstatusCritico.estatus_critico', compact('estatusCritico'));
 }
 
@@ -84,7 +84,13 @@ public function estatus_critico(Request $request)
     public function estatus_critico_registrar(Request $request)
     {
         $this->validate($request, [
-            'estatus' => 'required'
+        'estatus' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
+
+        ], [
+            'estatus.required' => 'El estatus es obligatorio.',
+            'estatus.regex' => 'El estatus solo puede contener letras y espacios.',
+            'estatus.max' => 'El estatus no debe exceder los 30 caracteres.',
+
         ]);
 
         EstatusCritico::create([
@@ -114,7 +120,13 @@ public function estatus_critico(Request $request)
     public function estatus_critico_salvar(EstatusCritico $id, Request $request)
     {
         $this->validate($request, [
-            'estatus' => 'required'
+        'estatus' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
+
+        ], [
+            'estatus.required' => 'El estatus es obligatorio.',
+            'estatus.regex' => 'El estatus solo puede contener letras y espacios.',
+            'estatus.max' => 'El estatus no debe exceder los 30 caracteres.',
+
         ]);
 
         $query = EstatusCritico::find($id->id);
@@ -131,6 +143,7 @@ public function estatus_critico(Request $request)
         return redirect()->route('estatus_critico')->with('success', 'Estatus crítico eliminado correctamente');
     }
 
+
     //..................................................Servicios: Importar.....
     public function estatus_critico_importar(Request $request)
     {
@@ -143,3 +156,4 @@ public function estatus_critico(Request $request)
         return redirect()->route('estatus_critico')->with('success', 'Estatus críticos importados correctamente.');
     }
 }
+

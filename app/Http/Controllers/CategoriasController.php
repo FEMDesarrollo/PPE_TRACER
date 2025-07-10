@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\CategoriasImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\equipos;
 use App\Models\categorias;
@@ -135,5 +137,17 @@ class CategoriasController extends Controller
     {
         $id->delete();
         return redirect()->route('categorias')->with('success', 'Categoría eliminada correctamente');
+    }
+
+    //.....................................................Categorías: Importar.....
+    public function categorias_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new CategoriasImport, $request->file('archivo_excel'));
+
+        return redirect()->route('categorias')->with('success', 'Categorias importados correctamente.');
     }
 }

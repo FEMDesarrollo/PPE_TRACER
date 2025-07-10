@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\EquiposImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -10,7 +12,7 @@ use Carbon\Carbon;
 
 class EquiposController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Equipo: LISTA.....
     public function equipos(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -78,7 +80,7 @@ class EquiposController extends Controller
         return view('Dashboard.Equipos.equipos', compact('equipos'));
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Equipo: REGISTRAR.....
     public function equipos_registrar(Request $request)
     {
         $this->validate($request, [
@@ -92,7 +94,7 @@ class EquiposController extends Controller
         return redirect()->route('equipos')->with('success', 'Equipo registrado correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Equipo: detalle.....
     public function equipos_detalle($id)
     {
         $query = Equipos::find($id);
@@ -100,7 +102,7 @@ class EquiposController extends Controller
             ->with(['equipos' => $query]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Equipo: EDITAR.....
     public function equipos_editar($id)
     {
         $query = Equipos::find($id);
@@ -108,7 +110,7 @@ class EquiposController extends Controller
             ->with(['equipos' => $query]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Equipo: SALVAR.....
     public function equipos_salvar(Equipos $id, Request $request)
     {
         $this->validate($request, [
@@ -122,10 +124,22 @@ class EquiposController extends Controller
         return redirect()->route("equipos")->with('success', 'Equipo actualizado correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Equipo: Borrar.....
     public function equipos_borrar(Equipos $id)
     {
         $id->delete();
         return redirect()->route('equipos')->with('success', 'Equipo eliminado correctamente');
+    }
+
+    //..................................................Servicios: Importar.....
+    public function equipos_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new EquiposImport, $request->file('archivo_excel'));
+
+        return redirect()->route('equipos')->with('success', 'Equipos importados correctamente.');
     }
 }

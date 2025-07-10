@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ProveedoresImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -10,7 +12,7 @@ use Carbon\Carbon;
 
 class ProveedoresController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Proveedores: Lista.....
     public function proveedores(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -82,7 +84,7 @@ class ProveedoresController extends Controller
         return view('Dashboard.Proveedores.proveedores', compact('proveedores'));
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Proveedores: REGISTRAR.....
     public function proveedores_registrar(Request $request)
     {
         $this->validate($request, [
@@ -112,7 +114,7 @@ class ProveedoresController extends Controller
         return redirect()->route('proveedores')->with('success', 'Proveedor registrado correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Proveedores: detalle.....
     public function proveedores_detalle($id)
     {
         $query = Proveedores::find($id);
@@ -120,7 +122,7 @@ class ProveedoresController extends Controller
             ->with(['proveedores' => $query]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Proveedores: EDITAR.....
     public function proveedores_editar($id)
     {
         $query = Proveedores::find($id);
@@ -128,7 +130,7 @@ class ProveedoresController extends Controller
             ->with(['proveedores' => $query]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Proveedores: SALVAR.....
     public function proveedores_salvar(Proveedores $id, Request $request)
     {
        $this->validate($request, [
@@ -158,10 +160,22 @@ class ProveedoresController extends Controller
         return redirect()->route("proveedores")->with('success', 'Proveedor actualizado correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Proveedores: Borrar.....
     public function proveedores_borrar(Proveedores $id)
     {
         $id->delete();
         return redirect()->route('proveedores')->with('success', 'Proveedor eliminado correctamente');
+    }
+
+    //..................................................Proveedores: Importar.....
+    public function proveedores_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    Excel::import(new ProveedoresImport, $request->file('archivo_excel'));
+
+    return redirect()->route('proveedores')->with('success', 'Servicios importados correctamente.');
     }
 }

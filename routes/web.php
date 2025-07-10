@@ -46,15 +46,17 @@ Route::post('/servicio_registrar', [ServiciosController::class, 'servicio_regist
 Route::get('/servicio_editar/{id}', [ServiciosController::class, 'servicio_editar'])->name('servicio_editar');
 Route::put('/servicio_salvar/{id}', [ServiciosController::class, 'servicio_salvar'])->name('servicio_salvar');
 Route::delete('/servicio_borrar/{id}', [ServiciosController::class, 'servicio_borrar'])->name('servicio_borrar');
-
+Route::post('/servicios/importar', [ServiciosController::class, 'servicios_importar'])->name('servicios.importar');
 
 //---------------------------------RUTAS: Proveedores
 Route::name('proveedores')->get('/proveedores',[ProveedoresController::class, 'proveedores']);
 Route::name('proveedores_registrar')->post('/proveedores_registrar',[ProveedoresController::class, 'proveedores_registrar']);
+
 Route::name('proveedores_detalle')->get('/proveedores_detalle/{id}',[ProveedoresController::class, 'proveedores_detalle']);
 Route::name('proveedores_editar')->get('/proveedores_editar/{id}',[ProveedoresController::class, 'proveedores_editar']);
 Route::name('proveedores_salvar')->put('/proveedores_salvar/{id}',[ProveedoresController::class, 'proveedores_salvar']);
 Route::name('proveedores_borrar')->delete('/proveedores_borrar/{id}',[ProveedoresController::class, 'proveedores_borrar']);
+Route::post('/proveedores/importar', [ProveedoresController::class, 'proveedores_importar'])->name('proveedores.importar');
 
 
 //--------------------------------- RUTAS: Estaciones ---------------------------------
@@ -76,6 +78,7 @@ Route::name('gestion_inspecciones_detalle')->get('/gestion_inspecciones_detalle/
 Route::name('gestion_inspecciones_editar')->get('/gestion_inspecciones_editar/{id}',[GestionInspeccionesController::class, 'gestion_inspecciones_editar']);
 Route::name('gestion_inspecciones_salvar')->put('/gestion_inspecciones_salvar/{id}',[GestionInspeccionesController::class, 'gestion_inspecciones_salvar']);
 Route::name('gestion_inspecciones_borrar')->delete('/gestion_inspecciones_borrar/{id}',[GestionInspeccionesController::class, 'gestion_inspecciones_borrar']);
+Route::post('/gestion_inspecciones/importar', [GestionInspeccionesController::class, 'gestion_inspecciones_importar'])->name('gestion_inspecciones.importar');
 
 
 //--------------------------------- RUTAS: Equipos ---------------------------------
@@ -86,7 +89,7 @@ Route::name('equipos_detalle')->get('/equipos_detalle/{id}', [EquiposController:
 Route::name('equipos_editar')->get('/equipos_editar/{id}', [EquiposController::class, 'equipos_editar']);
 Route::name('equipos_salvar')->put('/equipos_salvar/{id}', [EquiposController::class, 'equipos_salvar']);
 Route::name('equipos_borrar')->delete('/equipos_borrar/{id}', [EquiposController::class, 'equipos_borrar']);
-
+Route::post('/equipos/importar', [EquiposController::class, 'equipos_importar'])->name('equipos.importar');
 
 
 //--------------------------------- RUTAS: Perfiles ---------------------------------
@@ -101,7 +104,7 @@ Route::name('perfiles_borrar')->delete('/perfiles_borrar/{id}',[PerfilesControll
 Route::post('/perfiles/importar', [PerfilesController::class, 'perfiles_importar'])->name('perfiles.importar');
 
 
-//--------------------------------- RUTAS: Estatus ---------------------------------
+//--------------------------------- RUTAS: Estatus ciítico ---------------------------------
 Route::name('estatus_critico')->get('/estatus_critico',[EstatusCriticoController::class, 'estatus_critico']);
 Route::name('estatus_critico_registrar')->post('/estatus_critico_registrar',[EstatusCriticoController::class, 'estatus_critico_registrar']);
 
@@ -109,6 +112,7 @@ Route::name('estatus_critico_detalle')->get('/estatus_critico_detalle/{id}',[Est
 Route::name('estatus_critico_editar')->get('/estatus_critico_editar/{id}',[EstatusCriticoController::class, 'estatus_critico_editar']);
 Route::name('estatus_critico_salvar')->put('/estatus_critico_salvar/{id}',[EstatusCriticoController::class, 'estatus_critico_salvar']);
 Route::name('estatus_critico_borrar')->delete('/estatus_critico_borrar/{id}',[EstatusCriticoController::class, 'estatus_critico_borrar']);
+Route::post('/estatus_critico/importar', [EstatusCriticoController::class, 'estatus_critico_importar'])->name('estatus_critico.importar');
 
 
 //--------------------------------- RUTAS: Estatus Equipo ---------------------------------
@@ -176,6 +180,7 @@ Route::name('control_inspecciones_detalle')->get('/control_inspecciones_detalle/
 Route::name('control_inspecciones_editar')->get('/control_inspecciones_editar/{id}',[ControlInspeccionesController::class, 'control_inspecciones_editar']);
 Route::name('control_inspecciones_salvar')->put('/control_inspecciones_salvar/{id}',[ControlInspeccionesController::class, 'control_inspecciones_salvar']);
 Route::name('control_inspecciones_borrar')->delete('/control_inspecciones_borrar/{id}',[ControlInspeccionesController::class, 'control_inspecciones_borrar']);
+Route::post('/control_inspecciones/importar', [ControlInspeccionesController::class, 'control_inspecciones_importar'])->name('control_inspecciones.importar');
 
 //--------------------------------- RUTAS: Permisos ---------------------------------
 
@@ -262,6 +267,7 @@ Route::name('accesorios_detalle')->get('/accesorios_detalle/{id}',[AccesoriosCon
 Route::name('accesorios_editar')->get('/accesorios_editar/{id}',[AccesoriosController::class, 'accesorios_editar']);
 Route::name('accesorios_salvar')->put('/accesorios_salvar/{id}',[AccesoriosController::class, 'accesorios_salvar']);
 Route::name('accesorios_borrar')->delete('/accesorios_borrar/{id}',[AccesoriosController::class, 'accesorios_borrar']);
+Route::post('/accesorios/importar', [AccesoriosController::class, 'accesorios_importar'])->name('accesorios.importar');
 
 //.................................RUTAS: SubEstaciones Equipos
 
@@ -282,6 +288,7 @@ Route::name('categorias_detalle')->get('/categorias_detalle/{id}',[CategoriasCon
 Route::name('categorias_editar')->get('/categorias_editar/{id}',[CategoriasController::class, 'categorias_editar']);
 Route::name('categorias_salvar')->put('/categorias_salvar/{id}',[CategoriasController::class, 'categorias_salvar']);
 Route::name('categorias_borrar')->delete('/categorias_borrar/{id}',[CategoriasController::class, 'categorias_borrar']);
+Route::post('/categorias/importar', [CategoriasController::class, 'categorias_importar'])->name('categorias.importar');
 
 //.................................RUTAS: Repuestos
 

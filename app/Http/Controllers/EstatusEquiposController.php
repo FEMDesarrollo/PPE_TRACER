@@ -7,6 +7,8 @@ use Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\EstatusEquipos;
 use Carbon\Carbon;
+use App\Imports\EstatusEquiposImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EstatusEquiposController extends Controller
 {
@@ -128,4 +130,17 @@ class EstatusEquiposController extends Controller
         $id->delete();
         return redirect()->route('estatus_equipos')->with('success', 'Estado de equipo eliminado correctamente');
     }
+
+    //..................................................Grupo: Importar.....
+    public function estatus_equipos_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    Excel::import(new EstatusEquiposImport, $request->file('archivo_excel'));
+
+    return redirect()->route('estatus_equipos')->with('success', 'Estados de equipo importadas correctamente.');
+    }
+
 }

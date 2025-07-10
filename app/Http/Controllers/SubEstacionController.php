@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Estaciones;
 use App\Models\SubEstacion;
 use Carbon\Carbon;
+use App\Imports\SubestacionImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SubEstacionController extends Controller
 {
@@ -148,4 +150,15 @@ class SubEstacionController extends Controller
         $id->delete();
         return redirect()->route('subestaciones')->with('success', 'Subestación eliminada correctamente');
     }
+                //..................................................Grupo: Importar.....
+        public function Subestacion_importar(Request $request)
+        {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new SubestacionImport, $request->file('archivo_excel'));
+
+        return redirect()->route('subestaciones')->with('success', 'subestaciones importados correctamente.');
+        }
 }

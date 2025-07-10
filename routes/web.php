@@ -66,6 +66,7 @@ Route::name('estaciones_editar')->get('/estaciones_editar/{id}',[EstacionesContr
 Route::name('estaciones_salvar')->put('/estaciones_salvar/{id}',[EstacionesController::class, 'estaciones_salvar']);
 Route::name('estaciones_borrar')->delete('/estaciones_borrar/{id}',[EstacionesController::class, 'estaciones_borrar']);
 
+Route::post('/estaciones/importar', [EstacionesController::class, 'estaciones_importar'])->name('estaciones.importar');
 
 //--------------------------------- RUTAS: Gestion de inspecciones ---------------------------------
 Route::name('gestion_inspecciones')->get('/gestion_inspecciones',[GestionInspeccionesController::class, 'gestion_inspecciones']);
@@ -97,6 +98,8 @@ Route::name('perfiles_editar')->get('/perfiles_editar/{id}',[PerfilesController:
 Route::name('perfiles_salvar')->put('/perfiles_salvar/{id}',[PerfilesController::class, 'perfiles_salvar']);
 Route::name('perfiles_borrar')->delete('/perfiles_borrar/{id}',[PerfilesController::class, 'perfiles_borrar']);
 
+Route::post('/perfiles/importar', [PerfilesController::class, 'perfiles_importar'])->name('perfiles.importar');
+
 
 //--------------------------------- RUTAS: Estatus ---------------------------------
 Route::name('estatus_critico')->get('/estatus_critico',[EstatusCriticoController::class, 'estatus_critico']);
@@ -117,6 +120,8 @@ Route::name('estatus_equipos_editar')->get('/estatus_equipos_editar/{id}',[Estat
 Route::name('estatus_equipos_salvar')->put('/estatus_equipos_salvar/{id}',[EstatusEquiposController::class, 'estatus_equipos_salvar']);
 Route::name('estatus_equipos_borrar')->delete('/estatus_equipos_borrar/{id}',[EstatusEquiposController::class, 'estatus_equipos_borrar']);
 
+Route::post('/estatus_equipos/importar', [EstatusEquiposController::class, 'estatus_equipos_importar'])->name('estatus_equipos.importar');
+
 //--------------------------------- RUTAS: Sub Estacion ---------------------------------
 
 Route::name('subestaciones')->get('/subestaciones',[SubEstacionController::class, 'subestaciones']);
@@ -126,6 +131,8 @@ Route::name('subestaciones_detalle')->get('/subestaciones_detalle/{id}',[SubEsta
 Route::name('subestaciones_editar')->get('/subestaciones_editar/{id}',[SubEstacionController::class, 'subestaciones_editar']);
 Route::name('subestaciones_salvar')->put('/subestaciones_salvar/{id}',[SubEstacionController::class, 'subestaciones_salvar']);
 Route::name('subestaciones_borrar')->delete('/subestaciones_borrar/{id}',[SubEstacionController::class, 'subestaciones_borrar']);
+
+Route::post('/subestaciones/importar', [SubEstacionController::class, 'subestacion_importar'])->name('subestacion.importar');
 
 //--------------------------------- RUTAS: Estacion Proveedores ---------------------------------
 
@@ -156,6 +163,9 @@ Route::name('usuarios_detalle')->get('/usuarios_detalle/{id}',[UsuariosControlle
 Route::name('usuarios_editar')->get('/usuarios_editar/{id}',[UsuariosController::class, 'usuarios_editar']);
 Route::name('usuarios_salvar')->put('/usuarios_salvar/{id}',[UsuariosController::class, 'usuarios_salvar']);
 Route::name('usuarios_borrar')->delete('/usuarios_borrar/{id}',[UsuariosController::class, 'usuarios_borrar']);
+
+
+Route::post('/usuarios/importar', [UsuariosController::class, 'usuarios_importar'])->name('usuarios.importar');
 
 //.................................RUTAS: control_inspecciones
 
@@ -218,6 +228,8 @@ Route::name('detalles_equipos_editar')->get('/detalles_equipos_editar/{id}',[Det
 Route::name('detalles_equipos_salvar')->put('/detalles_equipos_salvar/{id}',[DetallesEquipoController::class, 'detalles_equipos_salvar']);
 Route::name('detalles_equipos_borrar')->delete('/detalles_equipos_borrar/{id}',[DetallesEquipoController::class, 'detalles_equipos_borrar']);
 
+Route::post('/detalles_equipos/importar', [DetallesEquipoController::class, 'detalles_equipos_importar'])->name('DetalleEquipos.importar');
+
 //--------------------------------- RUTAS: Detalles estatus ---------------------------------
 
 Route::name('detalles_estatus')->get('/detalles_estatus',[DetallesEstatusController::class, 'detalles_estatus']);
@@ -238,6 +250,8 @@ Route::name('verificacion_correo_detalle')->get('/verificacion_correo_detalle/{i
 Route::name('verificacion_correo_editar')->get('/verificacion_correo_editar/{id}',[VerificacionCorreoController::class, 'verificacion_correo_editar']);
 Route::name('verificacion_correo_salvar')->put('verificacion_correo_salvar/{id}',[VerificacionCorreoController::class, 'verificacion_correo_salvar']);
 Route::name('verificacion_correo_borrar')->delete('/verificacion_correo_borrar/{id}',[VerificacionCorreoController::class, 'verificacion_correo_borrar']);
+
+Route::post('/verificacion_correo/importar', [VerificacionCorreoController::class, 'verificacion_correo_importar'])->name('VerificacionCorreo.importar');
 
 //.................................RUTAS: Accesorios
 

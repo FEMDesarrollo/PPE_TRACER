@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\verificacionCorreo;
 use App\Models\usuarios;
 use Carbon\Carbon;
+use App\Imports\VerificacionCorreoImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class VerificacionCorreoController extends Controller
 {
@@ -138,4 +140,16 @@ class VerificacionCorreoController extends Controller
         $id->delete();
         return redirect()->route('verificacion_correo')->with('success', 'Verificación de correo eliminada correctamente');
     }
+
+    //..................................................Grupo: Importar.....
+        public function verificacion_correo_importar(Request $request)
+        {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new VerificacionCorreoImport, $request->file('archivo_excel'));
+
+        return redirect()->route('verificacion_correo')->with('success', 'Verificacion del correo importados correctamente.');
+        }
 }

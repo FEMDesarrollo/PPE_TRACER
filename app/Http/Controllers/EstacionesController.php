@@ -7,6 +7,8 @@ use Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Estaciones;
 use Carbon\Carbon;
+use App\Imports\EstacionesImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EstacionesController extends Controller
 {
@@ -145,4 +147,17 @@ class EstacionesController extends Controller
         $id->delete();
         return redirect()->route('estaciones')->with('success', 'Estación eliminada correctamente');
     }
+
+    //..................................................Grupo: Importar.....
+    public function estaciones_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    Excel::import(new EstacionesImport, $request->file('archivo_excel'));
+
+    return redirect()->route('estaciones')->with('success', 'Estaciones importadas correctamente.');
+    }
+
 }

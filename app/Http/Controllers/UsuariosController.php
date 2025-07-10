@@ -12,6 +12,8 @@ use App\Models\usuarios;
 use App\Models\estaciones;
 use App\Models\subEstacion;
 use App\Models\perfiles;
+use App\Imports\UsuariosImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UsuariosController extends Controller
 {
@@ -235,5 +237,17 @@ class UsuariosController extends Controller
             return redirect()->route('usuarios')
                 ->with('error', 'Ocurrió un error al eliminar el usuario: ' . $e->getMessage());
         }
+
     }
-}
+            //..................................................Grupo: Importar.....
+        public function usuarios_importar(Request $request)
+        {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new UsuariosImport, $request->file('archivo_excel'));
+
+        return redirect()->route('usuarios')->with('success', 'Usuarios importados correctamente.');
+        }
+    }

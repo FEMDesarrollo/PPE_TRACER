@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\detallesEquipo;
 use App\Models\usuariosEquipos;
 use Carbon\Carbon;
+use App\Imports\DetalleEquiposImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DetallesEquipoController extends Controller
 {
@@ -163,5 +165,17 @@ class DetallesEquipoController extends Controller
     {
         $id->delete();
         return redirect()->route('detalles_equipos')->with('success', 'Detalle de equipo eliminado correctamente');
+    }
+
+    //..................................................Grupo: Importar.....
+    public function detalles_equipos_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    Excel::import(new DetalleEquiposImport, $request->file('archivo_excel'));
+
+    return redirect()->route('detalles_equipos')->with('success', 'Detalles de los equipos importadas correctamente.');
     }
 }

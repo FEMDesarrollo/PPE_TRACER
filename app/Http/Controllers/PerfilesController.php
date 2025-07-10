@@ -7,6 +7,8 @@ use Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Perfiles;
 use Carbon\Carbon;
+use App\Imports\PerfilesImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PerfilesController extends Controller
 {
@@ -127,5 +129,16 @@ class PerfilesController extends Controller
     {
         $id->delete();
         return redirect()->route('perfiles')->with('success', 'Perfil eliminado correctamente');
+    }
+    //..................................................Grupo: Importar.....
+    public function perfiles_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    Excel::import(new PerfilesImport, $request->file('archivo_excel'));
+
+    return redirect()->route('perfiles')->with('success', 'Perfiles importados correctamente.');
     }
 }

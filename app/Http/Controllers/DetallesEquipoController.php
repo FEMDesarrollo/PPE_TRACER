@@ -96,35 +96,11 @@ class DetallesEquipoController extends Controller
     //.....................................................Grupos: REGISTRAR.....
     public function detalles_equipos_registrar(Request $request)
     {
-        $this->validate($request, [
-        'modelo' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:50'],
-        'no_serie' => ['required','regex:/^[A-Za-z0-9\-ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:100'],
-        'talla' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:10'],
-        'piezas' => ['required','integer','min:1'],
-        'fecha_fabricacion' => ['required','date'],
-        'id_usuario_equipo' => ['required'],
-        ], [
-            'modelo.required' => 'El modelo es obligatorio.',
-            'modelo.regex' => 'El modelo solo puede contener letras, números y espacios.',
-            'modelo.max' => 'El modelo no debe exceder los 50 caracteres.',
-
-            'no_serie.required' => 'El número de serie es obligatorio.',
-            'no_serie.regex' => 'El número de serie solo puede contener letras, números, guiones y espacios.',
-            'no_serie.max' => 'El número de serie no debe exceder los 100 caracteres.',
-
-            'talla.required' => 'La talla es obligatoria.',
-            'talla.regex' => 'La talla solo puede contener letras, números y espacios.',
-            'talla.max' => 'La talla no debe exceder los 10 caracteres.',
-
-            'piezas.required' => 'El número de piezas es obligatorio.',
-            'piezas.integer' => 'El número de piezas debe ser un número entero.',
-            'piezas.min' => 'El número de piezas debe ser al menos 1.',
-
-            'fecha_fabricacion.required' => 'La fecha de fabricación es obligatoria.',
-            'fecha_fabricacion.date' => 'La fecha de fabricación debe ser una fecha válida.',
-
-            'id_usuario_equipo.required' => 'Debes seleccionar un usuario de equipo.'
-        ]);
+        $this->validate(
+        $request,
+        detallesEquipo::validationRules(),
+        detallesEquipo::validationMessages()
+    );
 
         detallesEquipo::create([
             'modelo' => $request->modelo,
@@ -160,35 +136,11 @@ class DetallesEquipoController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function detalles_equipos_salvar(detallesEquipo $id, Request $request)
     {
-        $this->validate($request, [
-        'modelo' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:50'],
-        'no_serie' => ['required','regex:/^[A-Za-z0-9\-ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:100'],
-        'talla' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:10'],
-        'piezas' => ['required','integer','min:1'],
-        'fecha_fabricacion' => ['required','date'],
-        'id_usuario_equipo' => ['required'],
-        ], [
-            'modelo.required' => 'El modelo es obligatorio.',
-            'modelo.regex' => 'El modelo solo puede contener letras, números y espacios.',
-            'modelo.max' => 'El modelo no debe exceder los 50 caracteres.',
-
-            'no_serie.required' => 'El número de serie es obligatorio.',
-            'no_serie.regex' => 'El número de serie solo puede contener letras, números, guiones y espacios.',
-            'no_serie.max' => 'El número de serie no debe exceder los 100 caracteres.',
-
-            'talla.required' => 'La talla es obligatoria.',
-            'talla.regex' => 'La talla solo puede contener letras, números y espacios.',
-            'talla.max' => 'La talla no debe exceder los 10 caracteres.',
-
-            'piezas.required' => 'El número de piezas es obligatorio.',
-            'piezas.integer' => 'El número de piezas debe ser un número entero.',
-            'piezas.min' => 'El número de piezas debe ser al menos 1.',
-
-            'fecha_fabricacion.required' => 'La fecha de fabricación es obligatoria.',
-            'fecha_fabricacion.date' => 'La fecha de fabricación debe ser una fecha válida.',
-
-            'id_usuario_equipo.required' => 'Debes seleccionar un usuario de equipo.'
-        ]);
+        $this->validate(
+        $request,
+        detallesEquipo::validationRules(),
+        detallesEquipo::validationMessages()
+    );
 
 
         $query = detallesEquipo::find($id->id);
@@ -213,15 +165,32 @@ class DetallesEquipoController extends Controller
 
     //..................................................Grupo: Importar.....
     public function detalles_equipos_importar(Request $request)
-    {
+{
     $request->validate([
         'archivo_excel' => 'required|file|mimes:xlsx,xls'
     ]);
 
-    Excel::import(new DetalleEquiposImport, $request->file('archivo_excel'));
+    try {
+        Excel::import(new DetalleEquiposImport, $request->file('archivo_excel'));
 
-    return redirect()->route('detalles_equipos')->with('success', 'Detalles de los equipos importadas correctamente.');
+        return redirect()->route('detalles_equipos')->with('success', 'Detalles de los equipos importados correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
+
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('detalles_equipos')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('detalles_equipos')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
+}
+
 }
 
 

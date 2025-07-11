@@ -5,10 +5,11 @@ namespace App\Imports;
 use App\Models\DetallesEquipo;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class DetalleEquiposImport implements ToModel, WithHeadingRow
+class DetalleEquiposImport implements ToModel, WithHeadingRow, WithValidation
 {
     public function model(array $row)
     {
@@ -20,6 +21,16 @@ class DetalleEquiposImport implements ToModel, WithHeadingRow
             'fecha_fabricacion'   => $this->parseFechaFlexible($row['fecha_fabricacion'])->format('Y-m-d'),
             'id_usuario_equipo'   => $row['id_usuario_equipo'],
         ]);
+    }
+
+    public function rules(): array
+    {
+        return detallesEquipo::validationRules();
+    }
+
+    public function customValidationMessages()
+    {
+        return detallesEquipo::validationMessages();
     }
 
     private function parseFechaFlexible($valor)

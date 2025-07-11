@@ -23,7 +23,7 @@ class UsuariosController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $usuarios = usuarios::with('perfil', 'estacion', 'subEstacion')
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -40,7 +40,7 @@ class UsuariosController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -87,7 +87,7 @@ class UsuariosController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.Usuario.usuarios', [
             'usuarios' => $usuarios,
             'estaciones' => estaciones::all(),
@@ -118,8 +118,8 @@ class UsuariosController extends Controller
         ]);
 
         try {
-            $img2 = "foto.jpg"; 
-            
+            $img2 = "foto.jpg";
+
             if($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $img = $file->getClientOriginalName();
@@ -155,7 +155,7 @@ class UsuariosController extends Controller
     public function usuarios_editar($id)
     {
         $usuario = usuarios::with(['perfil', 'estacion', 'subEstacion'])->findOrFail($id);
-        
+
         return view("Dashboard.Usuario.usuarios_editar", [
             'usuario' => $usuario,
             'estaciones' => estaciones::all(),
@@ -182,13 +182,13 @@ class UsuariosController extends Controller
 
         try {
             $fot2 = $id->foto; // Mantener la foto actual por defecto
-            
+
             if($request->hasFile('foto1')) {
                 // Eliminar la foto anterior si no es la por defecto
                 if($id->foto != 'foto.jpg') {
                     Storage::disk('public')->delete($id->foto);
                 }
-                
+
                 $file = $request->file('foto1');
                 $foto = $file->getClientOriginalName();
                 $ldate = date('Ymd_His_');
@@ -227,12 +227,12 @@ class UsuariosController extends Controller
             if($id->foto != 'foto.jpg') {
                 Storage::disk('public')->delete($id->foto);
             }
-            
+
             $id->delete();
-            
+
             return redirect()->route('usuarios')
                 ->with('success', 'Usuario eliminado correctamente');
-                
+
         } catch (\Exception $e) {
             return redirect()->route('usuarios')
                 ->with('error', 'Ocurrió un error al eliminar el usuario: ' . $e->getMessage());

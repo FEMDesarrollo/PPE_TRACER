@@ -24,7 +24,7 @@ class accesorios extends Model
         return $this->belongsTo(equipos::class, 'id_equipo', 'id');
     }
 
-     public static function validationRules(): array
+    public static function validationRules(): array
     {
         return [
             'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],

@@ -83,9 +83,11 @@ class ServiciosController extends Controller
     //.....................................................Servicios: REGISTRAR.....
     public function servicio_registrar(Request $request)
     {
-        $this->validate($request, [
-            'servicio' => 'required'
-        ]);
+        $this->validate(
+            $request,
+            servicios::validationRules(),
+            servicios::validationMessages()
+        );
 
         servicios::create([
             'servicio' => $request->servicio
@@ -113,9 +115,11 @@ class ServiciosController extends Controller
     //.....................................................Servicios: SALVAR.....
     public function servicio_salvar(servicios $id, Request $request)
     {
-        $this->validate($request, [
-            'servicio' => 'required'
-        ]);
+        $this->validate(
+            $request,
+            servicios::validationRules(),
+            servicios::validationMessages()
+        );
 
         $query = servicios::find($id->id);
         $query->servicio = $request->servicio;
@@ -139,8 +143,25 @@ class ServiciosController extends Controller
             'archivo_excel' => 'required|file|mimes:xlsx,xls'
         ]);
 
+        
+    try {
         Excel::import(new ServiciosImport, $request->file('archivo_excel'));
+            return redirect()->route('servicios')->with('success', 'Servicios importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
 
-        return redirect()->route('servicios')->with('success', 'Servicios importados correctamente.');
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('servicios')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('servicios')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }
+

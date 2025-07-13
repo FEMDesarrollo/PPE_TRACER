@@ -5,10 +5,11 @@ namespace App\Imports;
 use App\Models\VerificacionCorreo;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class VerificacionCorreoImport implements ToModel, WithHeadingRow
+class VerificacionCorreoImport implements ToModel, WithHeadingRow, WithValidation
 {
     public function model(array $row)
     {
@@ -39,5 +40,15 @@ class VerificacionCorreoImport implements ToModel, WithHeadingRow
 
         // Si falla todo, lanza excepción para detectar el error
         throw new \Carbon\Exceptions\InvalidFormatException("No se pudo entender la fecha: $valor");
+    }
+
+    public function rules(): array
+    {
+        return VerificacionCorreo::validationRules();
+    }
+
+    public function customValidationMessages()
+    {
+        return VerificacionCorreo::validationMessages();
     }
 }

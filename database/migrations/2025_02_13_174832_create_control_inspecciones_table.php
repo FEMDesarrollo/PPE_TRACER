@@ -17,7 +17,7 @@ class CreateControlInspeccionesTable extends Migration
             $table->id();
             $table->enum('respuestas',['si','no'])->default('no');
             $table->date('fecha');
-            $table->longText('imagen');
+            $table->longText('imagen')->nullable();
             $table->longText('descripcion');
 
             $table->foreignId('id_usuario')->constrained('usuarios', 'id');

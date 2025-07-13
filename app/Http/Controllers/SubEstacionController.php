@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\SubestacionImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Estaciones;
 use App\Models\SubEstacion;
 use Carbon\Carbon;
-use App\Imports\SubestacionImport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class SubEstacionController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Subestación: Lista.....
     public function subestaciones(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -86,15 +86,14 @@ class SubEstacionController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Subestación: REGISTRAR.....
     public function subestaciones_registrar(Request $request)
     {
-        $this->validate($request, [
-            'nombre' => 'required',
-            'direccion' => 'required',
-            'telefono' => 'required',
-            'id_estacion' => 'required|exists:estaciones,id'
-        ]);
+        $this->validate(
+            $request,
+            SubEstacion::validationRules(),
+            SubEstacion::validationMessages()
+        );
 
         SubEstacion::create([
             'nombre' => $request->nombre,
@@ -106,7 +105,7 @@ class SubEstacionController extends Controller
         return redirect()->route('subestaciones')->with('success', 'Subestación registrada correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Subestación: DETALLE.....
     public function subestaciones_detalle($id)
     {
         $query = SubEstacion::with('estacion')->findOrFail($id);
@@ -114,7 +113,7 @@ class SubEstacionController extends Controller
             ->with(['subestacion' => $query]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Subestación: EDITAR.....
     public function subestaciones_editar($id)
     {
         $query = SubEstacion::with('estacion')->findOrFail($id);
@@ -124,15 +123,14 @@ class SubEstacionController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Subestación: SALVAR.....
     public function subestaciones_salvar(SubEstacion $id, Request $request)
     {
-        $this->validate($request, [
-            'nombre' => 'required',
-            'direccion' => 'required',
-            'telefono' => 'required',
-            'id_estacion' => 'required|exists:estaciones,id'
-        ]);
+        $this->validate(
+            $request,
+            SubEstacion::validationRules(),
+            SubEstacion::validationMessages()
+        );
 
         $query = SubEstacion::find($id->id);
         $query->nombre = $request->nombre;
@@ -144,21 +142,36 @@ class SubEstacionController extends Controller
         return redirect()->route("subestaciones")->with('success', 'Subestación actualizada correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Subestación: BORRAR.....
     public function subestaciones_borrar(SubEstacion $id)
     {
         $id->delete();
         return redirect()->route('subestaciones')->with('success', 'Subestación eliminada correctamente');
     }
-                //..................................................Grupo: Importar.....
-        public function Subestacion_importar(Request $request)
-        {
+    //..................................................Subestación: Importar.....
+    public function Subestacion_importar(Request $request)
+    {
         $request->validate([
             'archivo_excel' => 'required|file|mimes:xlsx,xls'
         ]);
 
+        try {
         Excel::import(new SubestacionImport, $request->file('archivo_excel'));
+            return redirect()->route('subestaciones')->with('success', 'Subestaciones importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
 
-        return redirect()->route('subestaciones')->with('success', 'subestaciones importados correctamente.');
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('subestaciones')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('subestaciones')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
         }
+    }
 }

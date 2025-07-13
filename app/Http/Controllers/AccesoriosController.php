@@ -94,10 +94,10 @@ class AccesoriosController extends Controller
     public function accesorios_registrar(Request $request)
     {
         $this->validate(
-        $request,
-        Accesorios::validationRules(),
-        Accesorios::validationMessages()
-    );
+            $request,
+            Accesorios::validationRules(),
+            Accesorios::validationMessages()
+        );
 
 
         $img2 = "logotipo.png";
@@ -144,10 +144,10 @@ class AccesoriosController extends Controller
     public function accesorios_salvar(Accesorios $id, Request $request)
     {
         $this->validate(
-        $request,
-        Accesorios::validationRules(),
-        Accesorios::validationMessages()
-    );
+            $request,
+            Accesorios::validationRules(),
+            Accesorios::validationMessages()
+        );
 
         $img2 = $request->imagen2;
 
@@ -181,7 +181,7 @@ class AccesoriosController extends Controller
 
 
     //.....................................................Accesorios: Importar.....
-public function accesorios_importar(Request $request)
+    public function accesorios_importar(Request $request)
 {
     $request->validate([
         'archivo_excel' => 'required|file|mimes:xlsx,xls'
@@ -189,23 +189,23 @@ public function accesorios_importar(Request $request)
 
     try {
         Excel::import(new AccesoriosImport, $request->file('archivo_excel'));
-        return redirect()->route('accesorios')->with('success', 'Accesorios importados correctamente.');
-    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-        $failures = $e->failures();
+            return redirect()->route('accesorios')->with('success', 'Accesorios importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
 
-        $errorMessages = [];
-        foreach ($failures as $failure) {
-            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('accesorios')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('accesorios')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
         }
-
-        return redirect()->route('accesorios')
-            ->with('error', 'Error en la importación:')
-            ->with('errorDetails', $errorMessages);
-    } catch (\Exception $e) {
-        return redirect()->route('accesorios')
-            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
-}
 
 }
 

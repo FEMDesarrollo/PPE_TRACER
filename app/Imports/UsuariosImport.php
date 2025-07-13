@@ -5,8 +5,9 @@ namespace App\Imports;
 use App\Models\usuarios;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class UsuariosImport implements ToModel, WithHeadingRow
+class UsuariosImport implements ToModel, WithHeadingRow, WithValidation
 {
     public function model(array $row)
     {
@@ -23,5 +24,15 @@ class UsuariosImport implements ToModel, WithHeadingRow
             'id_perfil'  => $row['id_perfil'],
             
         ]);
+    }
+
+     public function rules(): array
+    {
+        return Usuarios::validationRules();
+    }
+
+    public function customValidationMessages()
+    {
+        return Usuarios::validationMessages();
     }
 }

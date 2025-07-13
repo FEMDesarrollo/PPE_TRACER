@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\VerificacionCorreoImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\verificacionCorreo;
 use App\Models\usuarios;
 use Carbon\Carbon;
-use App\Imports\VerificacionCorreoImport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class VerificacionCorreoController extends Controller
 {
@@ -90,13 +90,11 @@ class VerificacionCorreoController extends Controller
     //.....................................................Verificación Correo: REGISTRAR.....
     public function verificacion_correo_registrar(Request $request)
     {
-
-
-        verificacionCorreo::create([
-            'codigo_verificacion' => $request->codigo_verificacion,
-            'fecha' => $request->fecha,
-            'id_usuario' => $request->id_usuario
-        ]);
+        $this->validate(
+            $request,
+            verificacionCorreo::validationRules(),
+            verificacionCorreo::validationMessages()
+        );
 
         return redirect()->route('verificacion_correo')->with('success', 'Verificación de correo registrada correctamente');
     }
@@ -124,6 +122,11 @@ class VerificacionCorreoController extends Controller
     public function verificacion_correo_salvar(verificacionCorreo $id, Request $request)
     {
        
+        $this->validate(
+            $request,
+            verificacionCorreo::validationRules(),
+            verificacionCorreo::validationMessages()
+        );
 
         $query = verificacionCorreo::find($id->id);
         $query->codigo_verificacion = $request->codigo_verificacion;
@@ -148,8 +151,23 @@ class VerificacionCorreoController extends Controller
             'archivo_excel' => 'required|file|mimes:xlsx,xls'
         ]);
 
+         try {
         Excel::import(new VerificacionCorreoImport, $request->file('archivo_excel'));
+            return redirect()->route('verificacion_correo')->with('success', 'Vericación de correos importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
 
-        return redirect()->route('verificacion_correo')->with('success', 'Verificacion del correo importados correctamente.');
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('verificacion_correo')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('verificacion_correo')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
         }
+    }
 }

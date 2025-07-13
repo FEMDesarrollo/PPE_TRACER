@@ -150,7 +150,7 @@
                         <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                <form action="{{ route('estatus_equipos.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                                <form action="{{ route('estaciones.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
                                     @csrf
                                     <div class="modal-header">
                                     <h5 class="modal-title" id="importModalLabel">Importar archivo Excel</h5>

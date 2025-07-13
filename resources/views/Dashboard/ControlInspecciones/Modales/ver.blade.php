@@ -52,7 +52,7 @@
                     <div class="col-12 col-md-6">
                         <div class="form-floating">
                             <input type="text" class="form-control w-100" id="ver_descripcion{{ $controlins->id }}" value="{{ $controlins->descripcion }}" readonly>
-                            <label for="ver_descripcion{{ $controlins->id }}">Descripcion</label>
+                            <label for="ver_descripcion{{ $controlins->id }}">Descripción</label>
                         </div>
                     </div>
 
@@ -66,8 +66,8 @@
 
                     <div class="col-12 col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control w-100" id="ver_id_gestion_inspeccion{{ $controlins->id }}" value="{{ $controlins->gestion_inspeccion->observaciones ?? 'Sin gestion de inspeccion' }}" readonly>
-                            <label for="ver_id_gestion_inspeccion{{ $controlins->id }}">Gestion de inspeccion</label>
+                            <input type="text" class="form-control w-100" id="ver_id_gestion_inspeccion{{ $controlins->id }}" value="{{ $controlins->gestionInspecciones->observaciones ?? 'Sin gestion de inspeccion' }}" readonly>
+                            <label for="ver_id_gestion_inspeccion{{ $controlins->id }}">Gestion de inspección</label>
                         </div>
                     </div>
                 </div>

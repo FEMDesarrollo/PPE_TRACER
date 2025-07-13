@@ -83,15 +83,10 @@ class GestionInspeccionesController extends Controller
     //.....................................................Gestión de inspecciones: REGISTRAR.....
     public function gestion_inspecciones_registrar(Request $request)
     {
-        $this->validate($request, [
-        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
-
-        ], [
-            'observaciones.required' => 'La observaciones es obligatorio.',
-            'observaciones.regex' => 'La observaciones solo puede contener letras y espacios.',
-            'observaciones.max' => 'La observaciones no debe exceder los 30 caracteres.',
-
-        ]);
+        $this->validate($request, 
+        gestionInspecciones::validationRules(),
+        gestionInspecciones::validationMessages() 
+    );
 
         gestionInspecciones::create([
             'observaciones' => $request->observaciones
@@ -121,15 +116,10 @@ class GestionInspeccionesController extends Controller
     //.....................................................Gestión de inspecciones: SALVAR.....
     public function gestion_inspecciones_salvar(gestionInspecciones $id, Request $request)
     {
-        $this->validate($request, [
-        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30']
-
-        ], [
-            'observaciones.required' => 'La observaciones es obligatorio.',
-            'observaciones.regex' => 'La observaciones solo puede contener letras y espacios.',
-            'observaciones.max' => 'La observaciones no debe exceder los 30 caracteres.',
-
-        ]);
+        $this->validate($request, 
+        gestionInspecciones::validationRules(),
+        gestionInspecciones::validationMessages() 
+    );
 
         $query = gestionInspecciones::find($id->id);
         $query->observaciones = $request->observaciones;
@@ -144,5 +134,35 @@ class GestionInspeccionesController extends Controller
         $id->delete();
         return redirect()->route('gestion_inspecciones')->with('success', 'Inspección eliminada correctamente');
     }
+
+    //..................................................Grupo: Importar.....
+public function gestion_inspecciones_importar(Request $request)
+{
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    try {
+        Excel::import(new GestionInspeccionesImport, $request->file('archivo_excel'));
+        return redirect()->route('gestion_inspecciones')->with('success', 'Gestion Inspecciones importadas correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
+
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('gestion_inspecciones')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('gestion_inspecciones')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+    }
+  }
+
 }
+
+
 

@@ -83,9 +83,10 @@ class PerfilesController extends Controller
     //.....................................................Grupos: REGISTRAR.....
     public function perfiles_registrar(Request $request)
     {
-        $this->validate($request, [
-            'nombre' => 'required'
-        ]);
+        $this->validate($request, 
+        Perfiles::validationRules(),
+        Perfiles::validationMessages()
+    );
 
         Perfiles::create([
             'nombre' => $request->nombre
@@ -113,9 +114,10 @@ class PerfilesController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function perfiles_salvar(Perfiles $id, Request $request)
     {
-        $this->validate($request, [
-            'nombre' => 'required'
-        ]);
+        $this->validate($request, 
+        Perfiles::validationRules(),
+        Perfiles::validationMessages()
+    );
 
         $query = Perfiles::find($id->id);
         $query->nombre = $request->nombre;
@@ -131,14 +133,31 @@ class PerfilesController extends Controller
         return redirect()->route('perfiles')->with('success', 'Perfil eliminado correctamente');
     }
     //..................................................Grupo: Importar.....
-    public function perfiles_importar(Request $request)
-    {
+public function perfiles_importar(Request $request)
+{
     $request->validate([
         'archivo_excel' => 'required|file|mimes:xlsx,xls'
     ]);
 
-    Excel::import(new PerfilesImport, $request->file('archivo_excel'));
+    try {
+        Excel::import(new PerfilesImport, $request->file('archivo_excel'));
+        return redirect()->route('perfiles')->with('success', 'Perfiles importados correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
 
-    return redirect()->route('perfiles')->with('success', 'Perfiles importados correctamente.');
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('perfiles')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('perfiles')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
+  }
+
 }
+

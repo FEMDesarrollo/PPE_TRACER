@@ -3,9 +3,26 @@
 @section('page_title', 'PANEL ADMINISTRATIVO')
 @section('subtitle', 'Estación')
 @section('content')
+@include('components.alertas de cruds.alerts')
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
+
+
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>{{ session('error') }}</strong>
+        @if(session('errorDetails'))
+            <ul class="mb-0 mt-2">
+                @foreach(session('errorDetails') as $detail)
+                    <li>{{ $detail }}</li>
+                @endforeach
+            </ul>
+        @endif
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
                 <div class="card">
                     <div class="card-body">
                         <!-- Contenedor superior de tabla -->
@@ -150,7 +167,7 @@
                         <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                <form action="{{ route('estatus_equipos.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                                <form action="{{ route('estaciones.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
                                     @csrf
                                     <div class="modal-header">
                                     <h5 class="modal-title" id="importModalLabel">Importar archivo Excel</h5>

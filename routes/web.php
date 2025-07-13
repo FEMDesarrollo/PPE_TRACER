@@ -112,6 +112,7 @@ Route::name('estatus_critico_detalle')->get('/estatus_critico_detalle/{id}',[Est
 Route::name('estatus_critico_editar')->get('/estatus_critico_editar/{id}',[EstatusCriticoController::class, 'estatus_critico_editar']);
 Route::name('estatus_critico_salvar')->put('/estatus_critico_salvar/{id}',[EstatusCriticoController::class, 'estatus_critico_salvar']);
 Route::name('estatus_critico_borrar')->delete('/estatus_critico_borrar/{id}',[EstatusCriticoController::class, 'estatus_critico_borrar']);
+
 Route::post('/estatus_critico/importar', [EstatusCriticoController::class, 'estatus_critico_importar'])->name('estatus_critico.importar');
 
 

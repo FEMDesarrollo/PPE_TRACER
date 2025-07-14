@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Imports\AccesoriosImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\Equipos;
 use App\Models\Accesorios;
 use Carbon\Carbon;
@@ -85,40 +87,17 @@ class AccesoriosController extends Controller
                 'time_filter' => $timeFilter
             ]);
 
-        return view('Dashboard.Accesorios.accesorios', [
-            'accesorios' => $accesorios,
-            'equipos' => Equipos::all()
-        ]);
+        return view('Dashboard.Accesorios.accesorios', ['accesorios' => $accesorios,'equipos' => Equipos::all()]);
     }
 
     //.....................................................Accesorios: REGISTRAR.....
     public function accesorios_registrar(Request $request)
     {
-        $this->validate($request, [
-        'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-        'marca' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ.\s]+$/u', 'max:20'],
-        'modelo' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
-        'detalle_descripcion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s\-]+$/u', 'max:255'],
-        'id_equipo' => 'required'
-        ], [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
-            'nombre.max' => 'El nombre no debe exceder los 30 caracteres.',
-
-            'marca.required' => 'La marca es obligatoria.',
-            'marca.regex' => 'La marca solo puede contener letras, números, espacios y puntos.',
-            'marca.max' => 'La marca no debe exceder los 20 caracteres.',
-
-            'modelo.required' => 'El modelo es obligatorio.',
-            'modelo.regex' => 'El modelo solo puede contener letras, números y espacios.',
-            'modelo.max' => 'El modelo no debe exceder los 20 caracteres.',
-
-            'detalle_descripcion.required' => 'La descripción es obligatoria.',
-            'detalle_descripcion.regex' => 'La descripción solo puede contener letras, números, espacios y guiones.',
-            'detalle_descripcion.max' => 'La descripción no debe exceder los 255 caracteres.',
-
-            'id_equipo.required' => 'Debes seleccionar un equipo.',
-        ]);
+        $this->validate(
+            $request,
+            Accesorios::validationRules(),
+            Accesorios::validationMessages()
+        );
 
 
         $img2 = "logotipo.png";
@@ -164,31 +143,11 @@ class AccesoriosController extends Controller
     //.....................................................Accesorios: SALVAR.....
     public function accesorios_salvar(Accesorios $id, Request $request)
     {
-        $this->validate($request, [
-        'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-        'marca' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ.\s]+$/u', 'max:20'],
-        'modelo' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
-        'detalle_descripcion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s\-]+$/u', 'max:255'],
-        'id_equipo' => 'required'
-        ], [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
-            'nombre.max' => 'El nombre no debe exceder los 30 caracteres.',
-
-            'marca.required' => 'La marca es obligatoria.',
-            'marca.regex' => 'La marca solo puede contener letras, números, espacios y puntos.',
-            'marca.max' => 'La marca no debe exceder los 20 caracteres.',
-
-            'modelo.required' => 'El modelo es obligatorio.',
-            'modelo.regex' => 'El modelo solo puede contener letras, números y espacios.',
-            'modelo.max' => 'El modelo no debe exceder los 20 caracteres.',
-
-            'detalle_descripcion.required' => 'La descripción es obligatoria.',
-            'detalle_descripcion.regex' => 'La descripción solo puede contener letras, números, espacios y guiones.',
-            'detalle_descripcion.max' => 'La descripción no debe exceder los 255 caracteres.',
-
-            'id_equipo.required' => 'Debes seleccionar un equipo.',
-        ]);
+        $this->validate(
+            $request,
+            Accesorios::validationRules(),
+            Accesorios::validationMessages()
+        );
 
         $img2 = $request->imagen2;
 
@@ -214,23 +173,39 @@ class AccesoriosController extends Controller
 
     //.....................................................Accesorios: BORRAR.....
     public function accesorios_borrar(Accesorios $id)
-    {
-        $id->delete();
-       return redirect()->route('accesorios')->with('success', 'El accesorio se ha eliminado correctamente.');
-       return back()->with('error', 'Ocurrió un error al procesar la solicitud.');
-    }
+{
+    $id->delete();
+    return redirect()->route('accesorios')->with('success', 'El accesorio se ha eliminado correctamente.');
+}
+
 
 
     //.....................................................Accesorios: Importar.....
     public function accesorios_importar(Request $request)
-    {
-        $request->validate([
-            'archivo_excel' => 'required|file|mimes:xlsx,xls'
-        ]);
+{
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
 
+    try {
         Excel::import(new AccesoriosImport, $request->file('archivo_excel'));
+            return redirect()->route('accesorios')->with('success', 'Accesorios importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
 
-        return redirect()->route('accesorios')->with('success', 'Accesorios importados correctamente.');
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('accesorios')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('accesorios')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
+
 }
 

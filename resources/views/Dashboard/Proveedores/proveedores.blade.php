@@ -6,6 +6,21 @@
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
+
+            @if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>{{ session('error') }}</strong>
+        @if(session('errorDetails'))
+            <ul class="mb-0 mt-2">
+                @foreach(session('errorDetails') as $detail)
+                    <li>{{ $detail }}</li>
+                @endforeach
+            </ul>
+        @endif
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
                 <div class="card">
                     <div class="card-body">
                         <!-- Contenedor superior de tabla -->
@@ -18,7 +33,7 @@
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                         <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                                     </select>
-                                    
+
                                     @if(request('search'))
                                         <input type="hidden" name="search" value="{{ request('search') }}">
                                     @endif
@@ -43,7 +58,7 @@
                                                     placeholder="Buscar por ID, nombre y dirección..." value="{{ request('search') }}">
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Filtro de tiempo -->
                                         <div class="col-md-6">
                                             <select name="time_filter" class="form-select border-0 border-bottom" onchange="this.form.submit()">
@@ -59,7 +74,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <!-- Botón Agregar en tabla -->
                             <div class="col-12 col-md-3 text-md-end">
                                 <a href="{{ route('proveedores') }}" class="btn btn-secondary me-md-2">
@@ -94,22 +109,22 @@
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <!-- Botón Editar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEditar{{ $proveedor->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEditar{{ $proveedor->id }}"
                                                         style="color: #222944">
                                                         <i class="bi bi-pencil-square fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEliminar{{ $proveedor->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEliminar{{ $proveedor->id }}"
                                                         style="color: #cf0a2c">
                                                         <i class="bi bi-trash fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Ver -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalVer{{ $proveedor->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalVer{{ $proveedor->id }}"
                                                         style="color: #212121">
                                                         <i class="bi bi-eye fs-5"></i>
                                                     </button>
@@ -131,7 +146,7 @@
                             <span class="text-bling fw-bold p-3" style="color: #222944">
                                 Mostrando del {{ $proveedores->firstItem() }} al {{ $proveedores->lastItem() }} de {{ $proveedores->total() }} Proveedores
                             </span>
-                            
+
                             <!-- Botón para Importar Información -->
                             <div class="d-flex gap-2">
                                 <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
@@ -142,7 +157,7 @@
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Exportar información
                                 </button>
-                            </div> 
+                            </div>
                         </div>
 
                         <!-- Modal -->
@@ -180,14 +195,14 @@
             </div>
         </div>
     </section>
-            
+
             <!--Modal de Añadir -->
         @include('Dashboard.Proveedores.Modales.agregar')
         <!--Fin Modal de Añadir -->
 
         <!-- Modals para cada proveedor -->
         @foreach($proveedores as $proveedor)
-        
+
         <!-- Modal de Editar -->
         @include('Dashboard.Proveedores.Modales.editar')
 
@@ -196,7 +211,7 @@
 
         <!-- Modal de Ver -->
         @include('Dashboard.Proveedores.Modales.ver')
- 
+
     @endforeach
 
     @push('scripts')
@@ -204,10 +219,10 @@
         function changeEntries(select) {
             const perPage = select.value;
             const url = new URL(window.location.href);
-            
+
             // Actualiza el parámetro per_page en la URL
             url.searchParams.set('per_page', perPage);
-            
+
             // Recarga la página con el nuevo parámetro
             window.location.href = url.toString();
         }
@@ -219,7 +234,7 @@
             }
         });
     </script>
-    
+
     @endpush
-    
+
 @endsection

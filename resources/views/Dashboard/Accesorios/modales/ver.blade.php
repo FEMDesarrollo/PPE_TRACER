@@ -13,7 +13,7 @@
                 <div class="imagen-accesorio text-center mb-4">
                     @if($accesorio->imagen)
                         <img
-                            src="{{ asset('storage/' . $accesorio->imagen) }}"
+                            src="{{ asset('storage/' . $accesorio->imagen) }}" 
                             alt="Foto del accesorio"
                             class="img-accesorio"
                             data-bs-toggle="modal"

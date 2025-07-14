@@ -7,7 +7,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
 use App\Models\ControlInspecciones;
 use App\Models\usuarios;
 use App\Models\GestionInspecciones;
@@ -91,23 +90,21 @@ class ControlInspeccionesController extends Controller
     //.....................................................Control_Inspecciones: REGISTRAR.....
     public function control_inspecciones_registrar(Request $request)
     {
-        $request->validate([
-            'respuestas' => 'required',
-            'fecha' => 'required|date',
-            'descripcion' => 'required',
-            'id_usuario' => 'required|exists:usuarios,id',
-            'id_gestion_inspeccion' => 'required|exists:gestion_inspecciones,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+        $this->validate(
+            $request,
+            ControlInspecciones::validationRules(),
+            ControlInspecciones::validationMessages()
+        );
 
-        try {
             $img2 = "imagen.jpg";
-            if($request->hasFile('imagen')) {
+
+
+            if($request->file('imagen') != ''){
                 $file = $request->file('imagen');
                 $img = $file->getClientOriginalName();
                 $ldate = date('Ymd_His_');
                 $img2 = $ldate . $img;
-                Storage::disk('public')->put($img2, file_get_contents($file));
+                \Storage::disk('public')->put($img2, \File::get($file));
             }
 
             ControlInspecciones::create([
@@ -120,18 +117,14 @@ class ControlInspeccionesController extends Controller
             ]);
 
             return redirect()->route('control_inspecciones')->with('success', 'Control de inspección registrado correctamente');
-
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error al registrar: ' . $e->getMessage());
-        }
     }
 
     //.....................................................Control_Inspecciones: EDITAR.....
     public function control_inspecciones_editar($id)
     {
-        $control = ControlInspecciones::with(['usuarios', 'gestionInspecciones'])->findOrFail($id);
-        return view('Dashboard.ControlInspecciones.control_inspecciones_editar', [
-            'control_inspecciones' => $control,
+        $query = ControlInspecciones::find($id);
+        return view("Dashboard.ControlInspecciones.control_inspecciones_editar", [
+            'control_inspecciones' => $query,
             'usuarios' => usuarios::all(),
             'gestion_inspecciones' => GestionInspecciones::all()
         ]);
@@ -140,45 +133,32 @@ class ControlInspeccionesController extends Controller
     //.....................................................Control_Inspecciones: SALVAR.....
     public function control_inspecciones_salvar(ControlInspecciones $id, Request $request)
     {
-        $request->validate([
-            'respuestas' => 'required',
-            'fecha' => 'required|date',
-            'descripcion' => 'required',
-            'id_usuario' => 'required|exists:usuarios,id',
-            'id_gestion_inspeccion' => 'required|exists:gestion_inspecciones,id',
-            'imagen1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+        $this->validate(
+            $request,
+            ControlInspecciones::validationRules(),
+            ControlInspecciones::validationMessages()
+        );
 
-        try {
             $img2 = $request->imagen2;
-            if($request->hasFile('imagen1')) {
-                // Delete old image if exists
-                if($img2 && $img2 != "imagen.jpg" && Storage::disk('public')->exists($img2)) {
-                    Storage::disk('public')->delete($img2);
-                }
 
+            if($request->file('imagen1') != '') {
                 $file = $request->file('imagen1');
-                $imagen = $file->getClientOriginalName();
+                $img = $file->getClientOriginalName();
                 $ldate = date('Ymd_His_');
-                $img2 = $ldate . $imagen;
-                Storage::disk('public')->put($img2, file_get_contents($file));
+                $img2 = $ldate . $img;
+                \Storage::disk('public')->put($img2, \File::get($file));
             }
 
-            $id->update([
-                'respuestas' => $request->respuestas,
-                'fecha' => $request->fecha,
-                'imagen' => $img2,
-                'descripcion' => $request->descripcion,
-                'id_usuario' => $request->id_usuario,
-                'id_gestion_inspeccion' => $request->id_gestion_inspeccion
-            ]);
+            $query = ControlInspecciones::find($id->id);
+            $query->respuestas = $request->respuestas;
+            $query->fecha = $request->fecha;
+            $query->imagen = $img2;
+            $query->descripcion = $request->descripcion;
+            $query->id_usuario = $request->id_usuario;
+            $query->save();
 
-            return redirect()->route('control_inspecciones')->with('success', 'Control de inspección actualizado correctamente');
-
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error al actualizar: ' . $e->getMessage());
+            return redirect()->route('control_inspecciones')->with('success', 'El accesorio se ha actualizado correctamente.');
         }
-    }
 
     //..................................................Control_Inspecciones: BORRAR.....
     public function control_inspecciones_borrar(ControlInspecciones $id)
@@ -194,8 +174,23 @@ class ControlInspeccionesController extends Controller
             'archivo_excel' => 'required|file|mimes:xlsx,xls'
         ]);
 
-        Excel::import(new ControlInspeccionesImport, $request->file('archivo_excel'));
+    try {
+            Excel::import(new ControlInspeccionesImport, $request->file('archivo_excel'));
+            return redirect()->route('control_inspecciones')->with('success', 'Control de inspecciones importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
 
-        return redirect()->route('control_inspecciones')->with('success', 'Control de inspecciones importados correctamente.');
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('control_inspecciones')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('control_inspecciones')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

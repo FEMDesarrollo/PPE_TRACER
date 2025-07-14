@@ -2,28 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\UsuariosImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
-
 use App\Models\usuarios;
 use App\Models\estaciones;
 use App\Models\subEstacion;
 use App\Models\perfiles;
-use App\Imports\UsuariosImport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class UsuariosController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Usuarios: LISTA.....
     public function usuarios(Request $request)
     {
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $usuarios = usuarios::with('perfil', 'estacion', 'subEstacion')
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -40,7 +39,7 @@ class UsuariosController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -87,7 +86,7 @@ class UsuariosController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.Usuario.usuarios', [
             'usuarios' => $usuarios,
             'estaciones' => estaciones::all(),
@@ -96,66 +95,47 @@ class UsuariosController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Usuarios: REGISTRAR.....
     public function usuarios_registrar(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required',
-            'app' => 'required',
-            'apm' => 'required',
-            'telefono' => 'required',
-            'correo' => 'required|email|unique:usuarios,correo',
-            'password' => 'required',
-            'id_estacion' => 'required',
-            'id_subestacion' => 'required',
-            'id_perfil' => 'required',
-            'foto' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
-        ], [
-            'correo.unique' => 'El correo electrónico ya está registrado en el sistema',
-            'foto.image' => 'El archivo debe ser una imagen válida',
-            'foto.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg o gif',
-            'foto.max' => 'La imagen no debe pesar más de 2MB'
-        ]);
+        $this->validate(
+            $request,
+            usuarios::validationRules(),
+            usuarios::validationMessages()
+        );
 
-        try {
-            $img2 = "foto.jpg"; 
-            
-            if($request->hasFile('foto')) {
-                $file = $request->file('foto');
-                $img = $file->getClientOriginalName();
-                $ldate = date('Ymd_His_');
-                $img2 = $ldate . $img;
-                Storage::disk('public')->put($img2, file_get_contents($file));
-            }
+            $img2 = "foto.jpg";
 
-            $usuario = usuarios::create([
+            if($request->file('fotofoto') != '') {
+            $file = $request->file('imagen');
+            $img = $file->getClientOriginalName();
+            $ldate = date('Ymd_His_');
+            $img2 = $ldate . $img;
+            \Storage::disk('public')->put($img2, \File::get($file));
+        }
+
+            usuarios::create([
                 'nombre' => $request->nombre,
                 'app' => $request->app,
                 'apm' => $request->apm,
                 'telefono' => $request->telefono,
                 'correo' => $request->correo,
-                'password' => $request->password, // Se recomienda encriptar la contraseña
+                'password' => $request->password, 
                 'foto' => $img2,
                 'id_estacion' => $request->id_estacion,
                 'id_subestacion' => $request->id_subestacion,
                 'id_perfil' => $request->id_perfil
             ]);
 
-            return redirect()->route('usuarios')
-                ->with('success', 'Usuario creado correctamente');
+            return redirect()->route('usuarios')->with('success', 'Usuario creado correctamente');
 
-        } catch (\Exception $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Ocurrió un error al registrar el usuario: ' . $e->getMessage());
-        }
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Usuarios: EDITAR.....
     public function usuarios_editar($id)
     {
         $usuario = usuarios::with(['perfil', 'estacion', 'subEstacion'])->findOrFail($id);
-        
+
         return view("Dashboard.Usuario.usuarios_editar", [
             'usuario' => $usuario,
             'estaciones' => estaciones::all(),
@@ -164,90 +144,73 @@ class UsuariosController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Usuarios: SALVAR.....
     public function usuarios_salvar(usuarios $id, Request $request)
     {
-        $request->validate([
-            'nombre' => 'required',
-            'app' => 'required',
-            'apm' => 'required',
-            'telefono' => 'required',
-            'correo' => 'required|email|unique:usuarios,correo,'.$id->id,
-            'password' => 'sometimes|required',
-            'id_estacion' => 'required',
-            'id_subestacion' => 'required',
-            'id_perfil' => 'required',
-            'foto1' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+        $this->validate(
+            $request,
+            usuarios::validationRules(),
+            usuarios::validationMessages()
+        );
 
-        try {
-            $fot2 = $id->foto; // Mantener la foto actual por defecto
+            $fot2 = $request->foto; 
             
-            if($request->hasFile('foto1')) {
-                // Eliminar la foto anterior si no es la por defecto
-                if($id->foto != 'foto.jpg') {
-                    Storage::disk('public')->delete($id->foto);
-                }
-                
-                $file = $request->file('foto1');
-                $foto = $file->getClientOriginalName();
-                $ldate = date('Ymd_His_');
-                $fot2 = $ldate . $foto;
-                Storage::disk('public')->put($fot2, file_get_contents($file));
-            }
-
-            $id->update([
-                'nombre' => $request->nombre,
-                'app' => $request->app,
-                'apm' => $request->apm,
-                'telefono' => $request->telefono,
-                'correo' => $request->correo,
-                'password' => $request->password ? $request->password : $id->password,
-                'foto' => $fot2,
-                'id_estacion' => $request->id_estacion,
-                'id_subestacion' => $request->id_subestacion,
-                'id_perfil' => $request->id_perfil
-            ]);
-
-            return redirect()->route("usuarios")
-                ->with('success', 'Usuario actualizado correctamente');
-
-        } catch (\Exception $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Ocurrió un error al actualizar el usuario: ' . $e->getMessage());
+            if($request->file('foto1') != '') {
+            $file = $request->file('foto1');
+            $img = $file->getClientOriginalName();
+            $ldate = date('Ymd_His_');
+            $img2 = $ldate . $img;
+            \Storage::disk('public')->put($img2, \File::get($file));
         }
+
+            $query = usuarios::find($id->id);
+            $query->nombre = $request->nombre;
+            $query->app = $request->app;
+            $query->apm = $request->apm;
+            $query->telefono = $request->telefono;
+            $query->correo = $request->correo;
+             $query->password = $request->password;
+            $query->foto = $fot2;
+            $query->id_estacion = $request->id_estacion;
+            $query->id_subestacion = $request->id_subestacion;
+            $query->id_perfil = $request->id_perfil;
+            $query->save();
+                
+            return redirect()->route("usuarios")->with('success', 'Usuario actualizado correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+
+    //..................................................Usuarios: BORRAR.....
     public function usuarios_borrar(usuarios $id)
     {
-        try {
-            // Eliminar la foto asociada si no es la por defecto
-            if($id->foto != 'foto.jpg') {
-                Storage::disk('public')->delete($id->foto);
+        $id->delete();
+        return redirect()->route('usuarios')->with('success', 'El usuario se ha eliminado correctamente.');
+    }
+
+    //..................................................Grupo: Importar.....
+    public function usuarios_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    try {
+        Excel::import(new UsuariosImport, $request->file('archivo_excel'));
+            return redirect()->route('usuarios')->with('success', 'Usuarios importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
             }
-            
-            $id->delete();
-            
+
             return redirect()->route('usuarios')
-                ->with('success', 'Usuario eliminado correctamente');
-                
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
         } catch (\Exception $e) {
             return redirect()->route('usuarios')
-                ->with('error', 'Ocurrió un error al eliminar el usuario: ' . $e->getMessage());
-        }
-
-    }
-            //..................................................Grupo: Importar.....
-        public function usuarios_importar(Request $request)
-        {
-        $request->validate([
-            'archivo_excel' => 'required|file|mimes:xlsx,xls'
-        ]);
-
-        Excel::import(new UsuariosImport, $request->file('archivo_excel'));
-
-        return redirect()->route('usuarios')->with('success', 'Usuarios importados correctamente.');
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
         }
     }
+}

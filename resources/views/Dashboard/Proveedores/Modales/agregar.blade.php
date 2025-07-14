@@ -11,17 +11,29 @@
                     <form action="{{ route('proveedores_registrar') }}" method="POST" class="row g-3">
                         @csrf
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" name="nombre" class="form-control" id="nombreProveedor" placeholder="Nombre" required>
+                            <input type="text" name="nombre" class="form-control @error('nombre') is-invalid @enderror" id="nombre" placeholder="Nombre" value="{{ old('nombre') }}" required>
                             <label for="nombreProveedor" class="ps-4">Nombre</label>
+                            @error('nombre')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" name="direccion" class="form-control" id="direccion" placeholder="Dirección" required>
+                            <input type="text" name="direccion" class="form-control @error('direccion') is-invalid @enderror" id="direccion" placeholder="Dirección" value="{{ old('direccion') }}" required>
                             <label for="direccion" class="ps-4">Dirección</label>
+                            @error('direccion')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" name="telefono" class="form-control" id="telefono" placeholder="Teléfono" required>
+                            <input type="text" name="telefono" class="form-control @error('telefono') is-invalid @enderror" id="telefono" placeholder="Teléfono" value="{{ old('telefono') }}" required>
                             <label for="telefono" class="ps-4">Teléfono</label>
+                            @error('telefono')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="modal-footer d-flex justify-content-center w-100">
                             <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                 Agregar
@@ -36,3 +48,14 @@
             </div>
         </div>
     </div>
+
+    <!--Redirección de formulario si hay errores en las validaciones -->
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+                myModal.show();
+            });
+        </script>
+    @endif
+    <!--Fin de redirección de formulario si hay errores en las validaciones -->

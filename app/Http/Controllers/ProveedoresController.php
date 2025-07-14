@@ -18,7 +18,7 @@ class ProveedoresController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $proveedores = Proveedores::query()
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -33,7 +33,7 @@ class ProveedoresController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -80,30 +80,18 @@ class ProveedoresController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.Proveedores.proveedores', compact('proveedores'));
     }
 
     //.....................................................Proveedores: REGISTRAR.....
     public function proveedores_registrar(Request $request)
     {
-        $this->validate($request, [
-            'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-            'direccion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-            'telefono' => ['required', 'regex:/^[0-9]{10}$/'],
-        ],[
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
-            'nombre.max' => 'El nombre no debe exceder los 30 caracteres.',
-
-            'direccion.required' => 'la dirección es obligatoria.',
-            'direccion.regex' => 'La dirección solo puede contener letras, números y espacios.',
-            'direccion.max' => 'La dirección no debe exceder los 30 caracteres.',
-
-            'telefono.required' => 'El telefono es obligatorio',
-            'direccion.regex' => 'EL telefono solo puede contener números',
-            'direccion.max' => 'EL telefono solo tine 10 digitos.',
-        ]);
+        $this->validate(
+        $request,
+        Proveedores::validationRules(),
+        Proveedores::validationMessages()
+    );
 
         Proveedores::create([
             'nombre' => $request->nombre,
@@ -133,23 +121,11 @@ class ProveedoresController extends Controller
     //.....................................................Proveedores: SALVAR.....
     public function proveedores_salvar(Proveedores $id, Request $request)
     {
-       $this->validate($request, [
-            'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-            'direccion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-            'telefono' => ['required', 'regex:/^[0-9]{10}$/'],
-        ],[
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
-            'nombre.max' => 'El nombre no debe exceder los 30 caracteres.',
-
-            'direccion.required' => 'la dirección es obligatoria.',
-            'direccion.regex' => 'La dirección solo puede contener letras, números y espacios.',
-            'direccion.max' => 'La dirección no debe exceder los 30 caracteres.',
-
-            'telefono.required' => 'El telefono es obligatorio',
-            'direccion.regex' => 'EL telefono solo puede contener números',
-            'direccion.max' => 'EL telefono solo tine 10 digitos.',
-        ]);
+       $this->validate(
+        $request,
+        Proveedores::validationRules(),
+        Proveedores::validationMessages()
+    );
 
         $query = Proveedores::find($id->id);
         $query->nombre = $request->nombre;
@@ -169,13 +145,29 @@ class ProveedoresController extends Controller
 
     //..................................................Proveedores: Importar.....
     public function proveedores_importar(Request $request)
-    {
+{
     $request->validate([
         'archivo_excel' => 'required|file|mimes:xlsx,xls'
     ]);
 
-    Excel::import(new ProveedoresImport, $request->file('archivo_excel'));
+    try {
+        Excel::import(new ProveedoresImport, $request->file('archivo_excel'));
+        return redirect()->route('proveedores')->with('success', 'Proveedores importados correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
 
-    return redirect()->route('proveedores')->with('success', 'Servicios importados correctamente.');
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: " . implode(', ', $failure->errors());
+        }
+
+        return redirect()->route('proveedores')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('proveedores')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
+}
+
 }

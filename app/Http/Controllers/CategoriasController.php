@@ -84,16 +84,11 @@ class CategoriasController extends Controller
     //.....................................................Categorías: REGISTRAR.....
     public function categorias_registrar(Request $request)
     {
-        $this->validate($request, [
-        'categoria' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
-        'id_equipo' => 'required'
-        ], [
-        'categoria.required' => 'La categoría es obligatoria.',
-        'categoria.regex' => 'La categoría solo puede contener letras y espacios.',
-        'categoria.max' => 'La categoría no debe exceder los 100 caracteres.',
-
-        'id_equipo.required' => 'Debes seleccionar un equipo.',
-        ]);
+        $this->validate(
+        $request,
+        categorias::validationRules(),
+        categorias::validationMessages()
+    );
 
         categorias::create([
             'categoria' => $request->categoria,
@@ -125,16 +120,11 @@ class CategoriasController extends Controller
     //.....................................................Categorías: SALVAR.....
     public function categorias_salvar(categorias $id, Request $request)
     {
-        $this->validate($request, [
-        'categoria' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
-        'id_equipo' => 'required'
-        ], [
-        'categoria.required' => 'La categoría es obligatoria.',
-        'categoria.regex' => 'La categoría solo puede contener letras y espacios.',
-        'categoria.max' => 'La categoría no debe exceder los 100 caracteres.',
-
-        'id_equipo.required' => 'Debes seleccionar un equipo.',
-        ]);
+        $this->validate(
+        $request,
+        categorias::validationRules(),
+        categorias::validationMessages()
+    );
 
         $query = categorias::find($id->id);
         $query->categoria = $request->categoria;
@@ -153,14 +143,30 @@ class CategoriasController extends Controller
 
 
     //.....................................................Categorías: Importar.....
-    public function categorias_importar(Request $request)
-    {
-        $request->validate([
-            'archivo_excel' => 'required|file|mimes:xlsx,xls'
-        ]);
+public function categorias_importar(Request $request)
+{
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
 
+    try {
         Excel::import(new CategoriasImport, $request->file('archivo_excel'));
+        return redirect()->route('categorias')->with('success', 'Categorías importadas correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
 
-        return redirect()->route('categorias')->with('success', 'Categorias importados correctamente.');
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('categorias')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('categorias')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
+}
+
 }

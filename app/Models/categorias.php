@@ -19,4 +19,22 @@ class categorias extends Model
     {
         return $this->belongsTo(equipos::class, 'id_equipo', 'id');
     }
+
+     public static function validationRules(): array
+    {
+        return [
+            'categoria' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
+            'id_equipo' => ['required'],
+        ];
+    }
+
+    public static function validationMessages(): array
+    {
+        return [
+            'categoria.required' => 'La categoría es obligatoria.',
+            'categoria.regex' => 'La categoría solo puede contener letras y espacios.',
+            'categoria.max' => 'La categoría no debe exceder los 50 caracteres.',
+            'id_equipo.required' => 'Debes seleccionar un equipo.',
+        ];
+    }
 }

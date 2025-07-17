@@ -152,6 +152,9 @@
                                     Importar Información
                                 </button>
 
+                                <!-- Botón Plantilla Excel --> 
+                                <a href="{{ url('/plantilla-control-inspecciones') }}" class="btn btn-success">Descargar Plantilla Excel</a>
+
                                 <!-- Botón para  Exportar información -->
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Exportar información

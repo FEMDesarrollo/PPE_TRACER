@@ -148,12 +148,15 @@
                                     Importar Información
                                 </button>
 
+                                <!-- Botón Plantilla Excel --> 
+                                <a href="{{ url('/plantilla-estatus-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
+
                                 <!-- Botón para  Exportar información -->
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Exportar información
                                 </button>
                            </div>
-                    </div>
+                       </div>
 
                     <!-- Modal -->
                         <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">

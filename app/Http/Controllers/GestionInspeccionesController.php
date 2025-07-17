@@ -144,7 +144,7 @@ public function gestion_inspecciones_importar(Request $request)
 
     try {
         Excel::import(new GestionInspeccionesImport, $request->file('archivo_excel'));
-        return redirect()->route('gestion_inspecciones')->with('success', 'Gestion Inspecciones importadas correctamente.');
+        return redirect()->route('gestion_inspecciones')->with('success', 'Inspecciones importadas correctamente.');
     } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
         $failures = $e->failures();
 

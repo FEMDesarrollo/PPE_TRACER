@@ -3,6 +3,8 @@
 @section('page_title', 'PANEL ADMINISTRATIVO')
 @section('subtitle', 'Servicios de proveedores')
 @section('content')
+@include('components.alertas de cruds.alerts')
+@include('components.alertas de validaciones.alerts')
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
@@ -18,7 +20,7 @@
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                         <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                                     </select>
-                                    
+
                                     @if(request('search'))
                                         <input type="hidden" name="search" value="{{ request('search') }}">
                                     @endif
@@ -43,7 +45,7 @@
                                                     placeholder="Buscar por ID, servicio y proveedor..." value="{{ request('search') }}">
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Filtro de tiempo -->
                                         <div class="col-md-6">
                                             <select name="time_filter" class="form-select border-0 border-bottom" onchange="this.form.submit()">
@@ -59,7 +61,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <!-- Botón Agregar en tabla -->
                             <div class="col-12 col-md-3 text-md-end">
                                 <a href="{{ route('proveedor_servicios') }}" class="btn btn-secondary me-md-2">
@@ -92,22 +94,22 @@
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <!-- Botón Editar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEditar{{ $proveedor_s->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEditar{{ $proveedor_s->id }}"
                                                         style="color: #222944">
                                                         <i class="bi bi-pencil-square fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEliminar{{ $proveedor_s->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEliminar{{ $proveedor_s->id }}"
                                                         style="color: #cf0a2c">
                                                         <i class="bi bi-trash fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Ver -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalVer{{ $proveedor_s->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalVer{{ $proveedor_s->id }}"
                                                         style="color: #212121">
                                                         <i class="bi bi-eye fs-5"></i>
                                                     </button>
@@ -129,12 +131,44 @@
                             <span class="text-bling fw-bold p-3" style="color: #222944">
                                 Mostrando del {{ $proveedorServicios->firstItem() }} al {{ $proveedorServicios->lastItem() }} de {{ $proveedorServicios->total() }} Registros
                             </span>
-                            
+
+                            <!-- Botón para Importar Información -->
+                            <div class="d-flex gap-2">
+                             <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
+                                Importar Información
+                             </button>
+
                             <!-- Botón Exportar de tabla -->
                             <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                 Exportar información
                             </button>
                         </div>
+                        </div>
+
+                         <!-- Modal -->
+                        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                <form action="{{ route('proveedor_servicios.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                                    @csrf
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="importModalLabel">Importar archivo Excel</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                    <input type="file" name="archivo_excel" class="form-control w-auto" required>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-success" style="background-color: #222944; color: white; border-color:#222944">Importar Excel</button>
+                                    </div>
+                                </form>
+                                </div>
+                            </div>
+                        </div>
+
 
                         <!-- Paginación -->
                         <div class="d-flex justify-content-center mt-3 pagination-container">
@@ -149,14 +183,14 @@
             </div>
         </div>
     </section>
-         
+
             <!--Modal de Añadir -->
         @include('Dashboard.Proveedores.ProveedoresServicios.Modales.agregar')
         <!--Fin Modal de Añadir -->
 
         <!-- Modals para cada relación proveedor-servicio -->
         @foreach($proveedorServicios as $proveedor_s)
-        
+
         <!-- Modal de Editar -->
         @include('Dashboard.Proveedores.ProveedoresServicios.Modales.editar')
 
@@ -172,10 +206,10 @@
         function changeEntries(select) {
             const perPage = select.value;
             const url = new URL(window.location.href);
-            
+
             // Actualiza el parámetro per_page en la URL
             url.searchParams.set('per_page', perPage);
-            
+
             // Recarga la página con el nuevo parámetro
             window.location.href = url.toString();
         }

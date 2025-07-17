@@ -13,28 +13,34 @@
 
                         <div class="col-12 col-sm-6 col-md-6">
                             <div class="form-floating">
-                                <select name="id_servicio" class="form-select" id="id_servicio" required>
+                                <select name="id_servicio" class="form-select @error('id_servicio') is-invalid @enderror" id="id_servicio" required>
                                     <option disabled selected>Selecciona una opción...</option>
                                     @foreach($servicios as $servis)
                                         <option value="{{ $servis->id }}">{{ $servis->servicio }}</option>
                                     @endforeach
                                 </select>
                                 <label for="id_servicio">Servicio</label>
+                                @error('id_servicio')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-6 col-md-6">
                             <div class="form-floating">
-                                <select name="id_proveedor" class="form-select" id="id_proveedor">
+                                <select name="id_proveedor" class="form-select @error('id_proveedor') is-invalid @enderror" id="id_proveedor">
                                     <option selected disabled>Selecciona una opción...</option>
                                     @foreach($proveedores as $proveedor)
                                         <option value="{{ $proveedor->id }}">{{ $proveedor->nombre }}</option>
                                     @endforeach
                                 </select>
                                 <label for="id_proveedor" class="ps-4">Proveedor</label>
+                                 @error('id_proveedor')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                             </div>
                         </div>
-                        
+
                         <div class="modal-footer d-flex justify-content-center w-100">
                             <button type="submit" class="btn" data-bs-dismiss="modal"
                                 style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
@@ -47,3 +53,13 @@
         </div>
     </div>
     <!--Fin de Añadir -->
+<!-- Mostrar modal automáticamente si hay errores -->
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+            myModal.show();
+        });
+    </script>
+@endif
+<!--Fin de redirección de formulario si hay errores en las validaciones -->

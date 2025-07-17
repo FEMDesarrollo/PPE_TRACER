@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\SubestacionEquiposImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\subestacionEquipos;
 use App\Models\equipos;
@@ -19,7 +21,7 @@ class SubEstacionEquiposController extends Controller
         $timeFilter = $request->input('time_filter');
         $estacionFilter = $request->input('estacion_filter');
         $subestacionFilter = $request->input('subestacion_filter');
-        
+
         $subestacionEquipos = subestacionEquipos::with(['equipo', 'estacion', 'subEstacion'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -40,7 +42,7 @@ class SubEstacionEquiposController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -86,7 +88,7 @@ class SubEstacionEquiposController extends Controller
                 'estacion_filter' => $estacionFilter,
                 'subestacion_filter' => $subestacionFilter
             ]);
-            
+
         return view('Dashboard.SubestacionEquipos.subestacionEquipos', [
             'subestacionEquipos' => $subestacionEquipos,
             'equipos' => equipos::all(),
@@ -97,7 +99,14 @@ class SubEstacionEquiposController extends Controller
 
     //.....................................................Subestación Equipos: REGISTRAR.....
 
-    public function subestacion_equipos_registrar(Request $request){
+    public function subestacion_equipos_registrar(Request $request)
+    {
+        $this->validate(
+            $request,
+            subestacionEquipos::validationRules(),
+            subestacionEquipos::validationMessages()
+        );
+
         subestacionEquipos::create(array(
             'no_traje' => $request->input('no_traje'),
             'id_equipo' => $request->input('id_equipo'),
@@ -128,7 +137,13 @@ class SubEstacionEquiposController extends Controller
 
     //.....................................................Subestación Equipos: SALVAR.....
 
-    public function subestacion_equipos_salvar(subestacionEquipos $id, Request $request){
+    public function subestacion_equipos_salvar(subestacionEquipos $id, Request $request)
+    {
+         $this->validate(
+            $request,
+            subestacionEquipos::validationRules(),
+            subestacionEquipos::validationMessages()
+        );
 
         //dd($request->all());
         $query = subestacionEquipos::find($id->id);
@@ -146,4 +161,30 @@ class SubEstacionEquiposController extends Controller
             $id->delete();
             return redirect()->route('subestacion_equipos');
             }
+ //..................................................SubestaciónEquipos: Importar.....
+    public function subestacion_equipos_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        try {
+        Excel::import(new SubestacionEquiposImport, $request->file('archivo_excel'));
+            return redirect()->route('subestacion_equipos')->with('success', 'Subestaciones equipos importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('subestacion_equipos')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('subestacion_equipos')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
+    }
 }

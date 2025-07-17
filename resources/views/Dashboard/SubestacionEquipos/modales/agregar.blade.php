@@ -12,7 +12,7 @@
                         {{ csrf_field() }}
 
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="number" name="no_traje" class="form-control @error('no_traje') is-invalid @enderror" id="no_traje" placeholder="Número de Traje">
+                            <input type="text" name="no_traje" class="form-control @error('no_traje') is-invalid @enderror" id="no_traje" placeholder="Número de Traje" value="{{ old('no_traje') }}">
                             <label for="no_traje" class="ps-4">Número de Traje</label>
                             @error('no_traje')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -52,7 +52,7 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="col-12 col-sm-6 col-md-6">
                             <div class="form-floating">
                                 <select name="id_subestacion" class="form-select @error('id_subestacion') is-invalid @enderror" id="id_subestacion" required>
@@ -70,7 +70,7 @@
                             </div>
                         </div>
 
-                        
+
                         <div class="modal-footer d-flex justify-content-center w-100">
                             <button type="submit" class="btn" data-bs-dismiss="modal"
                                 style="background-color: #222944; color: white; border-color:#222944">Agregar</button>

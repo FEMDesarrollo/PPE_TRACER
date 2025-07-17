@@ -11,13 +11,19 @@
                 <form action="{{ route('permisos_registrar') }}" method="POST" class="row g-3">
                     {{ csrf_field() }}
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="text" name="permiso" class="form-control" id="permiso" placeholder="Permiso">
+                        <input type="text" name="permiso" class="form-control @error('permiso') is-invalid @enderror" id="permiso" placeholder="Permiso" value="{{ old('permiso') }}">
                         <label for="permiso" class="ps-4">Permiso</label>
+                        @error('permiso')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    
+
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="text"  name="url" class="form-control" id="url" placeholder="Url">
+                        <input type="text"  name="url" class="form-control @error('url') is-invalid @enderror" id="url" placeholder="Url" value="{{ old('url') }}">
                         <label for="url" class="ps-4">URL</label>
+                        @error('url')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="modal-footer d-flex justify-content-center w-100">
                         <button type="submit" class="btn" data-bs-dismiss="modal"
@@ -31,3 +37,14 @@
     </div>
 </div>
 <!--Fin de Añadir -->
+
+<!-- Mostrar modal automáticamente si hay errores -->
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+            myModal.show();
+        });
+    </script>
+@endif
+<!--Fin de redirección de formulario si hay errores en las validaciones -->

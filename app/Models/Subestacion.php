@@ -28,7 +28,7 @@ class subEstacion extends Model
             'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
             'direccion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s\.,&]+$/u', 'max:100'],
             'telefono' => ['required', 'regex:/^[0-9\s\-\(\)\+]{7,20}$/'],
-            'id_estacion' => ['required', 'digits_between:1,10', 'regex:/^\d+$/']
+            'id_estacion' => ['required', 'digits_between:1,10', 'regex:/^\d+$/', 'exists:accesorios,id']
 
         ];
     }
@@ -47,9 +47,11 @@ class subEstacion extends Model
         'telefono.required' => 'El teléfono es obligatorio.',
         'telefono.regex' => 'El teléfono no es válido.',
 
-        'id_estacion.required' => 'Debes seleccionar una estación.',
-        'id_estacion.digits_between' => 'El valor de estación no es válido.',
-        'id_estacion.regex' => 'El valor de estación no es válido.',
+        'id_estacion.required' => 'La estación es obligatoria.',
+        'id_estacion.digits_between' => 'La estación no es válida.',
+        'id_estacion.regex' => 'El valor de estacion debe contener solo números.',
+        'id_estacion.exists' => 'La estación seleccionado no existe.',
+
         ];
     }
 }

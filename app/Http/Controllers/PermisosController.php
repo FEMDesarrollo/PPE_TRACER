@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\PermisosImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\Permisos;
 use Carbon\Carbon;
 
@@ -14,7 +18,7 @@ class PermisosController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $permisos = Permisos::query()
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -28,7 +32,7 @@ class PermisosController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -75,23 +79,18 @@ class PermisosController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.Permiso.permisos', compact('permisos'));
     }
 
     //.....................................................Grupos: REGISTRAR.....
     public function permisos_registrar(Request $request)
     {
-        $this->validate($request, [
-            'permiso' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
-            'url' => 'required'
-        ],[
-            'permiso.required' => 'El permiso es obligatorio.',
-            'permiso.regex' => 'El permiso solo puede contener letras y espacios.',
-            'permiso.max' => 'El permiso no debe exceder los 20 caracteres.',
-            
-            'url.required' => 'La URL es obligatoria.',
-        ]);
+        $this->validate(
+            $request,
+            Permisos::validationRules(),
+            Permisos::validationMessages()
+        );
 
         Permisos::create([
             'permiso' => $request->permiso,
@@ -120,16 +119,11 @@ class PermisosController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function permisos_salvar(Permisos $id, Request $request)
     {
-        $this->validate($request, [
-            'permiso' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:20'],
-            'url' => 'required'
-        ],[
-            'permiso.required' => 'El permiso es obligatorio.',
-            'permiso.regex' => 'El permiso solo puede contener letras y espacios.',
-            'permiso.max' => 'El permiso no debe exceder los 20 caracteres.',
-            
-            'url.required' => 'La URL es obligatoria.',
-        ]);
+        $this->validate(
+            $request,
+            Permisos::validationRules(),
+            Permisos::validationMessages()
+        );
 
         $query = Permisos::find($id->id);
         $query->permiso = $request->permiso;
@@ -144,5 +138,32 @@ class PermisosController extends Controller
     {
         $id->delete();
         return redirect()->route('permisos')->with('success', 'Permiso eliminado correctamente');
+    }
+
+    //..................................................Subestación: Importar.....
+    public function permisos_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        try {
+        Excel::import(new PermisosImport, $request->file('archivo_excel'));
+            return redirect()->route('permisos')->with('success', 'Permisos importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('permisos')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('permisos')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

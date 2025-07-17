@@ -159,6 +159,9 @@ Route::name('proveedor_servicios_editar')->get('/proveedor_servicios_editar/{id}
 Route::name('proveedor_servicios_salvar')->put('/proveedor_servicios_salvar/{id}',[ProveedorServiciosController::class, 'proveedor_servicios_salvar']);
 Route::name('proveedor_servicios_borrar')->delete('/proveedor_servicios_borrar/{id}',[ProveedorServiciosController::class, 'proveedor_servicios_borrar']);
 
+Route::post('/proveedor_servicios/importar', [ProveedorServiciosController::class, 'proveedor_servicios_importar'])->name('proveedor_servicios.importar');
+
+
 //.................................RUTAS: Usuarios
 
 Route::name('usuarios')->get('/usuarios',[UsuariosController::class, 'usuarios']);
@@ -193,6 +196,9 @@ Route::name('permisos_editar')->get('/permisos_editar/{id}',[PermisosController:
 Route::name('permisos_salvar')->put('/permisos_salvar/{id}',[PermisosController::class, 'permisos_salvar']);
 Route::name('permisos_borrar')->delete('/permisos_borrar/{id}',[PermisosController::class, 'permisos_borrar']);
 
+Route::post('/permisos/importar', [PermisosController::class, 'permisos_importar'])->name('permisos.importar');
+
+
 //--------------------------------- RUTAS: Permisos usuarios ---------------------------------
 
 Route::name('permisos_usuarios')->get('/permisos_usuarios',[PermisosUsuariosController::class, 'permisos_usuarios']);
@@ -223,6 +229,8 @@ Route::name('control_asignaciones_editar')->get('/control_asignaciones_editar/{i
 Route::name('control_asignaciones_salvar')->put('/control_asignaciones_salvar/{id}',[ControlAsignacionesController::class, 'control_asignaciones_salvar']);
 Route::name('control_asignaciones_borrar')->delete('/control_asignaciones_borrar/{id}',[ControlAsignacionesController::class, 'control_asignaciones_borrar']);
 
+Route::post('/control_asignaciones/importar', [ControlAsignacionesController::class, 'control_asignaciones_importar'])->name('ControlAsignaciones.importar');
+
 
 //--------------------------------- RUTAS: Detalles equipo ---------------------------------
 
@@ -245,6 +253,8 @@ Route::name('detalles_estatus_detalle')->get('/detalles_estatus_detalle/{id}',[D
 Route::name('detalles_estatus_editar')->get('/detalles_estatus_editar/{id}',[DetallesEstatusController::class, 'detalles_estatus_editar']);
 Route::name('detalles_estatus_salvar')->put('/detalles_estatus_salvar/{id}',[DetallesEstatusController::class, 'detalles_estatus_salvar']);
 Route::name('detalles_estatus_borrar')->delete('/detalles_estatus_borrar/{id}',[DetallesEstatusController::class, 'detalles_estatus_borrar']);
+
+Route::post('/detalles_estatus/importar', [DetallesEstatusController::class, 'detalles_estatus_importar'])->name('DetallesEstatus.importar');
 
 
 //--------------------------------- RUTAS: Verificacion de correo ---------------------------------
@@ -279,6 +289,8 @@ Route::name('subestacion_equipos_detalle')->get('/subestacion_equipos_detalle/{i
 Route::name('subestacion_equipos_editar')->get('/subestacion_equipos_editar/{id}',[SubEstacionEquiposController::class, 'subestacion_equipos_editar']);
 Route::name('subestacion_equipos_salvar')->put('/subestacion_equipos_salvar/{id}',[SubEstacionEquiposController::class, 'subestacion_equipos_salvar']);
 Route::name('subestacion_equipos_borrar')->delete('/subestacion_equipos_borrar/{id}',[SubEstacionEquiposController::class, 'subestacion_equipos_borrar']);
+
+Route::post('/subestacion_equipos/importar', [SubEstacionEquiposController::class, 'subestacion_equipos_importar'])->name('subestacion_equipos.importar');
 
 //.................................RUTAS: Categorias
 

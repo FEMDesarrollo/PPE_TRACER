@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\DetallesEstatusImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -95,21 +97,11 @@ class DetallesEstatusController extends Controller
     //.....................................................Grupos: REGISTRAR.....
     public function detalles_estatus_registrar(Request $request)
     {
-        $request->validate([
-            'total_respuesta' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:100'],
-
-            'id_estatus' => ['required'],
-
-            'id_usuario' => ['required'],
-        ], [
-            'total_respuesta.required' => 'El campo total de respuesta es obligatorio.',
-            'total_respuesta.regex' => 'Solo se permiten letras y números en el total de respuesta.',
-            'total_respuesta.max' => 'El total de respuesta no debe exceder los 100 caracteres.',
-
-            'id_estatus.required' => 'Debes seleccionar un estatus.',
-
-            'id_usuario.required' => 'Debes seleccionar un usuario.'
-                ]);
+        $this->validate(
+            $request,
+            detallesEstatus::validationRules(),
+            detallesEstatus::validationMessages()
+        );
 
         detallesEstatus::create([
             'total_respuesta' => $request->total_respuesta,
@@ -143,21 +135,11 @@ class DetallesEstatusController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function detalles_estatus_salvar(detallesEstatus $id, Request $request)
     {
-        $request->validate([
-            'total_respuesta' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:100'],
-
-            'id_estatus' => ['required'],
-
-            'id_usuario' => ['required'],
-        ], [
-            'total_respuesta.required' => 'El campo total de respuesta es obligatorio.',
-            'total_respuesta.regex' => 'Solo se permiten letras y números en el total de respuesta.',
-            'total_respuesta.max' => 'El total de respuesta no debe exceder los 100 caracteres.',
-
-            'id_estatus.required' => 'Debes seleccionar un estatus.',
-
-            'id_usuario.required' => 'Debes seleccionar un usuario.'
-                ]);
+        $this->validate(
+            $request,
+            detallesEstatus::validationRules(),
+            detallesEstatus::validationMessages()
+        );
 
         $query = detallesEstatus::find($id->id);
         $query->total_respuesta = $request->total_respuesta;
@@ -173,5 +155,32 @@ class DetallesEstatusController extends Controller
     {
         $id->delete();
         return redirect()->route('detalles_estatus')->with('success', 'Detalle de estatus eliminado correctamente');
+    }
+
+    //..................................................Subestación: Importar.....
+    public function detalles_estatus_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        try {
+        Excel::import(new DetallesEstatusImport, $request->file('archivo_excel'));
+            return redirect()->route('detalles_estatus')->with('success', 'Detalles de estatus importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('detalles_estatus')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('detalles_estatus')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

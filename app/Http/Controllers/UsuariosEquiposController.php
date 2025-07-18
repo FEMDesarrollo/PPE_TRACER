@@ -40,40 +40,40 @@ class UsuariosEquiposController extends Controller
                 
                 switch ($timeFilter) {
                     case 'today':
-                        $query->whereDate('fecha_estatus', $now->toDateString());
+                        $query->whereDate('created_at', $now->toDateString());
                         break;
                     case 'this_week':
-                        $query->whereBetween('fecha_estatus', [
+                        $query->whereBetween('created_at', [
                             $now->copy()->startOfWeek()->toDateTimeString(),
                             $now->copy()->endOfWeek()->toDateTimeString()
                         ]);
                         break;
                     case 'this_month':
-                        $query->whereBetween('fecha_estatus', [
+                        $query->whereBetween('created_at', [
                             $now->copy()->startOfMonth()->toDateTimeString(),
                             $now->copy()->endOfMonth()->toDateTimeString()
                         ]);
                         break;
                     case 'last_week':
-                        $query->whereBetween('fecha_estatus', [
+                        $query->whereBetween('created_at', [
                             $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
                             $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
                         ]);
                         break;
                     case 'last_month':
-                        $query->whereBetween('fecha_estatus', [
+                        $query->whereBetween('created_at', [
                             $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
                             $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
                         ]);
                         break;
                     case 'last_3_months':
-                        $query->where('fecha_estatus', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
                         break;
                     case 'last_6_months':
-                        $query->where('fecha_estatus', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
                         break;
                     case 'last_year':
-                        $query->where('fecha_estatus', '>=', $now->copy()->subYear()->toDateTimeString());
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
                         break;
                 }
             })

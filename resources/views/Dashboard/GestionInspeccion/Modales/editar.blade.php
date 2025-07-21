@@ -14,16 +14,19 @@
                             <div class="row g-3">
                                 <div class="col-12">
                                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                                        <input type="text" class="form-control w-100" name="observaciones" id="observaciones{{ $gestionInspeccion->id }}" 
-                                            placeholder="Observaciones" value="{{ $gestionInspeccion->observaciones }}" required>
+                                        <input type="text" class="form-control pe-5 @error('categoria') is-invalid @enderror" name="observaciones" id="observaciones{{ $gestionInspeccion->id }}" 
+                                            placeholder="Observaciones" value="{{ $gestionInspeccion->observaciones }}">
                                         <label for="observaciones{{ $gestionInspeccion->id }}">Observaciones</label>
+                                        @error('categoria')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
                             </div>
                             <div class="modal-footer d-flex justify-content-center w-100 mt-3">
                                 <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                                    Guardar cambios
+                                    Editar
                                 </button>
                                 <button type="button" class="btn" data-bs-dismiss="modal"
                                     style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">

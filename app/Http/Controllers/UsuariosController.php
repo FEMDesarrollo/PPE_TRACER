@@ -106,8 +106,8 @@ class UsuariosController extends Controller
 
             $img2 = "foto.jpg";
 
-            if($request->file('fotofoto') != '') {
-            $file = $request->file('imagen');
+            if($request->file('foto') != '') {
+            $file = $request->file('foto');
             $img = $file->getClientOriginalName();
             $ldate = date('Ymd_His_');
             $img2 = $ldate . $img;
@@ -134,13 +134,13 @@ class UsuariosController extends Controller
     //.....................................................Usuarios: EDITAR.....
     public function usuarios_editar($id)
     {
-        $usuario = usuarios::with(['perfil', 'estacion', 'subEstacion'])->findOrFail($id);
 
+        $query = usuarios::find($id);
         return view("Dashboard.Usuario.usuarios_editar", [
-            'usuario' => $usuario,
+            'usuario' => $query,
             'estaciones' => estaciones::all(),
             'perfiles' => perfiles::all(),
-            'subestaciones' => subEstacion::where('id_estacion', $usuario->id_estacion)->get()
+            'subestaciones' => subestacion::all()
         ]);
     }
 
@@ -153,8 +153,13 @@ class UsuariosController extends Controller
             usuarios::validationMessages()
         );
 
+<<<<<<< HEAD
             $fot2 = $request->foto;
 
+=======
+            $img2 = $request->foto2; 
+            
+>>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
             if($request->file('foto1') != '') {
             $file = $request->file('foto1');
             $img = $file->getClientOriginalName();
@@ -170,7 +175,7 @@ class UsuariosController extends Controller
             $query->telefono = $request->telefono;
             $query->correo = $request->correo;
              $query->password = $request->password;
-            $query->foto = $fot2;
+            $query->foto = $img2;
             $query->id_estacion = $request->id_estacion;
             $query->id_subestacion = $request->id_subestacion;
             $query->id_perfil = $request->id_perfil;

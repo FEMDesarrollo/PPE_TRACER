@@ -173,16 +173,16 @@ class AccesoriosController extends Controller
 
     //.....................................................Accesorios: BORRAR.....
     public function accesorios_borrar(Accesorios $id)
-{
-    $id->delete();
-    return redirect()->route('accesorios')->with('success', 'El accesorio se ha eliminado correctamente.');
-}
+    {
+        $id->delete();
+        return redirect()->route('accesorios')->with('success', 'El accesorio se ha eliminado correctamente.');
+    }
 
 
 
     //.....................................................Accesorios: Importar.....
     public function accesorios_importar(Request $request)
-{
+    {
     $request->validate([
         'archivo_excel' => 'required|file|mimes:xlsx,xls'
     ]);

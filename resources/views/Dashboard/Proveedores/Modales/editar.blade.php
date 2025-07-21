@@ -14,29 +14,53 @@
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
+<<<<<<< HEAD
                                         <input type="text" class="form-control w-100" name="nombre" id="nombreUsuario{{ $proveedor->id }}"
                                             placeholder="Nombre" value="{{ $proveedor->nombre }}" >
+=======
+                                        <input type="text" class="form-control pe-5 @error('nombre') is-invalid @enderror" name="nombre" id="nombreUsuario{{ $proveedor->id }}" 
+                                            placeholder="Nombre" value="{{ $proveedor->nombre }}">
+>>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
                                         <label for="nombreUsuario{{ $proveedor->id }}">Nombre</label>
+                                        @error('nombre')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
+<<<<<<< HEAD
                                         <input type="text" class="form-control w-100" name="direccion" id="direccion{{ $proveedor->id }}"
                                             placeholder="Dirección" value="{{ $proveedor->direccion }}" >
+=======
+                                        <input type="text" class="form-control pe-5 @error('direccion') is-invalid @enderror" name="direccion" id="direccion{{ $proveedor->id }}" 
+                                            placeholder="Dirección" value="{{ $proveedor->direccion }}">
+>>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
                                         <label for="direccion{{ $proveedor->id }}">Dirección</label>
+                                        @error('direccion')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
+<<<<<<< HEAD
                                         <input type="text" class="form-control w-100" name="telefono" id="telefono{{ $proveedor->id }}"
                                             placeholder="Teléfono" value="{{ $proveedor->telefono }}" >
+=======
+                                        <input type="text" class="form-control pe-5 @error('telefono') is-invalid @enderror" name="telefono" id="telefono{{ $proveedor->id }}" 
+                                            placeholder="Teléfono" value="{{ $proveedor->telefono }}">
+>>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
                                         <label for="telefono{{ $proveedor->id }}">Teléfono</label>
+                                        @error('telefono')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer d-flex justify-content-center w-100 mt-3">
                                 <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                                    Guardar cambios
+                                    Editar
                                 </button>
                                 <button type="button" class="btn" data-bs-dismiss="modal"
                                     style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">

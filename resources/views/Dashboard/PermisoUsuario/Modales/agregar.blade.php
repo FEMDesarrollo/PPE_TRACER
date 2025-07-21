@@ -1,3 +1,4 @@
+<!-- Modal de Añadir -->
 <div class="modal fade" id="modalAñadir" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -9,18 +10,6 @@
             <div class="modal-body">
                 <form action="{{ route('permisos_usuarios_registrar') }}" method="POST" class="row g-3" enctype="multipart/form-data">
                     @csrf
-                    <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select name="activo" class="form-select @error('activo') is-invalid @enderror" id="activo" required>
-                            <option selected disabled>Seleccione una opción...</option>
-                            <option value="1" {{ old('activo') == '1' ? 'selected' : '' }}>Activo</option>
-                            <option value="0" {{ old('activo') == '0' ? 'selected' : '' }}>No activo</option>
-                        </select>
-                        <label for="activo" class="ps-4">Activo</label>
-                        @error('activo')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
                         <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario" required>
                             <option selected disabled>Seleccione un usuario...</option>
@@ -47,6 +36,18 @@
                         @enderror
                     </div>
 
+                    <div class="col-12 col-sm-6 col-md-6 form-floating">
+                        <select name="activo" class="form-select @error('activo') is-invalid @enderror" id="activo" required>
+                            <option selected disabled>Seleccione una opción...</option>
+                            <option value="si" {{ old('activo') == 'si' ? 'selected' : '' }}>Si</option>
+                            <option value="no" {{ old('activo') == 'no' ? 'selected' : '' }}>No</option>
+                        </select>
+                        <label for="activo" class="ps-4">Activo</label>
+                        @error('activo')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="modal-footer d-flex justify-content-center w-100">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
                         <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
@@ -56,3 +57,15 @@
         </div>
     </div>
 </div>
+<!--Fin de Añadir -->
+
+<!--Redirección de formulario si hay errores en las validaciones -->
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+            myModal.show();
+        });
+    </script>
+@endif
+<!--Fin de redirección de formulario si hay errores en las validaciones -->

@@ -12,7 +12,7 @@
                     {{ csrf_field() }}
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="date" name="fecha_estatus" class="form-control @error('fecha_estatus') is-invalid @enderror" id="fecha_estatus" placeholder="Fecha" value="{{ old('fecha_estatus') }}" required>
+                        <input type="date" name="fecha_estatus" class="form-control @error('fecha_estatus') is-invalid @enderror" id="fecha_estatus" placeholder="Fecha" value="{{ old('fecha_estatus') }}">
                         <label for="fecha_estatus" class="ps-4">Fecha</label>
                         @error('fecha')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -20,7 +20,7 @@
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="text" name="comentarios" class="form-control @error('comentarios') is-invalid @enderror" id="comentarios" placeholder="Comentarios" value="{{ old('comentarios') }}" required>
+                        <input type="text" name="comentarios" class="form-control @error('comentarios') is-invalid @enderror" id="comentarios" placeholder="Comentarios" value="{{ old('comentarios') }}">
                         <label for="comentarios" class="ps-4">Comentarios</label>
                         @error('comentarios')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -29,7 +29,7 @@
 
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select class="form-select @error('id_estatus_equipo') is-invalid @enderror" name="id_estatus_equipo" id="id_estatus_equipo" required>
+                        <select class="form-select @error('id_estatus_equipo') is-invalid @enderror" name="id_estatus_equipo" id="id_estatus_equipo">
                             <option selected disabled>Seleccione un estado de estatus...</option>
                                 @foreach($estatus_equipo as $estatusEquipo)
                                     <option value="{{ $estatusEquipo->id }}" {{ old('id_estatus_equipo') == $estatusEquipo->id ? 'selected' : '' }}>{{ $estatusEquipo->estado }}</option>
@@ -43,7 +43,7 @@
 
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario" required>
+                        <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario">
                             <option selected disabled>Seleccione un usuario...</option>
                                 @foreach($usuario as $user)
                                     <option value="{{ $user->id }}" {{ old('id_usuario') == $user->id ? 'selected' : '' }}>{{ $user->nombre }}</option>
@@ -57,7 +57,7 @@
 
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select class="form-select @error('id_equipo') is-invalid @enderror" name="id_equipo" id="id_equipo" required>
+                        <select class="form-select @error('id_equipo') is-invalid @enderror" name="id_equipo" id="id_equipo">
                             <option selected disabled>Seleccione un equipo...</option>
                                 @foreach($equipo as $equip)
                                     <option value="{{ $equip->id }}" {{ old('id_equipo') == $equip->id ? 'selected' : '' }}>{{ $equip->equipo }}</option>
@@ -79,3 +79,15 @@
         </div>
     </div>
 </div>
+<!--Fin de Añadir -->
+
+<!--Redirección de formulario si hay errores en las validaciones -->
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+            myModal.show();
+        });
+    </script>
+@endif
+<!--Fin de redirección de formulario si hay errores en las validaciones -->

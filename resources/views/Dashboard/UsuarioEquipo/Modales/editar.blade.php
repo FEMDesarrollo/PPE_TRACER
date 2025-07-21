@@ -22,50 +22,70 @@
                             </div>
 
 
-                        <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="comentarios" id="comentarios{{ $userequipo->id }}" placeholder="Comentarios" value="{{ $userequipo->comentarios }}">
+                                    <input type="text" class="form-control pe-5 @error('comentarios') is-invalid @enderror" name="comentarios" id="comentarios{{ $userequipo->id }}" 
+                                    placeholder="Comentarios" value="{{ $userequipo->comentarios }}">
                                     <label for="comentarios{{ $userequipo->id }}">Comentarios</label>
+                                    @error('comentarios')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <select class="form-select" name="id_estatus_equipo" id="id_estatus_equipo{{ $userequipo->id }}">
+                                    <select class="form-select @error('id_estatus_equipo') is-invalid @enderror" name="id_estatus_equipo" id="id_estatus_equipo{{ $userequipo->id }}">
+                                        <option disabled selected>Selecciona una opción...</option>
                                         @foreach($estatus_equipo as $estatusEquipo)
-                                            <option value="{{ $estatusEquipo->id }}" {{ $userequipo->id_estatus_equipo == $estatusEquipo->id ? 'selected' : '' }}>
+                                            <option value="{{ $estatusEquipo->id }}" 
+                                                {{ old('id_estatus_equipo', $userequipo->id_estatus_equipo) == $estatusEquipo->id ? 'selected' : '' }}>
                                                 {{ $estatusEquipo->estado }}
                                             </option>
                                         @endforeach
                                     </select>
                                     <label for="id_estatus_equipo{{ $userequipo->id }}">Estado</label>
+                                    @error('id_estatus_equipo')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <select class="form-select" name="id_usuario" id="id_usuario{{ $userequipo->id }}">
+                                    
+                                <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario{{ $userequipo->id }}">
+                                    <option disabled selected>Selecciona una opción...</option>
                                         @foreach($usuario as $user)
-                                            <option value="{{ $user->id }}" {{ $userequipo->id_usuario == $user->id ? 'selected' : '' }}>
+                                            <option value="{{ $user->id }}" 
+                                                {{ old('id_usuario', $userequipo->id_usuario) == $user->id ? 'selected' : '' }}>
                                                 {{ $user->nombre }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <label for="id_usuario{{ $userequipo->id }}">Nombre de usuario</label>
+                                    <label for="id_usuario{{ $userequipo->id }}">Usuario</label>
+                                    @error('id_usuario')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <select class="form-select" name="id_equipo" id="id_equipo{{ $userequipo->id }}">
+                                    <select class="form-select @error('id_equipo') is-invalid @enderror" name="id_equipo" id="id_equipo{{ $userequipo->id }}">
+                                        <option disabled selected>Selecciona una opción...</option>
                                         @foreach($equipo as $equip)
-                                            <option value="{{ $equip->id }}" {{ $userequipo->id_usuario == $equip->id ? 'selected' : '' }}>
+                                            <option value="{{ $equip->id }}"
+                                                 {{ old('id_equipo', $userequipo->id_equipo) == $equip->id ? 'selected' : '' }}>
                                                 {{ $equip->equipo }}
                                             </option>
                                         @endforeach
                                     </select>
                                     <label for="id_equipo{{ $userequipo->id }}">Equipo</label>
+                                    @error('id_estacion')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 

@@ -14,9 +14,12 @@
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control w-100" name="servicio" id="servicio{{ $servicio->id }}" 
-                                            placeholder="Servicio" value="{{ $servicio->servicio }}" required>
+                                        <input type="text" class="form-control pe-5 @error('servicio') is-invalid @enderror" name="servicio" id="servicio{{ $servicio->id }}" placeholder="Servicio" 
+                                            placeholder="Servicio" value="{{ $servicio->servicio }}">
                                         <label for="servicio{{ $servicio->id }}">Servicio</label>
+                                        @error('servicio')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>

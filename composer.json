@@ -17,8 +17,11 @@
 =======
 
         "maatwebsite/excel": "3.1.47"
+<<<<<<< HEAD
 
 >>>>>>> 43788dd845a40782eb4df53355f90bffafcc1897
+=======
+>>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
     },
     "require-dev": {
         "facade/ignition": "^2.5",

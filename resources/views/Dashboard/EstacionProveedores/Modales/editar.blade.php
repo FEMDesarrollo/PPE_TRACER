@@ -1,4 +1,4 @@
- <!-- Modal de Editar -->
+<!-- Modal de Editar -->
 <div class="modal fade" id="modalEditar{{ $eproveedor->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modalEditarLabel{{ $eproveedor->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -14,26 +14,36 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <select name="id_proveedor" class="form-select" id="id_proveedor{{ $eproveedor->id }}" required>
+                                <select class="form-select @error('id_proveedor') is-invalid @enderror" name="id_proveedor" id="id_proveedor{{ $eproveedor->id }}">
+                                    <option disabled selected>Selecciona una opción...</option>
                                     @foreach($proveedores as $proveedor)
-                                        <option value="{{ $proveedor->id }}" {{ $proveedor->id == $eproveedor->id_proveedor ? 'selected' : '' }}>
+                                        <option value="{{ $proveedor->id }}" 
+                                            {{ old('id_proveedor', $eproveedor->id_proveedor) == $proveedor->id ? 'selected' : '' }}>
                                             {{ $proveedor->nombre }}
                                         </option>
                                     @endforeach
                                 </select>
                                 <label for="id_proveedor{{ $eproveedor->id }}">Proveedor</label>
+                                @error('id_proveedor')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <select name="id_estacion" class="form-select" id="id_estacion{{ $eproveedor->id }}" required>
+                                <select class="form-select @error('id_estacion') is-invalid @enderror" name="id_estacion" id="id_estacion{{ $eproveedor->id }}">
+                                    <option disabled selected>Selecciona una opción...</option>
                                     @foreach($estaciones as $estacion)
-                                        <option value="{{ $estacion->id }}" {{ $estacion->id == $eproveedor->id_estacion ? 'selected' : '' }}>
+                                        <option value="{{ $estacion->id }}" 
+                                            {{ old('id_estacion', $eproveedor->id_estacion) == $estacion->id ? 'selected' : '' }}>
                                             {{ $estacion->nombre }}
                                         </option>
                                     @endforeach
                                 </select>
                                 <label for="id_estacion{{ $eproveedor->id }}">Estación</label>
+                                @error('id_estacion')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -51,3 +61,4 @@
         </div>
     </div>
 </div>
+<!-- Fin de Editar -->

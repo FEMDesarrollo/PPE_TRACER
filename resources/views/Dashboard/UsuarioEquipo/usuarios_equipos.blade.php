@@ -3,6 +3,8 @@
 @section('page_title', 'PANEL ADMINISTRATIVO')
 @section('subtitle', 'Usuarios de equipos')
 @section('content')
+@include('components.alertas de cruds.alerts')
+@include('components.alertas de validaciones.alerts')
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
@@ -145,10 +147,39 @@
                             <a href="{{ url('/plantilla-usuarios-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
                             
-                            <!-- Botón Exportar de tabla -->
-                            <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                                Exportar información
-                            </button>
+                            <!-- Botón para Importar Información -->
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
+                                    Importar Información
+                                </button>
+
+                                <!-- Botón para  Exportar información -->
+                                <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
+                                    Exportar información
+                                </button>
+                           </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                <form action="{{ route('usuarios_equipos.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                                    @csrf
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="importModalLabel">Importar archivo Excel</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                    <input type="file" name="archivo_excel" class="form-control w-auto" required>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-success" style="background-color: #222944; color: white; border-color:#222944">Importar Excel</button>
+                                    </div>
+                                </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

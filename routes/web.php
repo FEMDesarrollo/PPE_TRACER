@@ -174,6 +174,7 @@ Route::name('estacion_proveedores_detalle')->get('/estacion_proveedores_detalle/
 Route::name('estacion_proveedores_editar')->get('/estacion_proveedores_editar/{id}',[EstacionProveedoresController::class, 'estacion_proveedores_editar']);
 Route::name('estacion_proveedores_salvar')->put('/estacion_proveedores_salvar/{id}',[EstacionProveedoresController::class, 'estacion_proveedores_salvar']);
 Route::name('estacion_proveedores_borrar')->delete('/estacion_proveedores_borrar/{id}',[EstacionProveedoresController::class, 'estacion_proveedores_borrar']);
+Route::post('/estacion_proveedores/importar', [EstacionProveedoresController::class, 'estacion_proveedores_importar'])->name('estacion_proveedores.importar');
 
 //.................................RUTAS: Proveedor_Servicios
 
@@ -234,6 +235,7 @@ Route::name('permisos_usuarios_detalle')->get('/permisos_usuarios_detalle/{id}',
 Route::name('permisos_usuarios_editar')->get('/permisos_usuarios_editar/{id}',[PermisosUsuariosController::class, 'permisos_usuarios_editar']);
 Route::name('permisos_usuarios_salvar')->put('/permisos_usuarios_salvar/{id}',[PermisosUsuariosController::class, 'permisos_usuarios_salvar']);
 Route::name('permisos_usuarios_borrar')->delete('/permisos_usuarios_borrar/{id}',[PermisosUsuariosController::class, 'permisos_usuarios_borrar']);
+Route::post('/permisos_usuarios/importar', [PermisosUsuariosController::class, 'permisos_usuarios_importar'])->name('permisos_usuarios.importar');
 
 //--------------------------------- RUTAS: Usuarios equipo ---------------------------------
 
@@ -244,6 +246,7 @@ Route::name('usuarios_equipos_detalle')->get('/usuarios_equipos_detalle/{id}',[U
 Route::name('usuarios_equipos_editar')->get('/usuarios_equipos_editar/{id}',[UsuariosEquiposController::class, 'usuarios_equipos_editar']);
 Route::name('usuarios_equipos_salvar')->put('/usuarios_equipos_salvar/{id}',[UsuariosEquiposController::class, 'usuarios_equipos_salvar']);
 Route::name('usuarios_equipos_borrar')->delete('/usuarios_equipos_borrar/{id}',[UsuariosEquiposController::class, 'usuarios_equipos_borrar']);
+Route::post('/usuarios_equipos/importar', [UsuariosEquiposController::class, 'usuarios_equipos_importar'])->name('usuarios_equipos.importar');
 
 //--------------------------------- RUTAS: Control de Asignaciones ---------------------------------
 
@@ -338,6 +341,7 @@ Route::name('repuestos_detalle')->get('/repuestos_detalle/{id}',[RepuestosContro
 Route::name('repuestos_editar')->get('/repuestos_editar/{id}',[RepuestosController::class, 'repuestos_editar']);
 Route::name('repuestos_salvar')->put('/repuestos_salvar/{id}',[RepuestosController::class, 'repuestos_salvar']);
 Route::name('repuestos_borrar')->delete('/repuestos_borrar/{id}',[RepuestosController::class, 'repuestos_borrar']);
+Route::post('/repuestos/importar', [RepuestosController::class, 'repuestos_importar'])->name('repuestos.importar');
 
 
 //---------------------------------RUTAS: Plantilla Excel

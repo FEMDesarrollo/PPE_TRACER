@@ -14,7 +14,7 @@ class VerificacionCorreoController extends Controller
     //.....................................................Verificación Correo: LISTA.....
     public function verificacion_correo(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
         $usuarioFilter = $request->input('usuario_filter');

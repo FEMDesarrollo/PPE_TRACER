@@ -3,9 +3,25 @@
 @section('page_title', 'PANEL ADMINISTRATIVO')
 @section('subtitle', 'Estatus crítico')
 @section('content')
+@include('components.alertas de cruds.alerts')
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
+
+ @if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>{{ session('error') }}</strong>
+        @if(session('errorDetails'))
+            <ul class="mb-0 mt-2">
+                @foreach(session('errorDetails') as $detail)
+                    <li>{{ $detail }}</li>
+                @endforeach
+            </ul>
+        @endif
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
                 <div class="card">
                     <div class="card-body">
                         <!-- Contenedor superior de tabla -->
@@ -133,6 +149,9 @@
                                 <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
                                     Importar Información
                                 </button>
+
+                                <!-- Botón Plantilla Excel --> 
+                                <a href="{{ url('/plantilla-estatus-critico') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
                                 <!-- Botón para  Exportar información -->
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">

@@ -88,28 +88,10 @@ class EstacionesController extends Controller
     //.....................................................Grupos: REGISTRAR.....
     public function estaciones_registrar(Request $request)
     {
-        $this->validate($request, [
-        'nombre' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:100'],
-        'direccion' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s.,&]+$/u','max:255'],
-        'telefono' => ['required','regex:/^[0-9\s]+$/u','max:20'],
-        'total_trajes' => ['required','integer','min:1'],
-        ], [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.regex' => 'El nombre solo puede contener letras, números y espacios.',
-            'nombre.max' => 'El nombre no debe exceder los 100 caracteres.',
-
-            'direccion.required' => 'La dirección es obligatoria.',
-            'direccion.regex' => 'La dirección solo puede contener letras, números, puntos, comas, & y espacios.',
-            'direccion.max' => 'La dirección no debe exceder los 255 caracteres.',
-
-            'telefono.required' => 'El teléfono es obligatorio.',
-            'telefono.regex' => 'El teléfono solo puede contener números y espacios.',
-            'telefono.max' => 'El teléfono no debe exceder los 20 caracteres.',
-
-            'total_trajes.required' => 'El total de trajes es obligatorio.',
-            'total_trajes.integer' => 'El total de trajes debe ser un número entero.',
-            'total_trajes.min' => 'El total de trajes debe ser al menos 1.',
-        ]);
+        $this->validate($request,
+        Estaciones::validationRules(),
+        Estaciones::validationMessages() 
+        );
 
         Estaciones::create([
             'nombre' => $request->nombre,
@@ -140,28 +122,10 @@ class EstacionesController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function estaciones_salvar(Estaciones $id, Request $request)
     {
-         $this->validate($request, [
-        'nombre' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$/u','max:100'],
-        'direccion' => ['required','regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s.,&]+$/u','max:255'],
-        'telefono' => ['required','regex:/^[0-9\s]+$/u','max:20'],
-        'total_trajes' => ['required','integer','min:1'],
-        ], [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.regex' => 'El nombre solo puede contener letras, números y espacios.',
-            'nombre.max' => 'El nombre no debe exceder los 100 caracteres.',
-
-            'direccion.required' => 'La dirección es obligatoria.',
-            'direccion.regex' => 'La dirección solo puede contener letras, números, puntos, comas, & y espacios.',
-            'direccion.max' => 'La dirección no debe exceder los 255 caracteres.',
-
-            'telefono.required' => 'El teléfono es obligatorio.',
-            'telefono.regex' => 'El teléfono solo puede contener números y espacios.',
-            'telefono.max' => 'El teléfono no debe exceder los 20 caracteres.',
-
-            'total_trajes.required' => 'El total de trajes es obligatorio.',
-            'total_trajes.integer' => 'El total de trajes debe ser un número entero.',
-            'total_trajes.min' => 'El total de trajes debe ser al menos 1.',
-        ]);
+         $this->validate($request,
+        Estaciones::validationRules(),
+        Estaciones::validationMessages()
+        );
 
         $query = Estaciones::find($id->id);
         $query->nombre = $request->nombre;
@@ -181,17 +145,30 @@ class EstacionesController extends Controller
     }
 
 
-    //..................................................Grupo: Importar.....
-    public function estaciones_importar(Request $request)
-    {
+//..................................................Grupo: Importar.....
+public function estaciones_importar(Request $request)
+{
     $request->validate([
         'archivo_excel' => 'required|file|mimes:xlsx,xls'
     ]);
 
-    Excel::import(new EstacionesImport, $request->file('archivo_excel'));
+    try {
+        Excel::import(new EstacionesImport, $request->file('archivo_excel'));
+        return redirect()->route('estaciones')->with('success', 'Estaciones importadas correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
 
-    return redirect()->route('estaciones')->with('success', 'Estaciones importadas correctamente.');
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('estaciones')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('estaciones')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
-
+  }
 }
-

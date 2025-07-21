@@ -83,15 +83,10 @@ class EstatusEquiposController extends Controller
     //.....................................................Grupos: REGISTRAR.....
     public function estatus_equipos_registrar(Request $request)
     {
-        $this->validate($request, [
-        'estado' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
-
-        ], [
-            'estado.required' => 'El estado es obligatorio.',
-            'estado.regex' => 'El estado solo puede contener letras y espacios.',
-            'estado.max' => 'El estado no debe exceder los 50 caracteres.',
-
-        ]);
+        $this->validate($request, 
+        EstatusEquipos::validationRules(),
+        EstatusEquipos::validationMessages() 
+    );
 
         EstatusEquipos::create([
             'estado' => $request->estado
@@ -119,15 +114,10 @@ class EstatusEquiposController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function estatus_equipos_salvar(EstatusEquipos $id, Request $request)
     {
-        $this->validate($request, [
-        'estado' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
-
-        ], [
-            'estado.required' => 'El estado es obligatorio.',
-            'estado.regex' => 'El estado solo puede contener letras y espacios.',
-            'estado.max' => 'El estado no debe exceder los 50 caracteres.',
-
-        ]);
+        $this->validate($request, 
+    EstatusEquipos::validationRules(),
+    EstatusEquipos::validationMessages() 
+    );
 
         $query = EstatusEquipos::find($id->id);
         $query->estado = $request->estado;
@@ -144,16 +134,31 @@ class EstatusEquiposController extends Controller
     }
 
 
-    //..................................................Grupo: Importar.....
-    public function estatus_equipos_importar(Request $request)
-    {
+//..................................................Grupo: Importar.....
+public function estatus_equipos_importar(Request $request)
+{
     $request->validate([
         'archivo_excel' => 'required|file|mimes:xlsx,xls'
     ]);
 
-    Excel::import(new EstatusEquiposImport, $request->file('archivo_excel'));
+    try {
+        Excel::import(new EstatusEquiposImport, $request->file('archivo_excel'));
+        return redirect()->route('estatus_equipos')->with('success', 'Estatus de equipo importadas correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
 
-    return redirect()->route('estatus_equipos')->with('success', 'Estados de equipo importadas correctamente.');
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('estatus_equipos')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('estatus_equipos')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
+  }
 
 }

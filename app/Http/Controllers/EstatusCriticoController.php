@@ -83,15 +83,10 @@ public function estatus_critico(Request $request)
     //.....................................................Estatus critico: REGISTRAR.....
     public function estatus_critico_registrar(Request $request)
     {
-        $this->validate($request, [
-        'estatus' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-
-        ], [
-            'estatus.required' => 'El estatus es obligatorio.',
-            'estatus.regex' => 'El estatus solo puede contener letras y espacios.',
-            'estatus.max' => 'El estatus no debe exceder los 30 caracteres.',
-
-        ]);
+        $this->validate($request, 
+        EstatusCritico::validationRules(),
+        EstatusCritico::validationMessages() 
+        );
 
         EstatusCritico::create([
             'estatus' => $request->estatus
@@ -119,15 +114,10 @@ public function estatus_critico(Request $request)
     //.....................................................Estatus critico: SALVAR.....
     public function estatus_critico_salvar(EstatusCritico $id, Request $request)
     {
-        $this->validate($request, [
-        'estatus' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:30'],
-
-        ], [
-            'estatus.required' => 'El estatus es obligatorio.',
-            'estatus.regex' => 'El estatus solo puede contener letras y espacios.',
-            'estatus.max' => 'El estatus no debe exceder los 30 caracteres.',
-
-        ]);
+        $this->validate($request, 
+        EstatusCritico::validationRules(),
+        EstatusCritico::validationMessages() 
+    );
 
         $query = EstatusCritico::find($id->id);
         $query->estatus = $request->estatus;
@@ -144,16 +134,30 @@ public function estatus_critico(Request $request)
     }
 
 
-    //..................................................Servicios: Importar.....
-    public function estatus_critico_importar(Request $request)
-    {
-        $request->validate([
-            'archivo_excel' => 'required|file|mimes:xlsx,xls'
-        ]);
+//..................................................Grupo: Importar.....
+public function estatus_critico_importar(Request $request)
+{
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
 
+    try {
         Excel::import(new EstatusCriticoImport, $request->file('archivo_excel'));
+        return redirect()->route('estatus_critico')->with('success', 'Estatus critico importadas correctamente.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
 
-        return redirect()->route('estatus_critico')->with('success', 'Estatus críticos importados correctamente.');
+        $errorMessages = [];
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->route('estatus_critico')
+            ->with('error', 'Error en la importación:')
+            ->with('errorDetails', $errorMessages);
+    } catch (\Exception $e) {
+        return redirect()->route('estatus_critico')
+            ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
+  }
 }
-

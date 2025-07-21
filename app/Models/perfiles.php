@@ -13,4 +13,20 @@ class perfiles extends Model
     protected $fillable = [
         'nombre'
         ];
+
+        public static function validationRules(): array
+    {
+        return [
+            'nombre' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:100']
+        ];
+    }
+
+     public static function validationMessages(): array
+    {
+        return [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.regex'    => 'El nombre solo puede contener letras y espacios.',
+            'nombre.max'      => 'El nombre no debe exceder los 100 caracteres.'
+        ];
+    }
 }

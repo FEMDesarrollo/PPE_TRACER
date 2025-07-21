@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\EstacionProveedoresImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -12,7 +14,7 @@ use Carbon\Carbon;
 
 class EstacionProveedoresController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Estación proveedores: LISTA.....
     public function estacion_proveedores(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -91,17 +93,14 @@ class EstacionProveedoresController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Estación proveedores: REGISTRAR.....
     public function estacion_proveedores_registrar(Request $request)
     {
-        $this->validate($request, [
-        'id_proveedor' => 'required',
-        'id_estacion' => 'required'
-        ], [
-            'id_proveedor.required' => 'Debes seleccionar un proveedor.',
-
-            'id_estacion.required' => 'Debes seleccionar una estacion.',
-        ]);
+        $this->validate(
+            $request,
+            EstacionProveedores::validationRules(),
+            EstacionProveedores::validationMessages()
+        );
 
         EstacionProveedores::create([
             'id_proveedor' => $request->id_proveedor,
@@ -111,7 +110,7 @@ class EstacionProveedoresController extends Controller
         return redirect()->route('estacion_proveedores')->with('success', 'Relación estación-proveedor registrada correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Estación proveedores: DETALLE.....
     public function estacion_proveedores_detalle($id)
     {
         $query = EstacionProveedores::with('estacion', 'proveedor')->findOrFail($id);
@@ -119,7 +118,7 @@ class EstacionProveedoresController extends Controller
             ->with(['estacion_proveedor' => $query]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Estación proveedores: EDITAR.....
     public function estacion_proveedores_editar($id)
     {
         $query = EstacionProveedores::with('estacion', 'proveedor')->findOrFail($id);
@@ -130,17 +129,14 @@ class EstacionProveedoresController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Estación proveedores: SALVAR.....
     public function estacion_proveedores_salvar(EstacionProveedores $id, Request $request)
     {
-        $this->validate($request, [
-        'id_proveedor' => 'required',
-        'id_estacion' => 'required'
-        ], [
-            'id_proveedor.required' => 'Debes seleccionar un proveedor.',
-
-            'id_estacion.required' => 'Debes seleccionar una estacion.',
-        ]);
+         $this->validate(
+            $request,
+            EstacionProveedores::validationRules(),
+            EstacionProveedores::validationMessages()
+        );
 
         $query = EstacionProveedores::find($id->id);
         $query->id_proveedor = $request->id_proveedor;
@@ -150,10 +146,37 @@ class EstacionProveedoresController extends Controller
         return redirect()->route("estacion_proveedores")->with('success', 'Relación estación-proveedor actualizada correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //..................................................Estación proveedores: BORRAR.....
     public function estacion_proveedores_borrar(EstacionProveedores $id)
     {
         $id->delete();
         return redirect()->route('estacion_proveedores')->with('success', 'Relación estación-proveedor eliminada correctamente');
+    }
+
+    //.....................................................Accesorios: Importar.....
+    public function estacion_proveedores_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    try {
+        Excel::import(new EstacionProveedoresImport, $request->file('archivo_excel'));
+            return redirect()->route('estacion_proveedores')->with('success', 'Estaciones de proveedores importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('estacion_proveedores')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('estacion_proveedores')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

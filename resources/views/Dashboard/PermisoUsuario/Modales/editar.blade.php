@@ -1,3 +1,4 @@
+<!-- Modal de Editar -->
 <div class="modal fade" id="modalEditar{{ $permisouser->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modalEditarLabel{{ $permisouser->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -11,23 +12,33 @@
                     @csrf
                     @method('PUT')
                     <div class="row g-3">
-                        <div class="col-12 col-md-6 form-floating">
-                            <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario_edit_{{ $permisouser->id }}" required>
-                                @foreach($usuarios as $user)
-                                    <option value="{{ $user->id }}" {{ $permisouser->id_usuario == $user->id ? 'selected' : '' }}>{{ $user->nombre }}</option>
-                                @endforeach
-                            </select>
-                            <label for="id_usuario_edit_{{ $permisouser->id }}">Usuario</label>
-                            @error('id_usuario')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        <div class="col-12 col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario_edit_{{ $permisouser->id }}">
+                                    <option disabled selected>Selecciona una opción...</option>
+                                    @foreach($usuarios as $user)
+                                        <option value="{{ $user->id }}"
+                                        {{ old('id_usuario', $permisouser->id_usuario) == $user->id ? 'selected' : '' }}>
+                                        {{ $user->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <label for="id_usuario{{ $permisouser->id }}">Usuario</label>
+                                @error('id_usuario')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="col-12 col-md-6 form-floating">
-                            <select class="form-select @error('id_permiso') is-invalid @enderror" name="id_permiso" id="id_permiso_edit_{{ $permisouser->id }}" required>
+                            <select class="form-select @error('id_permiso') is-invalid @enderror" name="id_permiso" id="id_permiso_edit_{{ $permisouser->id }}">
+                                <option disabled selected>Selecciona una opción...</option>
                                 @foreach($permisos as $permiso)
-                                    <option value="{{ $permiso->id }}" {{ $permisouser->id_permiso == $permiso->id ? 'selected' : '' }}>{{ $permiso->permiso }}</option>
-                                @endforeach
+                                    <option value="{{ $permiso->id }}" 
+                                        {{ old('id_permiso', $permisouser->id_permiso) == $permiso->id ? 'selected' : '' }}>
+                                        @endforeach
+                                        {{ $permiso->permiso}}
+                                    </option>
                             </select>
                             <label for="id_permiso_edit_{{ $permisouser->id }}">Permiso</label>
                             @error('id_permiso')
@@ -36,15 +47,16 @@
                         </div>
 
                         <div class="col-12 col-md-6 form-floating">
-                            <select class="form-select @error('activo') is-invalid @enderror" name="activo" id="activo_edit_{{ $permisouser->id }}" required>
-                                <option value="1" {{ $permisouser->activo == 1 ? 'selected' : '' }}>Activo</option>
-                                <option value="0" {{ $permisouser->activo == 0 ? 'selected' : '' }}>No activo</option>
+                            <select class="form-select @error('activo') is-invalid @enderror" name="activo" id="activo_edit_{{ $permisouser->id }}">
+                                <option value="si" {{ (old('activo', $permisouser->activo) == 'si') ? 'selected' : '' }}>Si</option>
+                                <option value="no" {{ (old('activo', $permisouser->activo) == 'no') ? 'selected' : '' }}>No</option>
                             </select>
                             <label for="activo_edit_{{ $permisouser->id }}">Estado</label>
                             @error('activo')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
                     </div>
 
                     <div class="modal-footer d-flex justify-content-center w-100 mt-3">
@@ -56,3 +68,4 @@
         </div>
     </div>
 </div>
+<!-- Fin de Editar -->

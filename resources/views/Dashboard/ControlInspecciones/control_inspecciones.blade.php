@@ -102,9 +102,9 @@
                                                     Sin imagen
                                                 @endif
                                             </td>
-                                            <td>{{ Str::limit($controlins->descripcion, 30) }}</td>
-                                            <td>{{ $controlins->usuarios->nombre ?? 'Sin usuario' }}</td>
-                                            <td>{{ Str::limit($controlins->gestionInspecciones->observaciones ?? 'Sin observación', 30) }}</td>
+                                            <td>{{ $controlins->descripcion }}</td>
+                                            <td>{{ $controlins->usuarios->nombre }}</td>
+                                            <td>{{ $controlins->gestionInspecciones->observaciones }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <!-- Botón Editar -->

@@ -27,7 +27,7 @@ class verificacionCorreo extends Model
     {
         return [
            'codigo_verificacion' => ['required', 'regex:/^\d+$/', 'max:30'],
-            'fecha'               => ['required'],
+            'fecha'              => ['required'],
             'id_usuario'          => ['required', 'digits_between:1,10', 'regex:/^\d+$/']
         ];
     }

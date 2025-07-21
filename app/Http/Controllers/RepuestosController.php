@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\RepuestosImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\accesorios;
 use App\Models\proveedorServicio;
@@ -106,16 +108,23 @@ class RepuestosController extends Controller
     }
 
     //.....................................................Repuestos: REGISTRAR.....
-    public function repuestos_registrar(Request $request){
-        repuestos::create(array(
-            'costo' => $request->input('costo'),
-            'fecha_disponible' => $request->input('fecha_disponible'),
-            'id_prov_servicio' => $request->input('id_prov_servicio'),
-            'id_accesorio' => $request->input('id_accesorio')
+    public function repuestos_registrar(Request $request)
+    {
+        $this->validate(
+            $request,
+            repuestos::validationRules(),
+            repuestos::validationMessages()
+        );
+        
+        repuestos::create([
+            'costo' => $request-> costo,
+            'fecha_disponible' => $request->fecha_disponible,
+            'id_prov_servicio' => $request->id_prov_servicio,
+            'id_accesorio' => $request->id_accesorio
 
-        ));
+        ]);
 
-        return redirect()->route('repuestos');
+        return redirect()->route('repuestos')->with('success', 'El repuesto se ha creado correctamente.');
     }
 
     //....................................................Repuestos: DETALLE.....
@@ -141,12 +150,11 @@ class RepuestosController extends Controller
     //.....................................................Repuestos: SALVAR.....
     public function repuestos_salvar(repuestos $id, Request $request)
     {
-        $request->validate([
-            'costo' => 'required|numeric|min:0',
-            'fecha_disponible' => 'required|date',
-            'id_prov_servicio' => 'required|exists:proveedor_servicios,id',
-            'id_accesorio' => 'required|exists:accesorios,id'
-        ]);
+        $this->validate(
+            $request,
+            repuestos::validationRules(),
+            repuestos::validationMessages()
+        );
 
         $query = repuestos::find($id->id);
         $query->costo = $request->costo;
@@ -163,5 +171,32 @@ class RepuestosController extends Controller
     {
         $id->delete();
         return redirect()->route('repuestos')->with('success', 'Repuesto eliminado correctamente');
+    }
+
+    //.....................................................Accesorios: Importar.....
+    public function repuestos_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    try {
+        Excel::import(new RepuestosImport, $request->file('archivo_excel'));
+            return redirect()->route('repuestos')->with('success', 'Repuestos importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('repuestos')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('repuestos')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

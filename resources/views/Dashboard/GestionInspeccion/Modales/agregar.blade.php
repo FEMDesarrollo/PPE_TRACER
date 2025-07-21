@@ -11,7 +11,7 @@
                     <form action="{{ route('gestion_inspecciones_registrar') }}" method="POST" class="row g-3">
                         @csrf
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" name="observaciones" class="form-control @error('observaciones') is-invalid @enderror"" id="observaciones" placeholder="Observaciones" value="{{ old('observaciones') }}" required>
+                            <input type="text" name="observaciones" class="form-control @error('observaciones') is-invalid @enderror"" id="observaciones" placeholder="Observaciones" value="{{ old('observaciones') }}">
                             <label for="observaciones" class="ps-4">Observaciones</label>
                             @error('observaciones')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>

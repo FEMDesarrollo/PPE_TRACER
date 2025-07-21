@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\UsuariosEquiposImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -14,7 +16,7 @@ use Carbon\Carbon;
 
 class UsuariosEquiposController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Usuarios equipo: LISTA.....
     public function usuarios_equipos(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -40,40 +42,40 @@ class UsuariosEquiposController extends Controller
                 
                 switch ($timeFilter) {
                     case 'today':
-                        $query->whereDate('fecha_estatus', $now->toDateString());
+                        $query->whereDate('created_at', $now->toDateString());
                         break;
                     case 'this_week':
-                        $query->whereBetween('fecha_estatus', [
+                        $query->whereBetween('created_at', [
                             $now->copy()->startOfWeek()->toDateTimeString(),
                             $now->copy()->endOfWeek()->toDateTimeString()
                         ]);
                         break;
                     case 'this_month':
-                        $query->whereBetween('fecha_estatus', [
+                        $query->whereBetween('created_at', [
                             $now->copy()->startOfMonth()->toDateTimeString(),
                             $now->copy()->endOfMonth()->toDateTimeString()
                         ]);
                         break;
                     case 'last_week':
-                        $query->whereBetween('fecha_estatus', [
+                        $query->whereBetween('created_at', [
                             $now->copy()->subWeek()->startOfWeek()->toDateTimeString(),
                             $now->copy()->subWeek()->endOfWeek()->toDateTimeString()
                         ]);
                         break;
                     case 'last_month':
-                        $query->whereBetween('fecha_estatus', [
+                        $query->whereBetween('created_at', [
                             $now->copy()->subMonth()->startOfMonth()->toDateTimeString(),
                             $now->copy()->subMonth()->endOfMonth()->toDateTimeString()
                         ]);
                         break;
                     case 'last_3_months':
-                        $query->where('fecha_estatus', '>=', $now->copy()->subMonths(3)->toDateTimeString());
+                        $query->where('created_at', '>=', $now->copy()->subMonths(3)->toDateTimeString());
                         break;
                     case 'last_6_months':
-                        $query->where('fecha_estatus', '>=', $now->copy()->subMonths(6)->toDateTimeString());
+                        $query->where('created_at', '>=', $now->copy()->subMonths(6)->toDateTimeString());
                         break;
                     case 'last_year':
-                        $query->where('fecha_estatus', '>=', $now->copy()->subYear()->toDateTimeString());
+                        $query->where('created_at', '>=', $now->copy()->subYear()->toDateTimeString());
                         break;
                 }
             })
@@ -93,16 +95,14 @@ class UsuariosEquiposController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Usuarios equipo: REGISTRAR.....
     public function usuarios_equipos_registrar(Request $request)
     {
-        $request->validate([
-            'fecha_estatus' => 'required|date',
-            'comentarios' => 'required',
-            'id_estatus_equipo' => 'required',
-            'id_usuario' => 'required',
-            'id_equipo' => 'required'
-        ]);
+        $this->validate(
+            $request,
+            usuariosEquipos::validationRules(),
+            usuariosEquipos::validationMessages()
+        );
 
         usuariosEquipos::create([
             'fecha_estatus' => $request->fecha_estatus,
@@ -115,7 +115,7 @@ class UsuariosEquiposController extends Controller
         return redirect()->route('usuarios_equipos')->with('success', 'Relación usuario-equipo registrada correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Usuarios equipo: DETALLE.....
     public function usuarios_equipos_detalle($id)
     {
         $query = usuariosEquipos::with(['estatus_equipos', 'usuarios', 'equipos'])->find($id);
@@ -123,7 +123,7 @@ class UsuariosEquiposController extends Controller
             ->with(['usuario_equipo' => $query]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Usuarios equipo: EDITAR.....
     public function usuarios_equipos_editar($id)
     {
         $query = usuariosEquipos::with(['estatus_equipos', 'usuarios', 'equipos'])->find($id);
@@ -136,16 +136,14 @@ class UsuariosEquiposController extends Controller
             ]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Usuarios equipo: SALVAR.....
     public function usuarios_equipos_salvar(usuariosEquipos $id, Request $request)
     {
-        $request->validate([
-            'fecha_estatus' => 'required|date',
-            'comentarios' => 'required',
-            'id_estatus_equipo' => 'required',
-            'id_usuario' => 'required',
-            'id_equipo' => 'required'
-        ]);
+        $this->validate(
+            $request,
+            usuariosEquipos::validationRules(),
+            usuariosEquipos::validationMessages()
+        );
 
         $query = usuariosEquipos::find($id->id);
         $query->fecha_estatus = $request->fecha_estatus;
@@ -158,10 +156,37 @@ class UsuariosEquiposController extends Controller
         return redirect()->route("usuarios_equipos")->with('success', 'Relación usuario-equipo actualizada correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //.....................................................Usuarios equipo: BORRAR.....
     public function usuarios_equipos_borrar(usuariosEquipos $id)
     {
         $id->delete();
         return redirect()->route('usuarios_equipos')->with('success', 'Relación usuario-equipo eliminada correctamente');
+    }
+
+    //.....................................................Usuarios equipos: Importar.....
+    public function usuarios_equipos_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    try {
+        Excel::import(new UsuariosEquiposImport, $request->file('archivo_excel'));
+            return redirect()->route('usuarios_equipos')->with('success', 'Usuarios de equipos importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('usuarios_equipos')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('usuarios_equipos')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

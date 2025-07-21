@@ -7,12 +7,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 <form action="{{ route('control_inspecciones_registrar') }}" method="POST" class="row g-3" enctype="multipart/form-data">
                     {{ csrf_field() }}
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select name="respuestas" class="form-select @error('respuestas') is-invalid @enderror" id="respuestas" required>
+                        <select name="respuestas" class="form-select @error('respuestas') is-invalid @enderror" id="respuestas">
                             <option selected disabled>Seleccione una opción...</option>
                             <option value="si" {{ old('respuestas') == 'si' ? 'selected' : '' }}>Sí</option>
                             <option value="no" {{ old('respuestas') == 'no' ? 'selected' : '' }}>No</option>
@@ -25,7 +24,7 @@
 
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="date" name="fecha" class="form-control @error('fecha') is-invalid @enderror" id="fecha" placeholder="Fecha" value="{{ old('fecha') }}" required>
+                        <input type="date" name="fecha" class="form-control @error('fecha') is-invalid @enderror" id="fecha" placeholder="Fecha" value="{{ old('fecha') }}">
                         <label for="fecha" class="ps-4">Fecha</label>
                         @error('fecha')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -44,7 +43,7 @@
 
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="text" name="descripcion" class="form-control @error('descripcion') is-invalid @enderror" id="descripcion" placeholder="Descripcion" value="{{ old('descripcion') }}" required>
+                        <input type="text" name="descripcion" class="form-control @error('descripcion') is-invalid @enderror" id="descripcion" placeholder="Descripcion" value="{{ old('descripcion') }}">
                         <label for="descripcion" class="ps-4">Descripción</label>
                         @error('descripcion')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -80,7 +79,7 @@
 
 
                     <div class="modal-footer d-flex justify-content-center w-100">
-                        <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
+                        <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Guardar</button>
                         <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
                     </div>
                 </form>
@@ -89,13 +88,13 @@
     </div>
 </div>
 
-    <!--Redirección de formulario si hay errores en las validaciones -->
-    @if ($errors->any())
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
-                myModal.show();
-            });
-        </script>
-    @endif
-    <!--Fin de redirección de formulario si hay errores en las validaciones -->
+<!--Redirección de formulario si hay errores en las validaciones -->
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
+            myModal.show();
+        });
+    </script>
+@endif
+<!--Fin de redirección de formulario si hay errores en las validaciones -->

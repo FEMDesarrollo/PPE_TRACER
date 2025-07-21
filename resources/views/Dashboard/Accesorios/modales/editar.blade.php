@@ -11,6 +11,7 @@
                 <form action="{{ route('accesorios_salvar', ['id' => $accesorio->id]) }}" method="post" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
+
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
@@ -71,7 +72,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <label for="id_equipo{{ $accesorio->id }}">Servicio</label>
+                                <label for="id_equipo{{ $accesorio->id }}">Equipo</label>
                                 @error('id_equipo')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -79,7 +80,7 @@
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center w-100 mt-4">
-                        <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Editar</button>
+                        <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Guardar</button>
                         <button type="button" class="btn" data-bs-dismiss="modal"
                             style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
                     </div>

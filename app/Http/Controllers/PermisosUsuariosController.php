@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\PermisosUsuariosImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\PermisosUsuarios;
 use App\Models\Usuarios;
@@ -10,7 +12,7 @@ use Carbon\Carbon;
 
 class PermisosUsuariosController extends Controller
 {
-    //.....................................................Grupo: Lista.....
+    //.....................................................Permisos usuarios: LISTA.....
     public function permisos_usuarios(Request $request)
     {
         $perPage = $request->input('per_page', 5);
@@ -86,18 +88,14 @@ class PermisosUsuariosController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: REGISTRAR.....
+    //.....................................................Permisos usuarios: REGISTRAR.....
     public function permisos_usuarios_registrar(Request $request)
     {
-        $this->validate($request, [
-            'id_usuario' => 'required|exists:usuarios,id',
-            'id_permiso' => 'required|exists:permisos,id',
-            'activo' => 'required|boolean'
-        ],[
-            'id_usuario.required' => 'El usuario es obligatorio.',
-            'id_permiso.required' => 'El permiso es obligatorio.',
-            'activo.required' => 'El estatus es obligatorio.',
-        ]);
+        $this->validate(
+            $request,
+            PermisosUsuarios::validationRules(),
+            PermisosUsuarios::validationMessages()
+        );
 
         PermisosUsuarios::create([
             'id_usuario' => $request->id_usuario,
@@ -108,7 +106,7 @@ class PermisosUsuariosController extends Controller
         return redirect()->route('permisos_usuarios')->with('success', 'Permiso de usuario registrado correctamente');
     }
 
-    //....................................................Grupo: detalle.....
+    //....................................................Permisos usuarios: DETALLE.....
     public function permisos_usuarios_detalle($id)
     {
         $query = PermisosUsuarios::with(['usuario', 'permiso'])->findOrFail($id);
@@ -119,7 +117,7 @@ class PermisosUsuariosController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: EDITAR.....
+    //.....................................................Permisos usuarios: EDITAR.....
     public function permisos_usuarios_editar($id)
     {
         $query = PermisosUsuarios::with(['usuario', 'permiso'])->findOrFail($id);
@@ -130,14 +128,14 @@ class PermisosUsuariosController extends Controller
         ]);
     }
 
-    //.....................................................Grupos: SALVAR.....
+    //.....................................................Permisos usuarios: SALVAR.....
     public function permisos_usuarios_salvar(PermisosUsuarios $id, Request $request)
     {
-        $this->validate($request, [
-            'id_usuario' => 'required|exists:usuarios,id',
-            'id_permiso' => 'required|exists:permisos,id',
-            'activo' => 'required|boolean'
-        ]);
+        $this->validate(
+            $request,
+            PermisosUsuarios::validationRules(),
+            PermisosUsuarios::validationMessages()
+        );
 
         $query = PermisosUsuarios::findOrFail($id->id);
         $query->id_usuario = $request->id_usuario;
@@ -148,10 +146,37 @@ class PermisosUsuariosController extends Controller
         return redirect()->route("permisos_usuarios")->with('success', 'Permiso de usuario actualizado correctamente');
     }
 
-    //..................................................Grupo: Borrar.....
+    //.....................................................Permisos usuarios: BORRAR.....
     public function permisos_usuarios_borrar(PermisosUsuarios $id)
     {
         $id->delete();
         return redirect()->route('permisos_usuarios')->with('success', 'Permiso de usuario eliminado correctamente');
+    }
+
+    //.....................................................Permisos usuarios: Importar.....
+    public function permisos_usuarios_importar(Request $request)
+    {
+    $request->validate([
+        'archivo_excel' => 'required|file|mimes:xlsx,xls'
+    ]);
+
+    try {
+        Excel::import(new PermisosUsuariosImport, $request->file('archivo_excel'));
+            return redirect()->route('permisos_usuarios')->with('success', 'Permisos de usuarios importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('permisos_usuarios')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('permisos_usuarios')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

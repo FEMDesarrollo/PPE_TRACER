@@ -120,7 +120,7 @@ class UsuariosController extends Controller
                 'apm' => $request->apm,
                 'telefono' => $request->telefono,
                 'correo' => $request->correo,
-                'password' => $request->password, 
+                'password' => $request->password,
                 'foto' => $img2,
                 'id_estacion' => $request->id_estacion,
                 'id_subestacion' => $request->id_subestacion,
@@ -153,8 +153,8 @@ class UsuariosController extends Controller
             usuarios::validationMessages()
         );
 
-            $fot2 = $request->foto; 
-            
+            $fot2 = $request->foto;
+
             if($request->file('foto1') != '') {
             $file = $request->file('foto1');
             $img = $file->getClientOriginalName();
@@ -175,7 +175,7 @@ class UsuariosController extends Controller
             $query->id_subestacion = $request->id_subestacion;
             $query->id_perfil = $request->id_perfil;
             $query->save();
-                
+
             return redirect()->route("usuarios")->with('success', 'Usuario actualizado correctamente');
     }
 

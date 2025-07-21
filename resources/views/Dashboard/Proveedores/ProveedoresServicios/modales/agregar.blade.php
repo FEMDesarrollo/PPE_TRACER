@@ -13,7 +13,7 @@
 
                         <div class="col-12 col-sm-6 col-md-6">
                             <div class="form-floating">
-                                <select name="id_servicio" class="form-select @error('id_servicio') is-invalid @enderror" id="id_servicio" required>
+                                <select name="id_servicio" class="form-select @error('id_servicio') is-invalid @enderror" id="id_servicio" >
                                     <option disabled selected>Selecciona una opción...</option>
                                     @foreach($servicios as $servis)
                                         <option value="{{ $servis->id }}">{{ $servis->servicio }}</option>

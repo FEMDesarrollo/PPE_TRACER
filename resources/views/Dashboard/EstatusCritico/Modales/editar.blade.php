@@ -14,8 +14,8 @@
                             <div class="row g-3">
                                 <div class="col-12 col-sm-6 col-md-6 form-floating">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control w-100" name="estatus" id="estatus{{ $estado->id }}" 
-                                            placeholder="Estatus" value="{{ $estado->estatus }}" required>
+                                        <input type="text" class="form-control w-100" name="estatus" id="estatus{{ $estado->id }}"
+                                            placeholder="Estatus" value="{{ $estado->estatus }}" >
                                         <label for="estatus{{ $estado->id }}">Estatus</label>
                                     </div>
                                 </div>

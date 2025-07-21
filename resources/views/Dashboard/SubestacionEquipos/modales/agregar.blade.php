@@ -21,7 +21,7 @@
 
                         <div class="col-12 col-sm-6 col-md-6">
                             <div class="form-floating">
-                                <select name="id_equipo" class="form-select @error('id_equipo') is-invalid @enderror" id="id_equipo" required>
+                                <select name="id_equipo" class="form-select @error('id_equipo') is-invalid @enderror" id="id_equipo" >
                                     <option disabled selected>Selecciona una opción...</option>
                                     @foreach($equipos as $equip)
                                         <option value="{{ $equip->id }}" {{ old('id_equipo') == $equip->id ? 'selected' : '' }}>
@@ -38,7 +38,7 @@
 
                         <div class="col-12 col-sm-6 col-md-6">
                             <div class="form-floating">
-                                <select name="id_estacion" class="form-select @error('id_estacion') is-invalid @enderror" id="id_estacion" required>
+                                <select name="id_estacion" class="form-select @error('id_estacion') is-invalid @enderror" id="id_estacion" >
                                     <option selected disabled>Selecciona una opción...</option>
                                     @foreach($estaciones as $estacion)
                                         <option value="{{ $estacion->id }}" {{ old('id_estacion') == $estacion->id ? 'selected' : '' }}>
@@ -55,7 +55,7 @@
 
                         <div class="col-12 col-sm-6 col-md-6">
                             <div class="form-floating">
-                                <select name="id_subestacion" class="form-select @error('id_subestacion') is-invalid @enderror" id="id_subestacion" required>
+                                <select name="id_subestacion" class="form-select @error('id_subestacion') is-invalid @enderror" id="id_subestacion" >
                                     <option selected disabled>Selecciona una opción...</option>
                                     @foreach($subEstacion as $sestacion)
                                         <option value="{{ $sestacion->id }}" {{ old('id_subestacion') == $sestacion->id ? 'selected' : '' }}>

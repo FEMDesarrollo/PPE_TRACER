@@ -128,12 +128,22 @@
                             <span class="text-bling fw-bold p-3" style="color: #222944">
                                 Mostrando del {{ $estacion_proveedores->firstItem() }} al {{ $estacion_proveedores->lastItem() }} de {{ $estacion_proveedores->total() }} Relaciones
                             </span>
+
+                            <!-- Botón para Importar Información -->
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
+                                    Importar Información
+                                </button>
+
+                            <!-- Botón Plantilla Excel --> 
+                            <a href="{{ url('/plantilla-estacion-proveedores') }}" class="btn btn-success">Descargar Plantilla Excel</a>
                             
                             <!-- Botón Exportar de tabla -->
                             <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                 Exportar información
                             </button>
                         </div>
+                    </div>
 
                         <!-- Paginación -->
                         <div class="d-flex justify-content-center mt-3 pagination-container">

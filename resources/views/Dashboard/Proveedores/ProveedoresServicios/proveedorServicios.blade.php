@@ -134,9 +134,13 @@
 
                             <!-- Botón para Importar Información -->
                             <div class="d-flex gap-2">
+
                              <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
                                 Importar Información
                              </button>
+
+                            <!-- Botón Plantilla Excel -->
+                            <a href="{{ url('/plantilla-proveedor-servicio') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
                             <!-- Botón Exportar de tabla -->
                             <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
@@ -168,7 +172,7 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
 
                         <!-- Paginación -->
                         <div class="d-flex justify-content-center mt-3 pagination-container">

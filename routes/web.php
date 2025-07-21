@@ -28,6 +28,32 @@ use App\Http\Controllers\DetallesEquipoController;
 use App\Http\Controllers\DetallesEstatusController;
 use App\Http\Controllers\VerificacionCorreoController;
 
+// ------------------------------- Ruta para descargar la plantilla -------------------------------------------
+use App\Exports\PlantillaAccesorios;
+use App\Exports\PlantillaCategorias;
+use App\Exports\PlantillaControlAsignaciones;
+use App\Exports\PlantillaControlInspecciones;
+use App\Exports\PlantillaDetallesEquipo;
+use App\Exports\PlantillaDetallesEstatus;
+use App\Exports\PlantillaEquipos;
+use App\Exports\PlantillaEstaciones;
+use App\Exports\PlantillaEstacionProveedores;
+use App\Exports\PlantillaEstatusCritico;
+use App\Exports\PlantillaEstatusEquipos;
+use App\Exports\PlantillaGestionInspecciones;
+use App\Exports\PlantillaPerfiles;
+use App\Exports\PlantillaPermisos;
+use App\Exports\PlantillaPermisosUsuarios;
+use App\Exports\PlantillaProveedores;
+use App\Exports\PlantillaProveedorServicio;
+use App\Exports\PlantillaRepuestos;
+use App\Exports\PlantillaServicios;
+use App\Exports\PlantillaSubestacion;
+use App\Exports\PlantillaSubestacionEquipos;
+use App\Exports\PlantillaUsuarios;
+use App\Exports\PlantillaUsuariosEquipos;
+use App\Exports\PlantillaVerificacionCorreo;
+
 
 
 Route::get('/dashboard', function (){
@@ -312,3 +338,101 @@ Route::name('repuestos_detalle')->get('/repuestos_detalle/{id}',[RepuestosContro
 Route::name('repuestos_editar')->get('/repuestos_editar/{id}',[RepuestosController::class, 'repuestos_editar']);
 Route::name('repuestos_salvar')->put('/repuestos_salvar/{id}',[RepuestosController::class, 'repuestos_salvar']);
 Route::name('repuestos_borrar')->delete('/repuestos_borrar/{id}',[RepuestosController::class, 'repuestos_borrar']);
+
+
+//---------------------------------RUTAS: Plantilla Excel
+Route::get('/plantilla-accesorios', function () {
+    return Excel::download(new PlantillaAccesorios, 'plantilla_accesorios.xlsx');
+});
+
+Route::get('/plantilla-categorias', function () {
+    return Excel::download(new PlantillaCategorias, 'plantilla_categorias.xlsx');
+});
+
+Route::get('/plantilla-control-asignaciones', function () {
+    return Excel::download(new PlantillaControlAsignaciones, 'plantilla_control_asignaciones.xlsx');
+});
+
+Route::get('/plantilla-control-inspecciones', function () {
+    return Excel::download(new PlantillaControlInspecciones, 'plantilla_control_inspecciones.xlsx');
+});
+
+Route::get('/plantilla-detalles-equipo', function () {
+    return Excel::download(new PlantillaDetallesEquipo, 'plantilla_detalles_equipo.xlsx');
+});
+
+Route::get('/plantilla-detalles-estatus', function () {
+    return Excel::download(new PlantillaDetallesEstatus, 'plantilla_detalles_estatus.xlsx');
+});
+
+Route::get('/plantilla-equipos', function () {
+    return Excel::download(new PlantillaEquipos, 'plantilla_equipos.xlsx');
+});
+
+Route::get('/plantilla-estaciones', function () {
+    return Excel::download(new PlantillaEstaciones, 'plantilla_estaciones.xlsx');
+});
+
+Route::get('/plantilla-estacion-proveedores', function () {
+    return Excel::download(new PlantillaEstacionProveedores, 'plantilla_estacion_proveedores.xlsx');
+});
+
+Route::get('/plantilla-estatus-critico', function () {
+    return Excel::download(new PlantillaEstatusCritico, 'plantilla_estatus_critico.xlsx');
+});
+
+Route::get('/plantilla-estatus-equipos', function () {
+    return Excel::download(new PlantillaEstatusEquipos, 'plantilla_estatus_equipos.xlsx');
+});
+
+Route::get('/plantilla-gestion-inspecciones', function () {
+    return Excel::download(new PlantillaGestionInspecciones, 'plantilla_gestion_inspecciones.xlsx');
+});
+
+Route::get('/plantilla-perfiles', function () {
+    return Excel::download(new PlantillaPerfiles, 'plantilla_perfiles.xlsx');
+});
+
+Route::get('/plantilla-permisos', function () {
+    return Excel::download(new PlantillaPermisos, 'plantilla_permisos.xlsx');
+});
+
+Route::get('/plantilla-permisos-usuarios', function () {
+    return Excel::download(new PlantillaPermisosUsuarios, 'plantilla_permisos_usuarios.xlsx');
+});
+
+Route::get('/plantilla-proveedores', function () {
+    return Excel::download(new PlantillaProveedores, 'plantilla_proveedores.xlsx');
+});
+
+Route::get('/plantilla-proveedor-servicio', function () {
+    return Excel::download(new PlantillaProveedorServicio, 'plantilla_proveedor_servicio.xlsx');
+});
+
+Route::get('/plantilla-repuestos', function () {
+    return Excel::download(new PlantillaRepuestos, 'plantilla_repuestos.xlsx');
+});
+
+Route::get('/plantilla-servicios', function () {
+    return Excel::download(new PlantillaServicios, 'plantilla_servicios.xlsx');
+});
+
+Route::get('/plantilla-subestacion', function () {
+    return Excel::download(new PlantillaSubestacion, 'plantilla_subestacion.xlsx');
+});
+
+Route::get('/plantilla-subestacion-equipos', function () {
+    return Excel::download(new PlantillaSubestacionEquipos, 'plantilla_subestacion_equipos.xlsx');
+});
+
+Route::get('/plantilla-usuarios', function () {
+    return Excel::download(new PlantillaUsuarios, 'plantilla_usuarios.xlsx');
+});
+
+Route::get('/plantilla-usuarios-equipos', function () {
+    return Excel::download(new PlantillaUsuariosEquipos, 'plantilla_usuarios_equipos.xlsx');
+});
+
+Route::get('/plantilla-verificacion-correo', function () {
+    return Excel::download(new PlantillaVerificacionCorreo, 'plantilla_verificacion_correo.xlsx');
+});

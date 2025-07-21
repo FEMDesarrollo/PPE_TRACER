@@ -129,50 +129,53 @@
                             </table>
                         </div>
 
-                        <!-- Contenedor inferior de tabla -->
-                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3">
-                                <!-- Mostrando equipos -->
-                                <span class="text-bling fw-bold p-3" style="color: #222944">
-                                    Mostrando del {{ $subestacionEquipos->firstItem() }} al {{ $subestacionEquipos->lastItem() }} de {{ $subestacionEquipos->total() }} Equipos
-                                </span>
-
-                                <!-- Botones de Importar y Exportar -->
-                                <div class="d-flex gap-2">
-                                    <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
-                                        Importar Información
-                                    </button>
-
-                                    <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                                        Exportar información
-                                    </button>
-                                </div>
-                            </div>
 
 
-                            <!-- Modal -->
+                        <!-- Modal -->
                         <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                <form action="{{ route('subestacion_equipos.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
-                                    @csrf
-                                    <div class="modal-header">
-                                    <h5 class="modal-title" id="importModalLabel">Importar archivo Excel</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                    </div>
+                                    <form action="{{ route('subestacion_equipos.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                                        @csrf
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="importModalLabel">Importar archivo Excel</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
 
-                                    <div class="modal-body">
-                                    <input type="file" name="archivo_excel" class="form-control w-auto" required>
-                                    </div>
+                                        <div class="modal-body">
+                                            <input type="file" name="archivo_excel" class="form-control w-auto" required>
+                                        </div>
 
-                                    <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" class="btn btn-success" style="background-color: #222944; color: white; border-color:#222944">Importar Excel</button>
-                                    </div>
-                                </form>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success" style="background-color: #222944; color: white; border-color:#222944">Importar Excel</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
 
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3">
+                            <!-- Mostrando equipos -->
+                            <span class="text-bling fw-bold p-3" style="color: #222944">
+                                Mostrando del {{ $subestacionEquipos->firstItem() }} al {{ $subestacionEquipos->lastItem() }} de {{ $subestacionEquipos->total() }} Equipos
+                            </span>
+
+                            <!-- Botón para Importar Información -->
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
+                                    Importar Información
+                                </button>
+
+                                <!-- Botón Plantilla Excel -->
+                                <a href="{{ url('/plantilla-subestacion-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
+
+                                <!-- Botón Exportar de tabla -->
+                                <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
+                                    Exportar información
+                                </button>
+                            </div>
+                        </div>
 
                         <!-- Paginación -->
                         <div class="d-flex justify-content-center mt-3 pagination-container">

@@ -141,6 +141,10 @@
                                 Importar Información
                              </button>
 
+                             <!-- Botón Plantilla Excel -->
+                            <a href="{{ url('/plantilla-subestacion') }}" class="btn btn-success">Descargar Plantilla Excel</a>
+
+
                             <!-- Botón Exportar de tabla -->
                             <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                 Exportar información

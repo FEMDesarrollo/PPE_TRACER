@@ -14,22 +14,22 @@
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control w-100" name="nombre" id="nombreUsuario{{ $proveedor->id }}" 
-                                            placeholder="Nombre" value="{{ $proveedor->nombre }}" required>
+                                        <input type="text" class="form-control w-100" name="nombre" id="nombreUsuario{{ $proveedor->id }}"
+                                            placeholder="Nombre" value="{{ $proveedor->nombre }}" >
                                         <label for="nombreUsuario{{ $proveedor->id }}">Nombre</label>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control w-100" name="direccion" id="direccion{{ $proveedor->id }}" 
-                                            placeholder="Dirección" value="{{ $proveedor->direccion }}" required>
+                                        <input type="text" class="form-control w-100" name="direccion" id="direccion{{ $proveedor->id }}"
+                                            placeholder="Dirección" value="{{ $proveedor->direccion }}" >
                                         <label for="direccion{{ $proveedor->id }}">Dirección</label>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control w-100" name="telefono" id="telefono{{ $proveedor->id }}" 
-                                            placeholder="Teléfono" value="{{ $proveedor->telefono }}" required>
+                                        <input type="text" class="form-control w-100" name="telefono" id="telefono{{ $proveedor->id }}"
+                                            placeholder="Teléfono" value="{{ $proveedor->telefono }}" >
                                         <label for="telefono{{ $proveedor->id }}">Teléfono</label>
                                     </div>
                                 </div>

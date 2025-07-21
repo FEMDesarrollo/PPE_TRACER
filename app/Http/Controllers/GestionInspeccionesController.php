@@ -83,9 +83,9 @@ class GestionInspeccionesController extends Controller
     //.....................................................Gestión de inspecciones: REGISTRAR.....
     public function gestion_inspecciones_registrar(Request $request)
     {
-        $this->validate($request, 
+        $this->validate($request,
         gestionInspecciones::validationRules(),
-        gestionInspecciones::validationMessages() 
+        gestionInspecciones::validationMessages()
     );
 
         gestionInspecciones::create([
@@ -116,9 +116,9 @@ class GestionInspeccionesController extends Controller
     //.....................................................Gestión de inspecciones: SALVAR.....
     public function gestion_inspecciones_salvar(gestionInspecciones $id, Request $request)
     {
-        $this->validate($request, 
+        $this->validate($request,
         gestionInspecciones::validationRules(),
-        gestionInspecciones::validationMessages() 
+        gestionInspecciones::validationMessages()
     );
 
         $query = gestionInspecciones::find($id->id);

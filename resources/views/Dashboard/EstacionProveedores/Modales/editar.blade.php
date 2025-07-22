@@ -14,10 +14,10 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <select class="form-select @error('id_proveedor') is-invalid @enderror" name="id_proveedor" id="id_proveedor{{ $eproveedor->id }}">
+                                <select class="form-select @error('id_proveedor') is-invalid @enderror" name="id_proveedor" id="id_proveedor{{ $eproveedor->id }}" >
                                     <option disabled selected>Selecciona una opción...</option>
                                     @foreach($proveedores as $proveedor)
-                                        <option value="{{ $proveedor->id }}" 
+                                        <option value="{{ $proveedor->id }}"
                                             {{ old('id_proveedor', $eproveedor->id_proveedor) == $proveedor->id ? 'selected' : '' }}>
                                             {{ $proveedor->nombre }}
                                         </option>
@@ -34,7 +34,7 @@
                                 <select class="form-select @error('id_estacion') is-invalid @enderror" name="id_estacion" id="id_estacion{{ $eproveedor->id }}">
                                     <option disabled selected>Selecciona una opción...</option>
                                     @foreach($estaciones as $estacion)
-                                        <option value="{{ $estacion->id }}" 
+                                        <option value="{{ $estacion->id }}"
                                             {{ old('id_estacion', $eproveedor->id_estacion) == $estacion->id ? 'selected' : '' }}>
                                             {{ $estacion->nombre }}
                                         </option>
@@ -49,7 +49,7 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-center w-100 mt-4">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                            Editar 
+                            Editar
                         </button>
                         <button type="button" class="btn" data-bs-dismiss="modal"
                             style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">

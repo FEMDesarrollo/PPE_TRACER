@@ -36,7 +36,7 @@ class verificacionCorreo extends Model
     {
         return [
             'codigo_verificacion.required' => 'El código es obligatorio.',
-            'codigo_verificacion.regex' => 'El código no es válido.',
+            'codigo_verificacion.regex' => 'El código solo acepta números.',
             'codigo_verificacion.max' => 'El código es muy largo.',
 
             'fecha.required' => 'La fecha es obligatoria.',

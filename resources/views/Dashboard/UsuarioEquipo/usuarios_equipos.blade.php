@@ -20,7 +20,7 @@
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                         <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                                     </select>
-                                    
+
                                     @if(request('search'))
                                         <input type="hidden" name="search" value="{{ request('search') }}">
                                     @endif
@@ -60,7 +60,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <!-- Botón Agregar en tabla -->
                             <div class="col-12 col-md-3 text-md-end">
                                 <a href="{{ route('usuarios_equipos') }}" class="btn btn-secondary me-md-2">
@@ -99,22 +99,22 @@
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <!-- Botón Editar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEditar{{ $userequipo->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEditar{{ $userequipo->id }}"
                                                         style="color: #222944">
                                                         <i class="bi bi-pencil-square fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEliminar{{ $userequipo->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEliminar{{ $userequipo->id }}"
                                                         style="color: #cf0a2c">
                                                         <i class="bi bi-trash fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Ver -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalVer{{ $userequipo->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalVer{{ $userequipo->id }}"
                                                         style="color: #212121">
                                                         <i class="bi bi-eye fs-5"></i>
                                                     </button>
@@ -143,8 +143,8 @@
                                     Importar Información
                                 </button>
 
-                            <!-- Botón Plantilla Excel --> 
-                            <a href="{{ url('/plantilla-usuarios-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
+                                <!-- Botón Plantilla Excel -->
+                                <a href="{{ url('/plantilla-usuarios-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
                                 <!-- Botón para  Exportar información -->
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
@@ -210,10 +210,10 @@
         function changeEntries(select) {
             const perPage = select.value;
             const url = new URL(window.location.href);
-            
+
             // Actualiza el parámetro per_page en la URL
             url.searchParams.set('per_page', perPage);
-            
+
             // Recarga la página con el nuevo parámetro
             window.location.href = url.toString();
         }
@@ -234,5 +234,5 @@
         @endif
     </script>
     @endpush
-    
+
 @endsection

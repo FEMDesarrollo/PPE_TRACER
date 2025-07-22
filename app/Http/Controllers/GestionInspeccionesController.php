@@ -83,9 +83,9 @@ class GestionInspeccionesController extends Controller
     //.....................................................Gestión de inspecciones: REGISTRAR.....
     public function gestion_inspecciones_registrar(Request $request)
     {
-        $this->validate($request, 
+        $this->validate($request,
         gestionInspecciones::validationRules(),
-        gestionInspecciones::validationMessages() 
+        gestionInspecciones::validationMessages()
     );
 
         gestionInspecciones::create([
@@ -116,9 +116,9 @@ class GestionInspeccionesController extends Controller
     //.....................................................Gestión de inspecciones: SALVAR.....
     public function gestion_inspecciones_salvar(gestionInspecciones $id, Request $request)
     {
-        $this->validate($request, 
+        $this->validate($request,
         gestionInspecciones::validationRules(),
-        gestionInspecciones::validationMessages() 
+        gestionInspecciones::validationMessages()
     );
 
         $query = gestionInspecciones::find($id->id);
@@ -144,7 +144,7 @@ public function gestion_inspecciones_importar(Request $request)
 
     try {
         Excel::import(new GestionInspeccionesImport, $request->file('archivo_excel'));
-        return redirect()->route('gestion_inspecciones')->with('success', 'Inspecciones importadas correctamente.');
+        return redirect()->route('gestion_inspecciones')->with('success', 'Gestion Inspecciones importadas correctamente.');
     } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
         $failures = $e->failures();
 

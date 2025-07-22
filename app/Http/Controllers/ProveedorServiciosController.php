@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ProveedorServicioImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\proveedorServicio;
 use App\Models\proveedores;
 use App\Models\servicios;
@@ -16,7 +20,7 @@ class ProveedorServiciosController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $proveedorServicios = proveedorServicio::with(['servicio', 'proveedor'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -32,7 +36,7 @@ class ProveedorServiciosController extends Controller
             })
                 ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -79,10 +83,10 @@ class ProveedorServiciosController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         $servicios = servicios::all();
         $proveedores = proveedores::all();
-        
+
         return view('Dashboard.Proveedores.ProveedoresServicios.proveedorServicios', compact(
             'proveedorServicios',
             'servicios',
@@ -93,16 +97,17 @@ class ProveedorServiciosController extends Controller
     //.....................................................Proveedor_Servicios: REGISTRAR.....
     public function proveedor_servicios_registrar(Request $request)
     {
-        $this->validate($request, [
-            'id_servicio' => 'required|exists:servicios,id',
-            'id_proveedor' => 'required|exists:proveedores,id'
-        ]);
+        $this->validate(
+            $request,
+            ProveedorServicio::validationRules(),
+            ProveedorServicio::validationMessages()
+        );
 
         // Verificar si ya existe esta relación
         $existente = ProveedorServicio::where('id_servicio', $request->id_servicio)
             ->where('id_proveedor', $request->id_proveedor)
             ->first();
-            
+
         if ($existente) {
             return redirect()->back()->with('error', 'Esta relación proveedor-servicio ya existe');
         }
@@ -128,7 +133,7 @@ class ProveedorServiciosController extends Controller
         $proveedorServicio = ProveedorServicio::findOrFail($id);
         $servicios = Servicio::all();
         $proveedores = Proveedor::all();
-        
+
         return view("Dashboard.Proveedores.ProveedoresServicios.proveedorServiciosEditar", compact(
             'proveedorServicio',
             'servicios',
@@ -139,19 +144,20 @@ class ProveedorServiciosController extends Controller
     //.....................................................Proveedor_Servicios: SALVAR.....
     public function proveedor_servicios_salvar(Request $request, $id)
     {
-        $this->validate($request, [
-            'id_servicio' => 'required|exists:servicios,id',
-            'id_proveedor' => 'required|exists:proveedores,id'
-        ]);
+        $this->validate(
+            $request,
+            ProveedorServicio::validationRules(),
+            ProveedorServicio::validationMessages()
+        );
 
         $proveedorServicio = ProveedorServicio::findOrFail($id);
-        
+
         // Verificar si ya existe esta relación (excluyendo el actual)
         $existente = ProveedorServicio::where('id_servicio', $request->id_servicio)
             ->where('id_proveedor', $request->id_proveedor)
             ->where('id', '!=', $id)
             ->first();
-            
+
         if ($existente) {
             return redirect()->back()->with('error', 'Esta relación proveedor-servicio ya existe');
         }
@@ -169,7 +175,34 @@ class ProveedorServiciosController extends Controller
     {
         $proveedorServicio = ProveedorServicio::findOrFail($id);
         $proveedorServicio->delete();
-        
+
         return redirect()->route('proveedor_servicios')->with('success', 'Relación proveedor-servicio eliminada correctamente');
+    }
+
+    //..................................................Subestación: Importar.....
+    public function proveedor_servicios_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        try {
+        Excel::import(new ProveedorServicioImport, $request->file('archivo_excel'));
+            return redirect()->route('proveedor_servicios')->with('success', 'Proveedores servicios importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('proveedor_servicios')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('proveedor_servicios')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ControlAsignacionImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -95,37 +97,18 @@ class ControlAsignacionesController extends Controller
     //.....................................................Grupos: REGISTRAR.....
     public function control_asignaciones_registrar(Request $request)
     {
-         $this->validate($request, [
-        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
-            'fecha_asignacion' => ['required','date','before_or_equal:fecha_devolucion'],
-            'fecha_devolucion' => ['required','date','after_or_equal:fecha_asignacion'],
-            'id_usuario_equipo' => 'required',
-            'id_estatus_critico' => 'required'
-        ], [
-            'observaciones.required' => 'Las observaciones son obligatorias.',
-            'observaciones.regex' => 'Las observaciones solo pueden contener letras y espacios.',
-            'observaciones.max' => 'Las observaciones no deben exceder los 50 caracteres.',
-
-            'fecha_asignacion.required' => 'La fecha de asignación es obligatoria.',
-            'fecha_asignacion.date' => 'La fecha de asignación debe ser una fecha válida.',
-            'fecha_asignacion.before_or_equal' => 'La fecha de asignación debe ser igual o anterior a la fecha de devolución.',
-
-            'fecha_devolucion.required' => 'La fecha de devolución es obligatoria.',
-            'fecha_devolucion.date' => 'La fecha de devolución debe ser una fecha válida.',
-            'fecha_devolucion.after_or_equal' => 'La fecha de devolución debe ser igual o posterior a la fecha de asignación.',
-
-            'id_usuario_equipo.required' => 'Debe seleccionar un usuario de equipo.',
-
-            'id_estatus_critico.required' => 'Debe seleccionar un estatus crítico.'
-
-        ]);
+         $this->validate(
+            $request,
+            controlAsignaciones::validationRules(),
+            controlAsignaciones::validationMessages()
+        );
 
         controlAsignaciones::create([
-            'observaciones' => $request->input("observaciones"),
-            'fecha_asignacion' => $request->input("fecha_asignacion"),
-            'fecha_devolucion' => $request->input("fecha_devolucion"),
-            'id_usuario_equipo' => $request->input("id_usuario_equipo"),
-            'id_estatus_critico' => $request->input("id_estatus_critico")
+            'observaciones' => $request->observaciones,
+            'fecha_asignacion' => $request->fecha_asignacion,
+            'fecha_devolucion' => $request->fecha_devolucion,
+            'id_usuario_equipo' => $request->id_usuario_equipo,
+            'id_estatus_critico' => $request->id_estatus_critico
         ]);
 
         return redirect()->route('control_asignaciones')->with('success', 'El control de asignaciones fue creado correctamente');
@@ -158,30 +141,11 @@ class ControlAsignacionesController extends Controller
     //.....................................................Grupos: SALVAR.....
     public function control_asignaciones_salvar(controlAsignaciones $id, Request $request)
     {
-        $this->validate($request, [
-        'observaciones' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
-            'fecha_asignacion' => ['required','date','before_or_equal:fecha_devolucion'],
-            'fecha_devolucion' => ['required','date','after_or_equal:fecha_asignacion'],
-            'id_usuario_equipo' => 'required',
-            'id_estatus_critico' => 'required'
-        ], [
-            'observaciones.required' => 'Las observaciones son obligatorias.',
-            'observaciones.regex' => 'Las observaciones solo pueden contener letras y espacios.',
-            'observaciones.max' => 'Las observaciones no deben exceder los 50 caracteres.',
-
-            'fecha_asignacion.required' => 'La fecha de asignación es obligatoria.',
-            'fecha_asignacion.date' => 'La fecha de asignación debe ser una fecha válida.',
-            'fecha_asignacion.before_or_equal' => 'La fecha de asignación debe ser igual o anterior a la fecha de devolución.',
-
-            'fecha_devolucion.required' => 'La fecha de devolución es obligatoria.',
-            'fecha_devolucion.date' => 'La fecha de devolución debe ser una fecha válida.',
-            'fecha_devolucion.after_or_equal' => 'La fecha de devolución debe ser igual o posterior a la fecha de asignación.',
-
-            'id_usuario_equipo.required' => 'Debe seleccionar un usuario de equipo.',
-
-            'id_estatus_critico.required' => 'Debe seleccionar un estatus crítico.'
-
-        ]);
+        $this->validate(
+            $request,
+            controlAsignaciones::validationRules(),
+            controlAsignaciones::validationMessages()
+        );
 
         $query = controlAsignaciones::find($id->id);
         $query->observaciones = $request->observaciones;
@@ -199,5 +163,32 @@ class ControlAsignacionesController extends Controller
     {
         $id->delete();
         return redirect()->route('control_asignaciones')->with('success', 'Control de asignaciones eliminado correctamente');
+    }
+
+    //..................................................Subestación: Importar.....
+    public function control_asignaciones_importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        try {
+        Excel::import(new ControlAsignacionImport, $request->file('archivo_excel'));
+            return redirect()->route('control_asignaciones')->with('success', 'Control de asignación importados correctamente.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Fila {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->route('control_asignaciones')
+                ->with('error', 'Error en la importación:')
+                ->with('errorDetails', $errorMessages);
+        } catch (\Exception $e) {
+            return redirect()->route('control_asignaciones')
+                ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
+        }
     }
 }

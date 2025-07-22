@@ -12,12 +12,17 @@
                 <form action="{{ route('subestacion_equipos_salvar', ['id' => $subEE->id]) }}" method="post">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
+                    <input type="hidden" name="id" value="{{ $subEE->id }}">
+
 
                     <div class="row g-3">
                          <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control w-100" name="no_traje" id="no_traje{{ $subEE->id }}" placeholder="Número traje" value="{{ $subEE->no_traje }}">
+                                <input type="text" class="form-control w-100  @error('no_traje') is-invalid @enderror" name="no_traje" id="no_traje{{ $subEE->id }}" placeholder="Número traje" value="{{old('no_traje', $subEE->no_traje )}}">
                                 <label for="no_traje{{ $subEE->id }}">Número traje</label>
+                                @error('no_traje')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -72,3 +77,12 @@
     </div>
 </div>
 <!-- Fin de Editar -->
+ <!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $subEE->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $subEE->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

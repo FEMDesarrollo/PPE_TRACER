@@ -22,9 +22,9 @@ class estaciones extends Model
     public static function validationRules(): array
     {
         return [
-            'nombre'        => ['required', 'max:255'],
-            'direccion'     => ['required', 'string', 'max:255'],
-            'telefono'      => ['required', 'regex:/^[0-9]{10}$/'],
+            'nombre'         => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s().]+$/u', 'max:150'],
+            'direccion' => ['required', 'regex:/^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s\.,&]+$/u', 'max:100'],
+            'telefono'       => ['required', 'regex:/^[0-9\s\-\(\)\+]{7,20}$/'],
             'total_trajes'  => ['required', 'integer', 'min:0'],
         ];
     }
@@ -32,11 +32,13 @@ class estaciones extends Model
     public static function validationMessages(): array
     {
         return [
-            'nombre.required'       => 'El nombre es obligatorio.',
-            'nombre.max'            => 'El nombre no debe exceder los 255 caracteres.',
+            'nombre.required' => 'El campo nombre es obligatorio.',
+            'nombre.regex'    => 'El campo nombre no es válido.',
+            'nombre.max'      => 'El campo nombre es muy largo.',
 
-            'direccion.required'    => 'La dirección es obligatoria.',
-            'direccion.max'         => 'La dirección no debe exceder los 255 caracteres.',
+            'direccion.required' => 'La dirección es obligatoria.',
+            'direccion.regex'    => 'La dirección solo puede contener letras, números, guiones,comas y espacios.',
+            'direccion.max'      => 'La dirección no debe exceder los 150 caracteres.',
 
             'telefono.required'     => 'El teléfono es obligatorio.',
             'telefono.regex'        => 'El teléfono debe contener exactamente 10 dígitos numéricos.',

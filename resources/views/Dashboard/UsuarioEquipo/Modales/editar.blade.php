@@ -12,8 +12,9 @@
                 <form action="{{ route('usuarios_equipos_salvar', ['id' => $userequipo->id]) }}" method="post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
-                        <div class="row g-3">
+                        <input type="hidden" name="id" value="{{ $userequipo->id }}">
 
+                        <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
                                     <input type="date" class="form-control w-100" name="fecha_estatus" id="fecha{{ $userequipo->id }}" placeholder="Fecha" value="{{ $userequipo->fecha_estatus }}">
@@ -24,8 +25,8 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control pe-5 @error('comentarios') is-invalid @enderror" name="comentarios" id="comentarios{{ $userequipo->id }}" 
-                                    placeholder="Comentarios" value="{{ $userequipo->comentarios }}">
+                                    <input type="text" class="form-control pe-5 @error('comentarios') is-invalid @enderror" name="comentarios" id="comentarios{{ $userequipo->id }}"
+                                    placeholder="Comentarios" value="{{old('comentarios', $userequipo->comentarios )}}">
                                     <label for="comentarios{{ $userequipo->id }}">Comentarios</label>
                                     @error('comentarios')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -38,7 +39,7 @@
                                     <select class="form-select @error('id_estatus_equipo') is-invalid @enderror" name="id_estatus_equipo" id="id_estatus_equipo{{ $userequipo->id }}">
                                         <option disabled selected>Selecciona una opción...</option>
                                         @foreach($estatus_equipo as $estatusEquipo)
-                                            <option value="{{ $estatusEquipo->id }}" 
+                                            <option value="{{ $estatusEquipo->id }}"
                                                 {{ old('id_estatus_equipo', $userequipo->id_estatus_equipo) == $estatusEquipo->id ? 'selected' : '' }}>
                                                 {{ $estatusEquipo->estado }}
                                             </option>
@@ -54,11 +55,11 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    
+
                                 <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario{{ $userequipo->id }}">
                                     <option disabled selected>Selecciona una opción...</option>
                                         @foreach($usuario as $user)
-                                            <option value="{{ $user->id }}" 
+                                            <option value="{{ $user->id }}"
                                                 {{ old('id_usuario', $userequipo->id_usuario) == $user->id ? 'selected' : '' }}>
                                                 {{ $user->nombre }}
                                             </option>
@@ -102,3 +103,12 @@
         </div>
     </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $userequipo->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $userequipo->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

@@ -12,26 +12,37 @@
                     <form action="{{ route('subestaciones_salvar', ['id' => $sestacion->id]) }}" method="post">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
+                        <input type="hidden" name="id" value="{{ $sestacion->id }}">
+
 
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="nombre" id="nombreUsuario{{ $sestacion->id }}" placeholder="Nombre" value="{{ $sestacion->nombre }}">
+                                    <input type="text" class="form-control w-100 @error('nombre') is-invalid @enderror" name="nombre" id="nombreUsuario{{ $sestacion->id }}" placeholder="Nombre" value="{{ old('nombre', $sestacion->nombre )}}">
                                     <label for="nombreUsuario{{ $sestacion->id }}">Nombre</label>
+                                    @error('nombre')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="direccion" id="direccion{{ $sestacion->id }}" placeholder="Dirección" value="{{ $sestacion->direccion }}">
+                                    <input type="text" class="form-control w-100 @error('direccion') is-invalid @enderror" name="direccion" id="direccion{{ $sestacion->id }}" placeholder="Dirección" value="{{ old('direccion', $sestacion->direccion )}}">
                                     <label for="direccion{{ $sestacion->id }}">Dirección</label>
+                                    @error('direccion')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="telefono" id="telefono{{ $sestacion->id }}" placeholder="Teléfono" value="{{ $sestacion->telefono }}">
+                                    <input type="text" class="form-control w-100 @error('telefono') is-invalid @enderror" name="telefono" id="telefono{{ $sestacion->id }}" placeholder="Teléfono" value="{{ old('telefono', $sestacion->telefono )}}">
                                     <label for="telefono{{ $sestacion->id }}">Teléfono</label>
+                                    @error('telefono')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
@@ -60,3 +71,12 @@
         </div>
     </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $sestacion->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $sestacion->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

@@ -11,11 +11,15 @@
                 <form action="{{ route('estatus_equipos_salvar', $estatusEquipo->id) }}" method="POST">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="id" value="{{ $estatusEquipo->id }}">
+
                     <div class="row g-3">
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" class="form-control @error('estado') is-invalid @enderror" name="estado" id="estado{{ $estatusEquipo->id }}" 
-                                placeholder="Estado" value="{{ $estatusEquipo->estado }}" >
+                            <input type="text" class="form-control @error('estado') is-invalid @enderror" name="estado" id="estado{{ $estatusEquipo->id }}"placeholder="Estado" value="{{old('estado', $estatusEquipo->estado )}}" >
                             <label for="estado{{ $estatusEquipo->id }}">Estado</label>
+                            @error('estado')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center w-100 mt-3">
@@ -28,3 +32,12 @@
     </div>
 </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $estatusEquipo->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $estatusEquipo->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

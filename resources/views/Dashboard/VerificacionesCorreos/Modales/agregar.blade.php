@@ -15,7 +15,7 @@
                     <!-- Código de verificación -->
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
                         <input type="text" name="codigo_verificacion" class="form-control @error('codigo_verificacion') is-invalid @enderror"
-                            id="codigo_verificacion" placeholder="Código de verificación" value="{{ old('codigo_verificacion') }}" required>
+                            id="codigo_verificacion" placeholder="Código de verificación" value="{{ old('codigo_verificacion') }}" >
                         <label for="codigo_verificacion" class="ps-4">Código de verificación</label>
                         @error('codigo_verificacion')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -25,7 +25,7 @@
                     <!-- Fecha -->
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
                         <input type="date" name="fecha" class="form-control @error('fecha') is-invalid @enderror"
-                            id="fecha" placeholder="Fecha" value="{{ old('fecha') }}" required>
+                            id="fecha" placeholder="Fecha" value="{{ old('fecha') }}" >
                         <label for="fecha" class="ps-4">Fecha</label>
                         @error('fecha')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -34,7 +34,7 @@
 
                     <!-- Usuario -->
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario" required>
+                        <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario" >
                             <option selected disabled>Seleccione un usuario...</option>
                             @foreach($usuarios as $user)
                                 <option value="{{ $user->id }}" {{ old('id_usuario') == $user->id ? 'selected' : '' }}>{{ $user->nombre }}</option>

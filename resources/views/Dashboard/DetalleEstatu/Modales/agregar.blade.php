@@ -12,7 +12,7 @@
                     {{ csrf_field() }}
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="text" name="total_respuesta" class="form-control @error('total_respuesta') is-invalid @enderror" id="total_respuesta" placeholder="Total de respuesta" value="{{ old('total_respuesta') }}" required>
+                        <input type="text" name="total_respuesta" class="form-control @error('total_respuesta') is-invalid @enderror" id="total_respuesta" placeholder="Total de respuesta" value="{{ old('total_respuesta') }}" >
                         <label for="total_respuesta" class="ps-4">Total de respuesta</label>
                         @error('total_respuesta')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -20,7 +20,7 @@
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select class="form-select @error('id_estatus') is-invalid @enderror" name="id_estatus" id="id_estatus" required>
+                        <select class="form-select @error('id_estatus') is-invalid @enderror" name="id_estatus" id="id_estatus" >
                             <option selected disabled>Seleccione un estatus...</option>
                                 @foreach($estatus_critico as $estado)
                                     <option value="{{ $estado->id }}" {{ old('id_estatus') == $estado->id ? 'selected' : '' }}>{{ $estado->estatus }}</option>
@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario" required>
+                        <select class="form-select @error('id_usuario') is-invalid @enderror" name="id_usuario" id="id_usuario" >
                             <option selected disabled>Seleccione un usuario...</option>
                                 @foreach($usuario as $user)
                                     <option value="{{ $user->id }}" {{ old('id_usuario') == $user->id ? 'selected' : '' }}>{{ $user->nombre }}</option>

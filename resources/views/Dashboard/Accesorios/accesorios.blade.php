@@ -142,8 +142,8 @@
                                 <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
                                     Importar Información
                                 </button>
-                                
-                            <!-- Botón Plantilla Excel --> 
+
+                            <!-- Botón Plantilla Excel -->
                             <a href="{{ url('/plantilla-accesorios') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
                                 <!-- Botón para  Exportar información -->

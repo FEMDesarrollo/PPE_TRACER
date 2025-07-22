@@ -12,47 +12,67 @@
                 <form action="{{ route('usuarios_salvar', ['id' => $user->id]) }}" method="post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
+                        <input type="hidden" name="id" value="{{ $user->id }}">
+
 
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="nombre" id="nombreUsuario{{ $user->id }}" placeholder="Nombre" value="{{ $user->nombre }}">
+                                    <input type="text" class="form-control w-100 @error('nombre') is-invalid @enderror" name="nombre" id="nombreUsuario{{ $user->id }}" placeholder="Nombre" value="{{old('nombre', $user->nombre )}}">
                                     <label for="nombreUsuario{{ $user->id }}">Nombre</label>
+                                    @error('nombre')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="app" id="app{{ $user->id }}" placeholder="Apellido paterno" value="{{ $user->app }}">
+                                    <input type="text" class="form-control w-100 @error('app') is-invalid @enderror" name="app" id="app{{ $user->id }}" placeholder="Apellido paterno" value="{{old('app', $user->app )}}">
                                     <label for="app{{ $user->id }}">Apellido paterno</label>
+                                    @error('app')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="apm" id="apm{{ $user->id }}" placeholder="Apellido materno" value="{{ $user->apm }}">
+                                    <input type="text" class="form-control w-100 @error('apm') is-invalid @enderror" name="apm" id="apm{{ $user->id }}" placeholder="Apellido materno" value="{{old('apm', $user->apm )}}">
                                     <label for="apm{{ $user->id }}">Apellido materno</label>
+                                    @error('apm')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="telefono" id="telefono{{ $user->id }}" placeholder="Teléfono" value="{{ $user->telefono }}">
+                                    <input type="text" class="form-control w-100 @error('telefono') is-invalid @enderror" name="telefono" id="telefono{{ $user->id }}" placeholder="Teléfono" value="{{old('telefono', $user->telefono )}}">
                                     <label for="telefono{{ $user->id }}">Teléfono</label>
+                                    @error('telefono')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="correo" id="correo{{ $user->id }}" placeholder="Correo" value="{{ $user->correo }}">
+                                    <input type="text" class="form-control w-100 @error('correo') is-invalid @enderror" name="correo" id="correo{{ $user->id }}" placeholder="Correo" value="{{old('correo', $user->correo )}}">
                                     <label for="correo{{ $user->id }}">Correo</label>
+                                    @error('correo')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="password" id="password{{ $user->id }}" placeholder="Contraseña" value="{{ $user->password }}">
+                                    <input type="text" class="form-control w-100 @error('password') is-invalid @enderror" name="password" id="password{{ $user->id }}" placeholder="Contraseña" value="{{old('password', $user->password )}}">
                                     <label for="password{{ $user->id }}">Contraseña</label>
+                                    @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
@@ -120,3 +140,12 @@
         </div>
     </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $user->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $user->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

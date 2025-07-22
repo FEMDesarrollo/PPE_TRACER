@@ -3,6 +3,8 @@
 @section('page_title', 'PANEL ADMINISTRATIVO')
 @section('subtitle', 'Equipos de subestación')
 @section('content')
+@include('components.alertas de cruds.alerts')
+@include('components.alertas de validaciones.alerts')
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
@@ -18,7 +20,7 @@
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                         <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                                     </select>
-                                    
+
                                     @if(request('search'))
                                         <input type="hidden" name="search" value="{{ request('search') }}">
                                     @endif
@@ -43,7 +45,7 @@
                                                     placeholder="Buscar por ID, número de traje, equipo, estación o subestación" value="{{ request('search') }}">
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Filtro de tiempo -->
                                         <div class="col-md-6">
                                             <select name="time_filter" class="form-select border-0 border-bottom" onchange="this.form.submit()">
@@ -59,7 +61,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <!-- Botón Agregar en tabla -->
                             <div class="col-12 col-md-3 text-md-end">
                                 <a href="{{ route('subestacion_equipos') }}" class="btn btn-secondary me-md-2">
@@ -78,7 +80,7 @@
                                 <thead class="border-0 border-bottom-0">
                                     <tr>
                                         <th>ID</th>
-                                        <th>No_Traje</th>
+                                        <th>Numero de traje</th>
                                         <th>Equipo</th>
                                         <th>Estación</th>
                                         <th>SubEstación</th>
@@ -96,22 +98,22 @@
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <!-- Botón Editar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEditar{{ $subEE->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEditar{{ $subEE->id }}"
                                                         style="color: #222944">
                                                         <i class="bi bi-pencil-square fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEliminar{{ $subEE->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEliminar{{ $subEE->id }}"
                                                         style="color: #cf0a2c">
                                                         <i class="bi bi-trash fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Ver -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalVer{{ $subEE->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalVer{{ $subEE->id }}"
                                                         style="color: #212121">
                                                         <i class="bi bi-eye fs-5"></i>
                                                     </button>
@@ -127,7 +129,32 @@
                             </table>
                         </div>
 
-                        <!-- Contenedor inferior de tabla -->
+
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="{{ route('subestacion_equipos.importar') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                                        @csrf
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="importModalLabel">Importar archivo Excel</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <input type="file" name="archivo_excel" class="form-control w-auto" required>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success" style="background-color: #222944; color: white; border-color:#222944">Importar Excel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3">
                             <!-- Mostrando equipos -->
                             <span class="text-bling fw-bold p-3" style="color: #222944">
@@ -136,20 +163,19 @@
 
                             <!-- Botón para Importar Información -->
                             <div class="d-flex gap-2">
-                             <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
-                                Importar Información
-                             </button>
+                                <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
+                                    Importar Información
+                                </button>
 
-                            <!-- Botón Plantilla Excel --> 
-                            <a href="{{ url('/plantilla-subestacion-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
+                                <!-- Botón Plantilla Excel -->
+                                <a href="{{ url('/plantilla-subestacion-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
-                            
-                            <!-- Botón Exportar de tabla -->
-                            <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                                Exportar información
-                            </button>
+                                <!-- Botón Exportar de tabla -->
+                                <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
+                                    Exportar información
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
                         <!-- Paginación -->
                         <div class="d-flex justify-content-center mt-3 pagination-container">
@@ -185,10 +211,10 @@
         function changeEntries(select) {
             const perPage = select.value;
             const url = new URL(window.location.href);
-            
+
             // Actualiza el parámetro per_page en la URL
             url.searchParams.set('per_page', perPage);
-            
+
             // Recarga la página con el nuevo parámetro
             window.location.href = url.toString();
         }
@@ -209,5 +235,5 @@
         @endif
     </script>
     @endpush
-    
+
 @endsection

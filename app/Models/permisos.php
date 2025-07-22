@@ -15,4 +15,23 @@ class permisos extends Model
         'icono',
         'url'
         ];
+
+        public static function validationRules(): array
+    {
+        return [
+             'permiso' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u', 'max:50'],
+             'url' => 'required'
+        ];
+    }
+
+    public static function validationMessages(): array
+    {
+        return [
+            'permiso.required' => 'El permiso es obligatorio.',
+            'permiso.regex' => 'El permiso solo puede contener letras y espacios.',
+            'permiso.max' => 'El nombre es demasiado largo.',
+
+            'url.required' => 'La URL es obligatoria.',
+        ];
+    }
 }

@@ -146,13 +146,6 @@
                             <!-- Botón Plantilla Excel --> 
                             <a href="{{ url('/plantilla-usuarios-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
-                            
-                            <!-- Botón para Importar Información -->
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
-                                    Importar Información
-                                </button>
-
                                 <!-- Botón para  Exportar información -->
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Exportar información

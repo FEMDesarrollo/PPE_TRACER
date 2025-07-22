@@ -10,6 +10,50 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
+<!-- Filtros compactos en una sola línea horizontal -->
+<div class="card shadow-sm mt-4">
+    <div class="card-body p-2">
+        <form method="GET" action="{{ route('usuarios.buscar') }}">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                <!-- Nombre -->
+                <input type="text" name="nombre" class="form-control form-control-sm w-auto"
+                    placeholder="Nombre" value="{{ request('nombre') }}" style="min-width: 140px;">
+
+                <!-- Apellido materno -->
+                <input type="text" name="apm" class="form-control form-control-sm w-auto"
+                    placeholder="Apellido materno" value="{{ request('apm') }}" style="min-width: 140px;">
+
+                <!-- Perfil -->
+                <select name="perfil" class="form-select form-select-sm w-auto" style="min-width: 130px;">
+                    <option value="">Perfil</option>
+                    @foreach($perfiles as $perfil)
+                        <option value="{{ $perfil->nombre }}" {{ request('perfil') == $perfil->nombre ? 'selected' : '' }}>
+                            {{ $perfil->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <!-- Subestación -->
+                <select name="subestacion" class="form-select form-select-sm w-auto" style="min-width: 130px;">
+                    <option value="">Subestación</option>
+                    @foreach($subestaciones as $sub)
+                        <option value="{{ $sub->nombre }}" {{ request('subestacion') == $sub->nombre ? 'selected' : '' }}>
+                            {{ $sub->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <!-- Botón -->
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+
+            </div>
+        </form>
+    </div>
+</div>
+
                         <!-- Contenedor superior de tabla -->
                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 p-4 gap-3">
                             <!-- Selector de entradas -->
@@ -30,7 +74,7 @@
                                     <label for="entries" class="mb-0">Entradas por página</label>
                                 </form>
                             </div>
-
+                            
                             <!-- Filtros combinados -->
                             <div class="col-12 col-md-6">
                                 <form method="GET" action="{{ route('usuarios') }}">
@@ -237,5 +281,9 @@
     </script>
     
     @endpush
+
+    
+
     
 @endsection
+

@@ -13,7 +13,7 @@ class Equipos extends Model
     protected $fillable = [
         'equipo'
         ];
-
+        
 
         public static function validationRules(): array
     {

@@ -162,5 +162,6 @@ class EquiposController extends Controller
             ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
     }
 }
+
 }
 

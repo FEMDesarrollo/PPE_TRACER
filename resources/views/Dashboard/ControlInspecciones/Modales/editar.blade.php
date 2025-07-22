@@ -4,7 +4,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
-                    <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $controlins->id }}" style="color: #222944;">Control de inspecciones</h5>
+                    <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $controlins->id }}" style="color: #222944;">Editar control de inspecciones</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -12,6 +12,7 @@
                 <form action="{{ route('control_inspecciones_salvar', ['id' => $controlins->id]) }}" method="post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
+                        <input type="hidden" name="id" value="{{ $controlins->id }}">
 
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
@@ -29,7 +30,7 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="date" class="form-control w-100" name="fecha" id="fecha{{ $controlins->id }}" placeholder="Fecha" value="{{ $controlins->fecha }}">
+                                    <input type="date" class="form-control w-100 @error('fecha') is-invalid @enderror" name="fecha" id="fecha{{ $controlins->id }}" placeholder="Fecha" value="{{ old('fecha',$controlins->fecha )}}">
                                     <label for="fecha{{ $controlins->id }}">Fecha</label>
                                 </div>
                             </div>
@@ -45,7 +46,7 @@
 
                         <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="descripcion" id="descripcion{{ $controlins->id }}" placeholder="Descripcion" value="{{ $controlins->descripcion }}">
+                                    <input type="text" class="form-control w-100 @error('descripcion') is-invalid @enderror" name="descripcion" id="descripcion{{ $controlins->id }}" placeholder="Descripcion" value="{{ old('descripcion', $controlins->descripcion )}}">
                                     <label for="descripcion{{ $controlins->id }}">Descripcion</label>
                                 </div>
                             </div>
@@ -90,3 +91,12 @@
         </div>
     </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $controlins->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $controlins->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

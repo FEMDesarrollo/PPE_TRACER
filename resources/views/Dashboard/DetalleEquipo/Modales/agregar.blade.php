@@ -13,7 +13,7 @@
 
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="text" name="modelo" class="form-control @error('modelo') is-invalid @enderror" id="modelo" placeholder="Modelo" value="{{ old('modelo') }}" required>
+                        <input type="text" name="modelo" class="form-control @error('modelo') is-invalid @enderror" id="modelo" placeholder="Modelo" value="{{ old('modelo') }}">
                         <label for="modelo" class="ps-4">Modelo</label>
                         @error('modelo')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -21,7 +21,7 @@
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="text" name="no_serie" class="form-control @error('no_serie') is-invalid @enderror" id="no_serie" placeholder="Numero de serie" value="{{ old('no_serie') }}" required>
+                        <input type="text" name="no_serie" class="form-control @error('no_serie') is-invalid @enderror" id="no_serie" placeholder="Numero de serie" value="{{ old('no_serie') }}">
                         <label for="no_serie" class="ps-4">Numero de serie</label>
                         @error('no_serie')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -29,7 +29,7 @@
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="text" name="talla" class="form-control @error('talla') is-invalid @enderror" id="talla" placeholder="Talla" value="{{ old('talla') }}" required>
+                        <input type="text" name="talla" class="form-control @error('talla') is-invalid @enderror" id="talla" placeholder="Talla" value="{{ old('talla') }}">
                         <label for="talla" class="ps-4">Talla</label>
                         @error('talla')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -37,7 +37,7 @@
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="number" name="piezas" class="form-control @error('piezas') is-invalid @enderror" id="piezas" placeholder="Piezas" value="{{ old('piezas') }}" required>
+                        <input type="number" name="piezas" class="form-control @error('piezas') is-invalid @enderror" id="piezas" placeholder="Piezas" value="{{ old('piezas') }}">
                         <label for="piezas" class="ps-4">Piezas</label>
                         @error('piezas')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -46,7 +46,7 @@
 
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="date" name="fecha_fabricacion" class="form-control @error('fecha_fabricacion') is-invalid @enderror" id="fecha_fabricacion" placeholder="Fecha de fabricacion" value="{{ old('fecha_fabricacion') }}" required>
+                        <input type="date" name="fecha_fabricacion" class="form-control @error('fecha_fabricacion') is-invalid @enderror" id="fecha_fabricacion" placeholder="Fecha de fabricacion" value="{{ old('fecha_fabricacion') }}">
                         <label for="fecha_fabricacion" class="ps-4">Fecha de fabricacion</label>
                         @error('fecha_fabricacion')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -55,7 +55,7 @@
 
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <select class="form-select @error('id_usuario_equipo') is-invalid @enderror" name="id_usuario_equipo" id="id_usuario_equipo" required>
+                        <select class="form-select @error('id_usuario_equipo') is-invalid @enderror" name="id_usuario_equipo" id="id_usuario_equipo">
                             <option selected disabled>Seleccione un usuario de equipo...</option>
                                 @foreach($usuarios_equipos as $userequipo)
                                     <option value="{{ $userequipo->id }}" {{ old('id_usuario_equipo') == $userequipo->id ? 'selected' : '' }}>{{ $userequipo->id }}</option>

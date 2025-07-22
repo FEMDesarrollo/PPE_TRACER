@@ -11,34 +11,53 @@
                         <form action="{{ route('estaciones_salvar', $estacion->id) }}" method="post">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="id" value="{{ $estacion->id }}">
+
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control w-100" name="nombre" id="nombreEstacion{{ $estacion->id }}"
-                                            placeholder="Nombre" value="{{ $estacion->nombre }}" required>
+                                        <input type="text" class="form-control w-100 @error('nombre') is-invalid @enderror" name="nombre" id="nombreEstacion{{ $estacion->nombre}}"
+                                            placeholder="Nombre" value="{{old('nombre', $estacion->nombre )}}">
                                         <label for="nombreEstacion{{ $estacion->id }}">Nombre</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control w-100" name="direccion" id="direccion{{ $estacion->id }}"
-                                            placeholder="Dirección" value="{{ $estacion->direccion }}" required>
-                                        <label for="direccion{{ $estacion->id }}">Dirección</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control w-100" name="telefono" id="telefono{{ $estacion->id }}"
-                                            placeholder="Teléfono" value="{{ $estacion->telefono }}" required>
-                                        <label for="telefono{{ $estacion->id }}">Teléfono</label>
+                                        @error('nombre')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                     </div>
                                 </div>
 
+
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
-                                        <input type="number" class="form-control w-100" name="total_trajes" id="total_trajes{{ $estacion->id }}"
-                                            placeholder="Teléfono" value="{{ $estacion->total_trajes }}" required>
+                                        <input type="text" class="form-control w-100 @error('direccion') is-invalid @enderror" name="direccion" id="direccion{{$estacion->direccion }}"
+                                            placeholder="Dirección" value="{{old('direccion',  $estacion->direccion )}}">
+                                        <label for="direccion{{ $estacion->id }}">Dirección</label>
+                                        @error('direccion')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control w-100 @error('telefono') is-invalid @enderror" name="telefono" id="telefono{{ $estacion->telefono }}"
+                                            placeholder="Teléfono" value="{{old('telefono', $estacion->telefono )}}">
+                                        <label for="telefono{{ $estacion->id }}">Teléfono</label>
+                                        @error('telefono')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control w-100 @error('total_trajes') is-invalid @enderror" name="total_trajes" id="total_trajes{{ $estacion->total_trajes }}"
+                                            placeholder="Teléfono" value="{{old('total_trajes', $estacion->total_trajes )}}">
                                         <label for="total_trajes{{ $estacion->id }}">Total de trajes</label>
+                                        @error('total_trajes')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                     </div>
                                 </div>
 
@@ -46,7 +65,7 @@
                             </div>
                             <div class="modal-footer d-flex justify-content-center w-100 mt-4">
                                 <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                                    Editar 
+                                    Editar
                                 </button>
                                 <button type="button" class="btn" data-bs-dismiss="modal"
                                     style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">
@@ -58,3 +77,12 @@
                 </div>
             </div>
         </div>
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $estacion->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $estacion->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

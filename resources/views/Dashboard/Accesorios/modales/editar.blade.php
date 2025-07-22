@@ -11,11 +11,13 @@
                 <form action="{{ route('accesorios_salvar', ['id' => $accesorio->id]) }}" method="post" enctype="multipart/form-data" >
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
+                    <input type="hidden" name="id" value="{{ $accesorio->id }}">
 
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control pe-5 @error('nombre') is-invalid @enderror" name="nombre" id="nombreAccesorio{{ $accesorio->id }}" placeholder="Nombre" value="{{ $accesorio->nombre }}">
+                                <input type="text" class="form-control pe-5 @error('nombre') is-invalid @enderror" name="nombre"
+                                id="nombreAccesorio{{ $accesorio->id }}" placeholder="Nombre" value="{{ old('nombre', $accesorio->nombre)}}">
                                 <label for="nombreAccesorio{{ $accesorio->id }}">Nombre</label>
                                 @error('nombre')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -34,7 +36,7 @@
 
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control @error('marca') is-invalid @enderror" name="marca" id="marca{{ $accesorio->id }}" placeholder="Marca" value="{{ $accesorio->marca }}">
+                                <input type="text" class="form-control @error('marca') is-invalid @enderror" name="marca" id="marca{{ $accesorio->id }}" placeholder="Marca" value="{{ old('marca', $accesorio->marca)}}">
                                 <label for="marca{{ $accesorio->id }}">Marca</label>
                                 @error('marca')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -44,7 +46,7 @@
 
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control @error('modelo') is-invalid @enderror" name="modelo" id="modelo{{ $accesorio->id }}" placeholder="Modelo" value="{{ $accesorio->modelo }}">
+                                <input type="text" class="form-control @error('modelo') is-invalid @enderror" name="modelo" id="modelo{{ $accesorio->id }}" placeholder="Modelo" value="{{  old('modelo', $accesorio->modelo)}}">
                                 <label for="nombreProveedor{{ $accesorio->id }}">Modelo</label>
                                 @error('modelo')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -54,7 +56,7 @@
 
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control @error('detalle_descripcion') is-invalid @enderror" name="detalle_descripcion" id="detalle_descripcion{{ $accesorio->id }}" placeholder="Detalle Descripción" value="{{ $accesorio->detalle_descripcion }}">
+                                <input type="text" class="form-control @error('detalle_descripcion') is-invalid @enderror" name="detalle_descripcion" id="detalle_descripcion{{ $accesorio->id }}" placeholder="Detalle Descripción" value="{{ old('detalle_descripcion', $accesorio->detalle_descripcion)}}">
                                 <label for="detalle_descripcion{{ $accesorio->id }}">Detalle Descripción</label>
                                 @error('detalle_descripcion')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -90,3 +92,12 @@
     </div>
 </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $accesorio->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $accesorio->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

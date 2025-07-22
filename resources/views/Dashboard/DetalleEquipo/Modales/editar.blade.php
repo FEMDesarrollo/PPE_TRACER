@@ -12,41 +12,56 @@
                 <form action="{{ route('detalles_equipos_salvar', ['id' => $detallequi->id]) }}" method="post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
+                    <input type="hidden" name="id" value="{{ $detallequi->id }}">
+
                         <div class="row g-3">
-
-
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="modelo" id="modelo{{ $detallequi->id }}" placeholder="Modelo" value="{{ $detallequi->modelo }}">
+                                    <input type="text" class="form-control w-100 @error('modelo') is-invalid @enderror" name="modelo" id="modelo{{ $detallequi->id }}" placeholder="Modelo" value="{{ old('modelo', $detallequi->modelo )}}">
                                     <label for="modelo{{ $detallequi->id }}">Modelo</label>
+                                     @error('modelo')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="no_serie" id="no_serie{{ $detallequi->id }}" placeholder="Numero de serie" value="{{ $detallequi->no_serie }}">
+                                    <input type="text" class="form-control w-100 @error('no_serie') is-invalid @enderror" name="no_serie" id="no_serie{{ $detallequi->id }}" placeholder="Numero de serie" value="{{ old('no_serie', $detallequi->no_serie )}}">
                                     <label for="no_serie{{ $detallequi->id }}">Numero de serie</label>
+                                     @error('no_serie')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="talla" id="talla{{ $detallequi->id }}" placeholder="Talla" value="{{ $detallequi->talla }}">
+                                    <input type="text" class="form-control w-100 @error('talla') is-invalid @enderror" name="talla" id="talla{{ $detallequi->id }}" placeholder="Talla" value="{{ old('talla', $detallequi->talla )}}">
                                     <label for="talla{{ $detallequi->id }}">Talla</label>
+                                     @error('talla')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="number" class="form-control w-100" name="piezas" id="piezas{{ $detallequi->id }}" placeholder="Piezas" value="{{ $detallequi->piezas }}">
+                                    <input type="number" class="form-control w-100 @error('piezas') is-invalid @enderror" name="piezas" id="piezas{{ $detallequi->id }}" placeholder="Piezas" value="{{ old('piezas', $detallequi->piezas )}}">
                                     <label for="piezas{{ $detallequi->id }}">Piezas</label>
+                                     @error('piezas')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="date" class="form-control w-100" name="fecha_fabricacion" id="fecha_fabricacion{{ $detallequi->id }}" placeholder="Fecha de fabricacion" value="{{ $detallequi->fecha_fabricacion }}">
+                                    <input type="date" class="form-control w-100 @error('fecha_fabricacion') is-invalid @enderror" name="fecha_fabricacion" id="fecha_fabricacion{{ $detallequi->id }}" placeholder="Fecha de fabricacion" value="{{ old('fecha_fabricacion', $detallequi->fecha_fabricacion )}}">
                                     <label for="fecha_fabricacion{{ $detallequi->id }}">Fecha de asignacion</label>
+                                     @error('fecha_fabricacion')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
 
@@ -77,3 +92,12 @@
         </div>
     </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $detallequi->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $detallequi->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

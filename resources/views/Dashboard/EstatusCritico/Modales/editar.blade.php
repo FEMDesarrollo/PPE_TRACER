@@ -11,21 +11,19 @@
                         <form action="{{ route('estatus_critico_salvar', $estado->id) }}" method="post">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="id" value="{{ $estado->id }}">
+
                             <div class="row g-3">
                                 <div class="col-12 col-sm-6 col-md-6 form-floating">
                                     <div class="form-floating">
-<<<<<<< HEAD
-                                        <input type="text" class="form-control w-100" name="estatus" id="estatus{{ $estado->id }}"
-                                            placeholder="Estatus" value="{{ $estado->estatus }}" >
-                                        <label for="estatus{{ $estado->id }}">Estatus</label>
-=======
-                                        <input type="text" class="form-control pe-5 @error('estatus') is-invalid @enderror" name="estatus" id="estatus{{ $estado->id }}" 
-                                            placeholder="Estatus" value="{{ $estado->estatus }}">
+
+
+                                        <input type="text" class="form-control pe-5 @error('estatus') is-invalid @enderror" name="estatus" id="estatus{{ $estado->id }}" placeholder="Estatus" value="{{old('estatus', $estado->estatus )}}">
                                         <label for="estatus{{ $estado->id }}">Estatus Crítico</label>
                                         @error('estatus')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
->>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
+
                                     </div>
                                 </div>
 
@@ -44,8 +42,12 @@
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-=======
-
-        
->>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $estado->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $estado->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

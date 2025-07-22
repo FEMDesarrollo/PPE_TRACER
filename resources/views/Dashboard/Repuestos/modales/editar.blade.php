@@ -12,19 +12,27 @@
                 <form action="{{ route('repuestos_salvar', ['id' => $repuesto->id]) }}" method="post">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
+                    <input type="hidden" name="id" value="{{ $repuesto->id }}">
+
 
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <input type="number" step="0.01" class="form-control w-100" name="costo" id="costo{{ $repuesto->id }}" placeholder="Costo" value="{{ $repuesto->costo }}">
+                                <input type="number" step="0.01" class="form-control w-100 @error('costo') is-invalid @enderror" name="costo" id="costo{{ $repuesto->id }}" placeholder="Costo" value="{{ old('costo', $repuesto->costo )}}">
                                 <label for="costo{{ $repuesto->id }}">Costo</label>
+                                @error('costo')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <input type="date" class="form-control w-100" name="fecha_disponible" id="fecha_disponible{{ $repuesto->id }}" placeholder="Fecha disponible" value="{{ $repuesto->fecha_disponible }}">
+                                <input type="date" class="form-control w-100 @error('fecha_disponible') is-invalid @enderror" name="fecha_disponible" id="fecha_disponible{{ $repuesto->id }}" placeholder="Fecha disponible" value="{{  old('fecha_disponible',$repuesto->fecha_disponible )}}">
                                 <label for="fecha_disponible{{ $repuesto->id }}">Fecha disponible</label>
+                                @error('fecha_disponible')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -66,3 +74,12 @@
     </div>
 </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $repuesto->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $repuesto->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

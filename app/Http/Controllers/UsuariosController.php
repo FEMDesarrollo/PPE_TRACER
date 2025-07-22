@@ -153,13 +153,10 @@ class UsuariosController extends Controller
             usuarios::validationMessages()
         );
 
-<<<<<<< HEAD
             $fot2 = $request->foto;
 
-=======
-            $img2 = $request->foto2; 
-            
->>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
+            $img2 = $request->foto2;
+
             if($request->file('foto1') != '') {
             $file = $request->file('foto1');
             $img = $file->getClientOriginalName();

@@ -11,12 +11,17 @@
                 <form action="{{ route('perfiles_salvar', $perfil->id) }}" method="post">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="id" value="{{ $perfil->id }}">
+
                     <div class="row g-3">
                         <div class="col-12">
                             <div class="col-12 col-sm-6 col-md-6 form-floating">
-                                <input type="text" class="form-control w-100" name="nombre" id="nombrePerfil{{ $perfil->id }}" 
-                                    placeholder="Nombre" value="{{ $perfil->nombre }}" required>
+                                <input type="text" class="form-control w-100" name="nombre" id="nombrePerfil{{ $perfil->id }}"
+                                    placeholder="Nombre" value="{{old('nombre', $perfil->nombre )}}" required>
                                 <label for="nombrePerfil{{ $perfil->id }}">Nombre</label>
+                                @error('nombre')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -35,3 +40,12 @@
     </div>
 </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $perfil->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $perfil->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

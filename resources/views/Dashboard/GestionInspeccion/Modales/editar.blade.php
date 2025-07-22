@@ -11,13 +11,14 @@
                         <form action="{{ route('gestion_inspecciones_salvar', $gestionInspeccion->id) }}" method="post">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="id" value="{{ $gestionInspeccion->id }}">
+
                             <div class="row g-3">
                                 <div class="col-12">
                                     <div class="col-12 col-sm-6 col-md-6 form-floating">
-                                        <input type="text" class="form-control pe-5 @error('categoria') is-invalid @enderror" name="observaciones" id="observaciones{{ $gestionInspeccion->id }}" 
-                                            placeholder="Observaciones" value="{{ $gestionInspeccion->observaciones }}">
+                                        <input type="text" class="form-control pe-5 @error('observaciones') is-invalid @enderror" name="observaciones" id="observaciones{{ $gestionInspeccion->id }}" placeholder="Observaciones" value="{{old('observaciones', $gestionInspeccion->observaciones )}}">
                                         <label for="observaciones{{ $gestionInspeccion->id }}">Observaciones</label>
-                                        @error('categoria')
+                                        @error('observaciones')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -38,3 +39,12 @@
                 </div>
             </div>
         </div>
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $gestionInspeccion->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $gestionInspeccion->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

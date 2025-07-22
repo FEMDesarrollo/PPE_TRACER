@@ -19,7 +19,7 @@ class VerificacionCorreoController extends Controller
         $timeFilter = $request->input('time_filter');
         $usuarioFilter = $request->input('usuario_filter');
         $dateFilter = $request->input('date_filter');
-        
+
         $verificaciones = verificacionCorreo::with(['usuarios'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -34,7 +34,7 @@ class VerificacionCorreoController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('fecha', $now->toDateString());
@@ -80,7 +80,7 @@ class VerificacionCorreoController extends Controller
                 'usuario_filter' => $usuarioFilter,
                 'date_filter' => $dateFilter
             ]);
-            
+
         return view('Dashboard.VerificacionesCorreos.verificacion_correo', [
             'verificacion_correo' => $verificaciones,
             'usuarios' => usuarios::all()
@@ -95,6 +95,14 @@ class VerificacionCorreoController extends Controller
             verificacionCorreo::validationRules(),
             verificacionCorreo::validationMessages()
         );
+
+        verificacionCorreo::create([
+                'codigo_verificacion' => $request->codigo_verificacion,
+                'fecha' => $request->fecha,
+                'id_usuario' => $request->id_usuario
+
+            ]);
+
 
         return redirect()->route('verificacion_correo')->with('success', 'Verificación de correo registrada correctamente');
     }
@@ -121,7 +129,7 @@ class VerificacionCorreoController extends Controller
     //.....................................................Verificación Correo: SALVAR.....
     public function verificacion_correo_salvar(verificacionCorreo $id, Request $request)
     {
-       
+
         $this->validate(
             $request,
             verificacionCorreo::validationRules(),

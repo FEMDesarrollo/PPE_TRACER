@@ -11,13 +11,10 @@
                     <form action="{{ route('estatus_critico_registrar') }}" method="POST" class="row g-3">
                         @csrf
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-<<<<<<< HEAD
-                            <input type="text" name="estatus" class="form-control @error('estatus') is-invalid @enderror" id="estatus" placeholder="Estatus" value="{{ old('estatus') }}" >
-                            <label for="estatus" class="ps-4">Estatus</label>
-=======
+
                             <input type="text" name="estatus" class="form-control @error('estatus') is-invalid @enderror" id="estatus" placeholder="Estatus" value="{{ old('estatus') }}">
                             <label for="estatus" class="ps-4">Estatus Crítico</label>
->>>>>>> 44759fd60a71b71cd8095ef1ea6b82a89e1049f4
+
                             @error('estatus')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

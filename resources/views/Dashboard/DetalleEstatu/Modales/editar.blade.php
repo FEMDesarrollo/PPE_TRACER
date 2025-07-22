@@ -12,14 +12,19 @@
                 <form action="{{ route('detalles_estatus_salvar', ['id' => $detallesta->id]) }}" method="post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
-                        <div class="row g-3">
+                        <input type="hidden" name="id" value="{{ $detallesta->id }}">
 
+                        <div class="row g-3">
                         <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="total_respuesta" id="total_respuesta{{ $detallesta->id }}" placeholder="Total de respuesta" value="{{ $detallesta->total_respuesta }}">
+                                    <input type="text" class="form-control w-100 @error('total_respuesta') is-invalid @enderror" name="total_respuesta" id="total_respuesta{{ $detallesta->id }}" placeholder="Total de respuesta" value="{{ old('total_respuesta', $detallesta->total_respuesta )}}">
                                     <label for="total_respuesta{{ $detallesta->id }}">Total de respuesta</label>
+                                    @error('total_respuesta')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 </div>
                             </div>
+
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
                                     <select class="form-select" name="id_estatus" id="id_estatus{{ $detallesta->id }}">
@@ -59,3 +64,12 @@
         </div>
     </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $detallesta->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $detallesta->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

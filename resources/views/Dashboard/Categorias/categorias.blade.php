@@ -152,10 +152,10 @@
                                     Importar Información
                                 </button>
 
-                            <!-- Botón Plantilla Excel --> 
+                            <!-- Botón Plantilla Excel -->
                             <a href="{{ url('/plantilla-categorias') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
-                                
+
                                 <!-- Botón para  Exportar información -->
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Exportar información
@@ -233,14 +233,7 @@
                 this.form.submit();
             }
         });
-
-        // Mostrar modal automáticamente si hay error de validación
-        @if($errors->any() || session('error'))
-            document.addEventListener('DOMContentLoaded', function() {
-                var modal = new bootstrap.Modal(document.getElementById('modalAñadir'));
-                modal.show();
-            });
-        @endif
+    
     </script>
     @endpush
 

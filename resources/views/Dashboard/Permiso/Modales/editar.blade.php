@@ -16,16 +16,22 @@
                 <div class="row g-3">
                     <div class="col-12 col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control w-100" name="permiso" id="permiso{{ $permiso->id }}" placeholder="Permisos" value="{{ $permiso->permiso }}">
+                            <input type="text" class="form-control w-100 @error('permiso') is-invalid @enderror" name="permiso" id="permiso{{ $permiso->id }}" placeholder="Permisos" value="{{ old('permiso', $permiso->permiso )}}">
                             <label for="permiso{{ $permiso->id }}">Permiso</label>
+                            @error('permiso')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                         </div>
                     </div>
-                    
+
 
                     <div class="col-12 col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control w-100" name="url" id="url{{ $permiso->id }}" placeholder="URL" value="{{ $permiso->url }}">
+                            <input type="text" class="form-control w-100 @error('url') is-invalid @enderror" name="url" id="url{{ $permiso->id }}" placeholder="URL" value="{{old('permiso', $permiso->url )}}">
                             <label for="url{{ $permiso->id }}">URL</label>
+                            @error('url')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                         </div>
                     </div>
                 </div>
@@ -41,3 +47,12 @@
     </div>
 </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $permiso->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $permiso->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

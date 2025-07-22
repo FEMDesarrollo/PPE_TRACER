@@ -3,7 +3,7 @@
         aria-labelledby="modalEditarLabel{{ $controlasi->id }}" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                
+
                 <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                     <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $controlasi->id }}" style="color: #222944;">Editar el control de asignaciones</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -13,12 +13,12 @@
                 <form action="{{ route('control_asignaciones_salvar', ['id' => $controlasi->id]) }}" method="post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
+                        <input type="hidden" name="id" value="{{ $controlasi->id }}">
+
                         <div class="row g-3">
-
-
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control w-100" name="observaciones" id="observaciones{{ $controlasi->id }}" placeholder="Observaciones" value="{{ $controlasi->observaciones }}">
+                                    <input type="text" class="form-control w-100 @error('observaciones') is-invalid @enderror" name="observaciones" id="observaciones{{ $controlasi->id }}" placeholder="Observaciones" value="{{  old('observaciones', $controlasi->observaciones) }}">
                                     <label for="observaciones{{ $controlasi->id }}">Observaciones</label>
                                 </div>
                             </div>
@@ -26,7 +26,7 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="date" class="form-control w-100" name="fecha_asignacion" id="fecha_asignacion{{ $controlasi->id }}" placeholder="Fecha de asignacion" value="{{ $controlasi->fecha_asignacion }}">
+                                    <input type="date" class="form-control w-100 @error('fecha_asignacion') is-invalid @enderror" name="fecha_asignacion" id="fecha_asignacion{{ $controlasi->id }}" placeholder="Fecha de asignacion" value="{{ old('fecha_asignacion', $controlasi->fecha_asignacion) }}">
                                     <label for="fecha_asignacion{{ $controlasi->id }}">Fecha de asignacion</label>
                                 </div>
                             </div>
@@ -34,7 +34,7 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="date" class="form-control w-100" name="fecha_devolucion" id="fecha_devolucion{{ $controlasi->id }}" placeholder="Fecha de devolucion" value="{{ $controlasi->fecha_devolucion }}">
+                                    <input type="date" class="form-control w-100 @error('fecha_devolucion') is-invalid @enderror" name="fecha_devolucion" id="fecha_devolucion{{ $controlasi->id }}" placeholder="Fecha de devolucion" value="{{  old('fecha_devolucion', $controlasi->fecha_devolucion )}}">
                                     <label for="fecha_devolucion{{ $controlasi->id }}">Fecha de devolucion</label>
                                 </div>
                             </div>
@@ -81,3 +81,12 @@
         </div>
     </div>
 <!-- Fin de Editar -->
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && old('id') == $controlasi->id)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $controlasi->id }}'));
+            modal.show();
+        });
+    </script>
+@endif

@@ -68,10 +68,10 @@
                         </div>
 
                         <div class="modal-footer d-flex justify-content-center w-100">
-                            <button type="submit" class="btn" data-bs-dismiss="modal"
-                                style="background-color: #222944; color: white; border-color:#222944">Guardar</button>
-                            <button type="button" class="btn" data-bs-dismiss="modal"
-                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c" onclick="resetFormulario()">Cancelar</button>
+                            <button type="submit" class="btn" data-bs-dismiss="modal" style="background-color: #222944; color: white; border-color:#222944">Guardar</button>
+                            <!-- Redirección evita reabrir modal -->
+                            <a href="{{ route('accesorios') }}" class="btn"
+                            style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                         </div>
                     </form>
                 </div>

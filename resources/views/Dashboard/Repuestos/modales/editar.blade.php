@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $repuesto->id }}" style="color: #222944;">Editar Repuesto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <a href="{{ route('repuestos') }}" class="btn-close" aria-label="Close"></a>
             </div>
 
             <div class="modal-body">
@@ -13,12 +13,11 @@
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
                     <input type="hidden" name="id" value="{{ $repuesto->id }}">
-
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
                                 <input type="number" class="form-control w-100 @error('costo') is-invalid @enderror" name="costo" id="costo{{ $repuesto->id }}" placeholder="Costo" 
-                                       value="{{ old('id') == $repuesto->id ? old('costo') : $repuesto->costo }}">
+                                       value="{{old('costo', $repuesto->costo )}}">
                                 <label for="costo{{ $repuesto->id }}">Costo</label>
                                 @error('costo')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -29,7 +28,7 @@
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
                                 <input type="date" class="form-control w-100 @error('fecha_disponible') is-invalid @enderror" name="fecha_disponible" id="fecha_disponible{{ $repuesto->id }}" placeholder="Fecha disponible" 
-                                       value="{{ old('id') == $repuesto->id ? old('fecha_disponible') : $repuesto->fecha_disponible }}">
+                                       value="{{old('fecha_disponible', $repuesto->fecha_disponible )}}">
                                 <label for="fecha_disponible{{ $repuesto->id }}">Fecha disponible</label>
                                 @error('fecha_disponible')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -43,7 +42,7 @@
                                     <option disabled selected>Selecciona una opción...</option>
                                     @foreach($proveedorServicios as $proveedor_s)
                                         <option value="{{ $proveedor_s->id }}"
-                                            {{ (old('id') == $repuesto->id && old('id_prov_servicio') == $proveedor_s->id) || $repuesto->id_prov_servicio == $proveedor_s->id ? 'selected' : '' }}>
+                                            {{ old('id_prov_servicio', $repuesto->id_prov_servicio) == $proveedor_s->id ? 'selected' : '' }}>
                                             {{ $proveedor_s->id }}
                                         </option>
                                     @endforeach
@@ -58,7 +57,7 @@
                                     <option disabled selected>Selecciona una opción...</option>
                                     @foreach($accesorios as $accesorio)
                                         <option value="{{ $accesorio->id }}" 
-                                            {{ (old('id') == $repuesto->id && old('id_accesorio') == $accesorio->id) || $repuesto->id_accesorio == $accesorio->id ? 'selected' : '' }}>
+                                            {{ old('id_equipo', $repuesto->id_equipo) == $accesorio->id ? 'selected' : '' }}>
                                             {{ $accesorio->nombre }}
                                         </option>
                                     @endforeach
@@ -81,12 +80,3 @@
 </div>
 <!-- Fin de Editar -->
 
-<!-- Script para mostrar el modal si hay errores y coincide el ID -->
-@if ($errors->any() && old('id') == $repuesto->id)
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $repuesto->id }}'));
-            modal.show();
-        });
-    </script>
-@endif

@@ -5,12 +5,12 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="staticBackdropLabel" style="color: #222944;">Agregar Nuevo Repuesto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <a href="{{ route('repuestos') }}" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
                 <form action="{{ route('repuestos_registrar') }}" method="POST" class="row g-3">
-                    {{ csrf_field() }}
-
+                    <input type="hidden" name="modal" value="añadir">
+                    @csrf
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
                         <input type="number" step="0.01" name="costo" class="form-control @error('costo') is-invalid @enderror" id="costo" placeholder="Costo" value="{{ old('costo') }}">
                         <label for="costo" class="ps-4">Costo</label>
@@ -69,19 +69,5 @@
     </div>
 </div>
 <!--Fin de Añadir -->
-
-
-
-<!--Redirección de formulario si hay errores en las validaciones -->
-@if ($errors->any())
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
-            myModal.show();
-        });
-    </script>
-@endif
-<!--Fin de redirección de formulario si hay errores en las validaciones -->
-
 
 

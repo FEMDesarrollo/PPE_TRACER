@@ -4,6 +4,7 @@
 @section('subtitle', 'Equipos')
 @section('content')
 @include('components.alertas de cruds.alerts')
+
     <section class="section">
         <div class="row">
             <div class="col-lg-12">

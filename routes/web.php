@@ -118,6 +118,7 @@ Route::name('equipos_borrar')->delete('/equipos_borrar/{id}', [EquiposController
 Route::post('/equipos/importar', [EquiposController::class, 'equipos_importar'])->name('equipos.importar');
 
 
+
 //--------------------------------- RUTAS: Perfiles ---------------------------------
 Route::name('perfiles')->get('/perfiles',[PerfilesController::class, 'perfiles']);
 Route::name('perfiles_registrar')->post('/perfiles_registrar',[PerfilesController::class, 'perfiles_registrar']);
@@ -198,9 +199,8 @@ Route::name('usuarios_detalle')->get('/usuarios_detalle/{id}',[UsuariosControlle
 Route::name('usuarios_editar')->get('/usuarios_editar/{id}',[UsuariosController::class, 'usuarios_editar']);
 Route::name('usuarios_salvar')->put('/usuarios_salvar/{id}',[UsuariosController::class, 'usuarios_salvar']);
 Route::name('usuarios_borrar')->delete('/usuarios_borrar/{id}',[UsuariosController::class, 'usuarios_borrar']);
-
-
 Route::post('/usuarios/importar', [UsuariosController::class, 'usuarios_importar'])->name('usuarios.importar');
+Route::get('/usuarios/buscar', [UsuariosController::class, 'buscar'])->name('usuarios.buscar');
 
 //.................................RUTAS: control_inspecciones
 

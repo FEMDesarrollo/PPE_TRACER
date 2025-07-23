@@ -13,6 +13,8 @@ use App\Models\usuarios;
 use App\Models\estaciones;
 use App\Models\subEstacion;
 use App\Models\perfiles;
+use Illuminate\Support\Facades\DB;
+
 
 class UsuariosController extends Controller
 {
@@ -215,4 +217,33 @@ class UsuariosController extends Controller
                 ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
         }
     }
+
+    public function buscar(Request $request)
+    {
+        $usuarios = usuarios::with(['perfil:id,nombre', 'subEstacion:id,nombre'])
+    ->select('id', 'nombre', 'app', 'id_perfil', 'id_subestacion')
+    ->when($request->filled('nombre'), fn($q) =>
+        $q->where('nombre', 'like', '%' . $request->nombre . '%'))
+    ->when($request->filled('apm'), fn($q) =>
+        $q->where('app', 'like', '%' . $request->apm . '%'))
+    ->when($request->filled('perfil'), fn($q) =>
+        $q->whereHas('perfil', fn($q2) =>
+            $q2->where('nombre', $request->perfil)))
+    ->when($request->filled('subestacion'), fn($q) =>
+        $q->whereHas('subEstacion', fn($q2) =>
+            $q2->where('nombre', $request->subestacion)))
+    ->paginate(10); 
+
+
+        $perfiles = perfiles::select('nombre')->get();
+        $subestaciones = subEstacion::select('nombre')->get();
+
+        return view('Dashboard.Usuario.usuarios', [
+            'usuarios' => $usuarios,
+            'estaciones' => estaciones::all(),
+            'perfiles' => perfiles::all(),
+            'subestaciones' => subEstacion::all()
+        ]);
+    }
+
 }

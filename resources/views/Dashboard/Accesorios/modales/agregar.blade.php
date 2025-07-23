@@ -80,26 +80,3 @@
     </div>
     <!--Fin de Añadir -->
 
-
-    <!--Redirección de formulario si hay errores en las validaciones -->
-    @if ($errors->any())
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
-                myModal.show();
-            });
-        </script>
-    @endif
-    <!--Fin de redirección de formulario si hay errores en las validaciones -->
-
-
-    <script>
-    function resetFormulario() {
-        document.getElementById('formAñadir').reset();
-
-        // Para limpiar estilos de validación si es necesario
-        document.querySelectorAll('#formAñadir .is-invalid').forEach(el => {
-            el.classList.remove('is-invalid');
-        });
-    }
-</script>

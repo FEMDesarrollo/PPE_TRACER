@@ -16,7 +16,7 @@
                                 <div class="col-12 col-md-6">
                                     <div class="form-floating">
                                         <input type="text" class="form-control pe-5 @error('servicio') is-invalid @enderror" name="servicio" id="servicio{{ $servicio->id }}" placeholder="Servicio"
-                                            placeholder="Servicio" value="{{ old('id') == $servicio->id ? old('servicio') : $servicio->servicio }}">
+                                            placeholder="Servicio" value="{{ old('servicio', $servicio->servicio  )}}">
                                         <label for="servicio{{ $servicio->id }}">Servicio</label>
                                         @error('servicio')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>

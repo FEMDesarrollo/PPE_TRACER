@@ -5,10 +5,11 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="modalAñadirLabel" style="color: #222944;">Agregar Nuevo Estado</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <a href="{{ route('estatus_equipos') }}" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
                 <form action="{{ route('estatus_equipos_registrar') }}" method="POST" class="row g-3">
+                    <input type="hidden" name="modal" value="añadir">
                     @csrf
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
                         <input type="text" name="estado" class="form-control  @error('estado') is-invalid @enderror" id="estado" placeholder="Estado" value="{{ old('estado') }}">
@@ -19,20 +20,11 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-center w-100">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944;">Guardar</button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c;">Cancelar</button>
-                    </div>
+                        <!-- Redirección limpia para evitar reabrir modal -->
+                        <a href="{{ route('estatus_equipos') }}" class="btn"
+                           style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
- <!--Redirección de formulario si hay errores en las validaciones -->
-    @if ($errors->any())
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
-                myModal.show();
-            });
-        </script>
-    @endif
-    <!--Fin de redirección de formulario si hay errores en las validaciones -->

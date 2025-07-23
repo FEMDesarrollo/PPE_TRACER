@@ -18,7 +18,7 @@ class PermisosUsuariosController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $permisosUsuarios = PermisosUsuarios::with(['usuario', 'permiso'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -33,7 +33,7 @@ class PermisosUsuariosController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -80,7 +80,7 @@ class PermisosUsuariosController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.PermisoUsuario.permisos_usuarios', [
             'permisos_usuarios' => $permisosUsuarios,
             'usuarios' => Usuarios::all(),

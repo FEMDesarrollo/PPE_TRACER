@@ -5,6 +5,8 @@
 @section('content')
 @include('components.alertas de cruds.alerts')
 @include('components.alertas de validaciones.alerts')
+@include('components.redirecciones de cruds.redirecciones')
+
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
@@ -20,7 +22,7 @@
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                         <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                                     </select>
-                                    
+
                                     @if(request('search'))
                                         <input type="hidden" name="search" value="{{ request('search') }}">
                                     @endif
@@ -60,7 +62,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <!-- Botón Agregar en tabla -->
                             <div class="col-12 col-md-3 text-md-end">
                                 <a href="{{ route('estacion_proveedores') }}" class="btn btn-secondary me-md-2">
@@ -93,22 +95,22 @@
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <!-- Botón Editar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEditar{{ $eproveedor->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEditar{{ $eproveedor->id }}"
                                                         style="color: #222944">
                                                         <i class="bi bi-pencil-square fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEliminar{{ $eproveedor->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalEliminar{{ $eproveedor->id }}"
                                                         style="color: #cf0a2c">
                                                         <i class="bi bi-trash fs-5"></i>
                                                     </button>
 
                                                     <!-- Botón Ver -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal" 
-                                                        data-bs-target="#modalVer{{ $eproveedor->id }}" 
+                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                        data-bs-target="#modalVer{{ $eproveedor->id }}"
                                                         style="color: #212121">
                                                         <i class="bi bi-eye fs-5"></i>
                                                     </button>
@@ -137,9 +139,9 @@
                                     Importar Información
                                 </button>
 
-                            <!-- Botón Plantilla Excel --> 
+                            <!-- Botón Plantilla Excel -->
                             <a href="{{ url('/plantilla-estacion-proveedores') }}" class="btn btn-success">Descargar Plantilla Excel</a>
-                            
+
                             <!-- Botón para Importar Información -->
                             <div class="d-flex gap-2">
                                 <button type="button" class="btn" style="background-color: #222944; color: white; border-color:#222944" data-bs-toggle="modal" data-bs-target="#importModal">
@@ -212,10 +214,10 @@
         function changeEntries(select) {
             const perPage = select.value;
             const url = new URL(window.location.href);
-            
+
             // Actualiza el parámetro per_page en la URL
             url.searchParams.set('per_page', perPage);
-            
+
             // Recarga la página con el nuevo parámetro
             window.location.href = url.toString();
         }
@@ -227,7 +229,7 @@
             }
         });
     </script>
-    
+
     @endpush
-    
+
 @endsection

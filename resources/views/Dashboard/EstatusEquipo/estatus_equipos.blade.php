@@ -4,6 +4,7 @@
 @section('subtitle', 'Estatus de equipo')
 @section('content')
 @include('components.alertas de cruds.alerts')
+@include('components.redirecciones de cruds.redirecciones')
 <section class="section">
     <div class="row">
         <div class="col-lg-12">
@@ -57,7 +58,7 @@
                                                 placeholder="Buscar por ID y estado..." value="{{ request('search') }}">
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Filtro de tiempo -->
                                     <div class="col-md-6">
                                         <select name="time_filter" class="form-select border-0 border-bottom" onchange="this.form.submit()">
@@ -73,7 +74,7 @@
                                 </div>
                             </form>
                         </div>
-                        
+
                         <!-- Botón Agregar en tabla -->
                         <div class="col-12 col-md-3 text-md-end">
                             <a href="{{ route('estatus_equipos') }}" class="btn btn-secondary me-md-2">
@@ -148,7 +149,7 @@
                                     Importar Información
                                 </button>
 
-                                <!-- Botón Plantilla Excel --> 
+                                <!-- Botón Plantilla Excel -->
                                 <a href="{{ url('/plantilla-estatus-equipos') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
                                 <!-- Botón para  Exportar información -->
@@ -179,7 +180,7 @@
                                 </div>
                             </div>
                         </div>
-    
+
 
                     <!-- Paginación -->
                     <div class="d-flex justify-content-center mt-3 pagination-container">
@@ -202,7 +203,7 @@
 
         <!-- Modales por estatusEquipo -->
         @foreach($estatusEquipos as $estatusEquipo)
-            
+
         <!-- Modal de Editar -->
         @include('Dashboard.EstatusEquipo.Modales.editar')
 

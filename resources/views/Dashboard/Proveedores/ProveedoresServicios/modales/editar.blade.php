@@ -5,18 +5,18 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $proveedor_s->id }}" style="color: #222944;">Editar Proveedor Servicios</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <a href="{{ route('proveedor_servicios') }}" class="btn-close" aria-label="Close"></a>
             </div>
 
             <div class="modal-body">
                 <form action="{{ route('proveedor_servicios_salvar', ['id' => $proveedor_s->id]) }}" method="post">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
-
+                            <input type="hidden" name="id" value="{{ $proveedor_s->id }}">
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <select class="form-select" name="id_servicio" id="id_servicio{{ $proveedor_s->id }}">
+                                <select class="form-select" name="id_servicio" id="id_servicio{{ $proveedor_s->id }}" placeholder="Estatus" value="{{ old('id_servicio', $proveedor_s->id_servicio)}}">
                                     @foreach($servicios as $servis)
                                         <option value="{{ $servis->id }}" {{ $proveedor_s->id_servicio == $servis->id ? 'selected' : '' }}>
                                             {{ $servis->servicio }}
@@ -29,7 +29,7 @@
 
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
-                                <select class="form-select" name="id_proveedor" id="id_proveedor{{ $proveedor_s->id }}">
+                                <select class="form-select" name="id_proveedor" id="id_proveedor{{ $proveedor_s->id }}" placeholder="Estatus" value="{{ old('id_proveedor', $proveedor_s->id_proveedor)}}">
                                     @foreach($proveedores as $proveedor)
                                         <option value="{{ $proveedor->id }}" {{ $proveedor_s->id_proveedor == $proveedor->id ? 'selected' : '' }}>
                                             {{ $proveedor->nombre }}
@@ -43,8 +43,9 @@
 
                     <div class="modal-footer d-flex justify-content-center w-100 mt-3">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Editar</button>
-                        <button type="button" class="btn" data-bs-dismiss="modal"
-                            style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                        <!-- Redirección evita reabrir modal -->
+                                <a href="{{ route('proveedor_servicios') }}" class="btn"
+                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                     </div>
                 </form>
             </div>

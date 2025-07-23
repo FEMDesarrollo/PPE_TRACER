@@ -5,10 +5,11 @@
             <div class="modal-content">
                 <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                     <h5 class="modal-title text-center fw-bold" id="staticBackdropLabel" style="color: #222944;">Agregar Nuevo Proveedor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <a href="{{ route('proveedores') }}" class="btn-close" aria-label="Close"></a>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('proveedores_registrar') }}" method="POST" class="row g-3">
+                        <input type="hidden" name="modal" value="añadir">
                         @csrf
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
                             <input type="text" name="nombre" class="form-control @error('nombre') is-invalid @enderror" id="nombre" placeholder="Nombre" value="{{ old('nombre') }}">
@@ -38,10 +39,9 @@
                             <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                 Agregar
                             </button>
-                            <button type="button" class="btn" data-bs-dismiss="modal"
-                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">
-                                Cancelar
-                            </button>
+                            <!-- Redirección evita reabrir modal -->
+                                <a href="{{ route('proveedores') }}" class="btn"
+                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                         </div>
                     </form>
                 </div>

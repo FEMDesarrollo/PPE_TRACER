@@ -8,7 +8,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('accesorios_registrar') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+                    <form id="formAñadir" action="{{ route('accesorios_registrar') }}" method="POST" class="row g-3" enctype="multipart/form-data">
                         {{ csrf_field() }}
 
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
@@ -71,7 +71,7 @@
                             <button type="submit" class="btn" data-bs-dismiss="modal"
                                 style="background-color: #222944; color: white; border-color:#222944">Guardar</button>
                             <button type="button" class="btn" data-bs-dismiss="modal"
-                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c" onclick="resetFormulario()">Cancelar</button>
                         </div>
                     </form>
                 </div>
@@ -91,3 +91,15 @@
         </script>
     @endif
     <!--Fin de redirección de formulario si hay errores en las validaciones -->
+
+
+    <script>
+    function resetFormulario() {
+        document.getElementById('formAñadir').reset();
+
+        // Para limpiar estilos de validación si es necesario
+        document.querySelectorAll('#formAñadir .is-invalid').forEach(el => {
+            el.classList.remove('is-invalid');
+        });
+    }
+</script>

@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $eproveedor->id }}" style="color: #222944;">Editar estación de proveedores</h5>
-                <a href="{{ route('estacion_proveedores') }}" class="btn-close" aria-label="Close"></a>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{{ route('estacion_proveedores_salvar', $eproveedor->id) }}" method="post">
@@ -51,9 +51,10 @@
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
                             Editar
                         </button>
-                        <a href="{{ route('estacion_proveedores') }}" class="btn"
-                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
-
+                        <button type="button" class="btn" data-bs-dismiss="modal"
+                            style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">
+                            Cancelar
+                        </button>
                     </div>
                 </form>
             </div>

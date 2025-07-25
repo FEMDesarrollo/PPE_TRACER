@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 class usuarios extends Model
 {
     use HasFactory;
+
     protected $table = 'usuarios';
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'nombre',
         'app',
@@ -21,36 +24,35 @@ class usuarios extends Model
         'id_estacion',
         'id_subestacion',
         'id_perfil',
+    ];
 
-        ];
-
-        public function estacion(): mixed
+    public function estacion(): mixed
     {
         return $this->belongsTo(estaciones::class, 'id_estacion');
     }
 
-            public function subestacion(): mixed
+    public function subestacion(): mixed
     {
         return $this->belongsTo(subEstacion::class, 'id_subestacion');
     }
 
-            public function perfil(): mixed
+    public function perfil(): mixed
     {
         return $this->belongsTo(perfiles::class, 'id_perfil');
     }
 
-     public static function validationRules(): array
+    public static function validationRules($id = null): array
     {
         return [
             'nombre'         => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s().]+$/u', 'max:50'],
             'app'            => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s.]+$/u', 'max:50'],
             'apm'            => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s.]+$/u', 'max:50'],
             'telefono'       => ['required', 'regex:/^[0-9\s\-\(\)\+]{7,20}$/'],
-            'correo'         => ['required', 'email', 'max:100', 'unique:usuarios,correo'],
+            'correo'         => ['required', 'email', 'max:100', 'unique:usuarios,correo,' . $id],
             'password'       => ['required', 'min:4', 'max:20'],
             'id_estacion'    => ['required', 'digits_between:1,10', 'regex:/^\d+$/'],
             'id_subestacion' => ['required', 'digits_between:1,10', 'regex:/^\d+$/'],
-            'id_perfil'      => ['required', 'digits_between:1,10', 'regex:/^\d+$/']
+            'id_perfil'      => ['required', 'digits_between:1,10', 'regex:/^\d+$/'],
         ];
     }
 
@@ -94,6 +96,4 @@ class usuarios extends Model
             'id_perfil.regex'          => 'El campo perfil debe ser numérico.',
         ];
     }
-
-
 }

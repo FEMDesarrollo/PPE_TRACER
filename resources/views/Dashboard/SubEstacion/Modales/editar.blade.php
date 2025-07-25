@@ -5,16 +5,13 @@
             <div class="modal-content">
                 <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                     <h5 class="modal-title text-center fw-bold" id="staticBackdropLabel" style="color: #222944;">Editar subestación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <a href="{{ route('subestaciones') }}" class="btn-close" aria-label="Close"></a>
                 </div>
-
                 <div class="modal-body">
                     <form action="{{ route('subestaciones_salvar', ['id' => $sestacion->id]) }}" method="post">
-                        {{ csrf_field() }}
-                        {{ method_field('PUT') }}
+                         @csrf
+                        @method('PUT')
                         <input type="hidden" name="id" value="{{ $sestacion->id }}">
-
-
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
@@ -48,22 +45,28 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <select class="form-select" name="id_estacion" id="id_estacion{{ $sestacion->id }}">
+                                    <select class="form-select @error('id_estacion') is-invalid @enderror" name="id_estacion" id="id_estacion{{ $sestacion->id }}">
+                                        <option disabled selected>Selecciona una opción...</option>
                                         @foreach($estaciones as $estacion)
-                                            <option value="{{ $estacion->id }}" {{ $sestacion->id_estacion == $estacion->id ? 'selected' : '' }}>
+                                            <option value="{{ $estacion->id }}"
+                                                {{ old('id_estacion', $sestacion->id_estacion) == $estacion->id ? 'selected' : '' }}>
                                                 {{ $estacion->nombre }}
                                             </option>
                                         @endforeach
                                     </select>
                                     <label for="id_estacion{{ $sestacion->id }}">Estación</label>
+                                    @error('id_estacion')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
 
                         <div class="modal-footer d-flex justify-content-center w-100 mt-4">
                             <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Editar</button>
-                            <button type="button" class="btn" data-bs-dismiss="modal"
-                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                            <!-- Redirección evita reabrir modal -->
+                            <a href="{{ route('subestaciones') }}" class="btn"
+                             style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                         </div>
                     </form>
                 </div>
@@ -71,12 +74,3 @@
         </div>
     </div>
 <!-- Fin de Editar -->
-<!-- Script para mostrar el modal si hay errores y coincide el ID -->
-@if ($errors->any() && old('id') == $sestacion->id)
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $sestacion->id }}'));
-            modal.show();
-        });
-    </script>
-@endif

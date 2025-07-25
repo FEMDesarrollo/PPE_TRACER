@@ -5,10 +5,11 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="staticBackdropLabel" style="color: #222944;">Agregar Nueva Categoria</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <a href="{{ route('categorias') }}" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
                 <form action="{{ route('categorias_registrar') }}" method="POST" class="row g-3">
+                    <input type="hidden" name="modal" value="añadir">
                     {{ csrf_field() }}
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
@@ -38,7 +39,9 @@
 
                     <div class="modal-footer d-flex justify-content-center w-100">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                        <a href="{{ route('categorias') }}" class="btn"
+                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
+
                     </div>
                 </form>
             </div>
@@ -47,8 +50,8 @@
 </div>
 <!--Fin de Añadir -->
 
-<!--Redirección de formulario si hay errores en las validaciones -->
-@if ($errors->any() && !old('modal_edit_id'))
+<!-- Script para mostrar el modal si hay errores y coincide el ID -->
+@if ($errors->any() && !old('id'))
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             var myModal = new bootstrap.Modal(document.getElementById('modalAñadir'));
@@ -56,14 +59,3 @@
         });
     </script>
 @endif
-
-@if ($errors->any() && old('modal_edit_id'))
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var modalId = 'modalEditar' + @json(old('modal_edit_id'));
-            var myModal = new bootstrap.Modal(document.getElementById(modalId));
-            myModal.show();
-        });
-    </script>
-@endif
-<!--Fin de redirección de formulario si hay errores en las validaciones -->

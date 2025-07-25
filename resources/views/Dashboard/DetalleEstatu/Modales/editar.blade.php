@@ -5,7 +5,7 @@
             <div class="modal-content">
                 <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                     <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $detallesta->id }}" style="color: #222944;">Editar detalle del estatus</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <a href="{{ route('detalles_estatus') }}" class="btn-close" aria-label="Close"></a>
                 </div>
 
                 <div class="modal-body">
@@ -42,7 +42,8 @@
                                 <div class="form-floating">
                                     <select class="form-select" name="id_usuario" id="id_usuario{{ $detallesta->id }}">
                                         @foreach($usuario as $user)
-                                            <option value="{{ $user->id }}" {{ $detallesta->id_usuario == $user->id ? 'selected' : '' }}>
+                                            <option value="{{ $user->id }}" 
+                                            {{ old('id_usuario', $detallesta->id_usuario) == $user->id ? 'selected' : '' }}>
                                                 {{ $user->nombre }}
                                             </option>
                                         @endforeach
@@ -55,8 +56,8 @@
 
                         <div class="modal-footer d-flex justify-content-center w-100 mt-4">
                             <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Editar</button>
-                            <button type="button" class="btn" data-bs-dismiss="modal"
-                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                        <a href="{{ route('detalles_estatus') }}" class="btn"
+                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                         </div>
                     </form>
                 </div>

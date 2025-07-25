@@ -5,7 +5,7 @@
             <div class="modal-content">
                 <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                     <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $detallequi->id }}" style="color: #222944;">Editar el detalle de equipo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <a href="{{ route('detalles_equipos') }}" class="btn-close" aria-label="Close"></a>
                 </div>
 
                 <div class="modal-body">
@@ -70,7 +70,8 @@
                                 <div class="form-floating">
                                     <select class="form-select" name="id_usuario_equipo" id="id_usuario_equipo{{ $detallequi->id }}">
                                         @foreach($usuarios_equipos as $userequipo)
-                                            <option value="{{ $userequipo->id }}" {{ $detallequi->id_usuario_equipo == $userequipo->id ? 'selected' : '' }}>
+                                            <option value="{{ $userequipo->id }}"
+                                             {{ old('id_usuario_equipo', $detallequi->id_usuario_equipo) == $userequipo->id ? 'selected' : '' }}>
                                                 {{ $userequipo->id }}
                                             </option>
                                         @endforeach
@@ -83,9 +84,8 @@
 
                         <div class="modal-footer d-flex justify-content-center w-100 mt-4">
                             <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Editar</button>
-                            <button type="button" class="btn" data-bs-dismiss="modal"
-                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
-                        </div>
+                           <a href="{{ route('detalles_equipos') }}" class="btn"
+                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                     </form>
                 </div>
             </div>

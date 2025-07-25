@@ -4,6 +4,8 @@
 @section('subtitle', 'Equipos')
 @section('content')
 @include('components.alertas de cruds.alerts')
+@include('components.alertas de validaciones.alerts')
+@include('components.redirecciones de cruds.redirecciones')
 
     <section class="section">
         <div class="row">

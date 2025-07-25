@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $estatusEquipo->id }}" style="color: #222944;">Editar Estado</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <a href="{{ route('estatus_equipos') }}" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
                 <form action="{{ route('estatus_equipos_salvar', $estatusEquipo->id) }}" method="POST">
@@ -15,7 +15,7 @@
 
                     <div class="row g-3">
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" class="form-control @error('estado') is-invalid @enderror" name="estado" id="estado{{ $estatusEquipo->id }}"placeholder="Estado" value="{{old('estado', $estatusEquipo->estado )}}" >
+                            <input type="text" class="form-control @error('estado') is-invalid @enderror" name="estado" id="estado{{ $estatusEquipo->id }}"placeholder="Estado" value="{{old('estado', $estatusEquipo->estado)}}" >
                             <label for="estado{{ $estatusEquipo->id }}">Estado</label>
                             @error('estado')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -24,7 +24,9 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-center w-100 mt-3">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944;">Guardar</button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c;">Cancelar</button>
+                        <!-- Redirección limpia para evitar reabrir modal -->
+                        <a href="{{ route('estatus_equipos') }}" class="btn"
+                           style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                     </div>
                 </form>
             </div>
@@ -32,12 +34,3 @@
     </div>
 </div>
 <!-- Fin de Editar -->
-<!-- Script para mostrar el modal si hay errores y coincide el ID -->
-@if ($errors->any() && old('id') == $estatusEquipo->id)
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $estatusEquipo->id }}'));
-            modal.show();
-        });
-    </script>
-@endif

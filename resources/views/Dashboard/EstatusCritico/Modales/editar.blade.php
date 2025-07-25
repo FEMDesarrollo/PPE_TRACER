@@ -5,7 +5,7 @@
                 <div class="modal-content">
                     <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                         <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $estado->id }}" style="color: #222944;">Editar Estatus Crítico</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <a href="{{ route('estatus_critico') }}" class="btn-close" aria-label="Close"></a>
                     </div>
                     <div class="modal-body">
                         <form action="{{ route('estatus_critico_salvar', $estado->id) }}" method="post">
@@ -18,7 +18,8 @@
                                     <div class="form-floating">
 
 
-                                        <input type="text" class="form-control pe-5 @error('estatus') is-invalid @enderror" name="estatus" id="estatus{{ $estado->id }}" placeholder="Estatus" value="{{old('estatus', $estado->estatus )}}">
+                                        <input type="text" class="form-control pe-5 @error('estatus') is-invalid @enderror" name="estatus" id="estatus{{ $estado->id }}" placeholder="Estatus" value="{{ old('estatus', $estado->estatus)}}"
+>
                                         <label for="estatus{{ $estado->id }}">Estatus Crítico</label>
                                         @error('estatus')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -32,22 +33,12 @@
                                 <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Guardar
                                 </button>
-                                <button type="button" class="btn" data-bs-dismiss="modal"
-                                    style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">
-                                    Cancelar
-                                </button>
+                                <!-- Redirección limpia para evitar reabrir modal -->
+                        <a href="{{ route('estatus_critico') }}" class="btn"
+                           style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-<!-- Script para mostrar el modal si hay errores y coincide el ID -->
-@if ($errors->any() && old('id') == $estado->id)
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var modal = new bootstrap.Modal(document.getElementById('modalEditar{{ $estado->id }}'));
-            modal.show();
-        });
-    </script>
-@endif

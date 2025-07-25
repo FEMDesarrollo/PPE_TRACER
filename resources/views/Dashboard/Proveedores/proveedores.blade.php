@@ -3,24 +3,12 @@
 @section('page_title', 'PANEL ADMINISTRATIVO')
 @section('subtitle', 'Proveedores')
 @section('content')
+@include('components.alertas de cruds.alerts')
+@include('components.alertas de validaciones.alerts')
+@include('components.redirecciones de cruds.redirecciones')
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
-
-            @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>{{ session('error') }}</strong>
-        @if(session('errorDetails'))
-            <ul class="mb-0 mt-2">
-                @foreach(session('errorDetails') as $detail)
-                    <li>{{ $detail }}</li>
-                @endforeach
-            </ul>
-        @endif
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
                 <div class="card">
                     <div class="card-body">
                         <!-- Contenedor superior de tabla -->
@@ -153,7 +141,7 @@
                                     Importar Información
                                 </button>
 
-                                <!-- Botón Plantilla Excel --> 
+                                <!-- Botón Plantilla Excel -->
                                 <a href="{{ url('/plantilla-proveedores') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
                                 <!-- Botón para  Exportar información -->

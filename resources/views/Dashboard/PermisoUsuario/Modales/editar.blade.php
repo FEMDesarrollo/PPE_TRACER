@@ -5,12 +5,14 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $permisouser->id }}" style="color: #222944;">Editar permiso de usuario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <a href="{{ route('permisos_usuarios') }}" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
                 <form action="{{ route('permisos_usuarios_salvar', $permisouser->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
+                     <input type="hidden" name="id" value="{{ $permisouser->id }}">
+
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
                             <div class="form-floating">
@@ -34,11 +36,12 @@
                             <select class="form-select @error('id_permiso') is-invalid @enderror" name="id_permiso" id="id_permiso_edit_{{ $permisouser->id }}">
                                 <option disabled selected>Selecciona una opción...</option>
                                 @foreach($permisos as $permiso)
-                                    <option value="{{ $permiso->id }}" 
+                                    <option value="{{ $permiso->id }}"
                                         {{ old('id_permiso', $permisouser->id_permiso) == $permiso->id ? 'selected' : '' }}>
-                                        @endforeach
                                         {{ $permiso->permiso}}
                                     </option>
+                                @endforeach
+
                             </select>
                             <label for="id_permiso_edit_{{ $permisouser->id }}">Permiso</label>
                             @error('id_permiso')
@@ -61,8 +64,9 @@
 
                     <div class="modal-footer d-flex justify-content-center w-100 mt-3">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Guardar</button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
-                    </div>
+                        <!-- Redirección evita reabrir modal -->
+                        <a href="{{ route('permisos_usuarios') }}" class="btn"
+                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>                    </div>
                 </form>
             </div>
         </div>

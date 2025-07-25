@@ -14,6 +14,7 @@ use App\Models\estaciones;
 use App\Models\subEstacion;
 use App\Models\perfiles;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 
 class UsuariosController extends Controller
@@ -122,7 +123,7 @@ class UsuariosController extends Controller
                 'apm' => $request->apm,
                 'telefono' => $request->telefono,
                 'correo' => $request->correo,
-                'password' => $request->password,
+                'password' => Hash::make($request->password),
                 'foto' => $img2,
                 'id_estacion' => $request->id_estacion,
                 'id_subestacion' => $request->id_subestacion,
@@ -149,13 +150,12 @@ class UsuariosController extends Controller
     //.....................................................Usuarios: SALVAR.....
     public function usuarios_salvar(usuarios $id, Request $request)
     {
+       
         $this->validate(
             $request,
-            usuarios::validationRules(),
+            usuarios::validationRules($id->id),
             usuarios::validationMessages()
         );
-
-            $fot2 = $request->foto;
 
             $img2 = $request->foto2;
 

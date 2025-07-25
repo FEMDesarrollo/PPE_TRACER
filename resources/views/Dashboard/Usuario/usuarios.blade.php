@@ -5,16 +5,17 @@
 @section('content')
 @include('components.alertas de cruds.alerts')
 @include('components.alertas de validaciones.alerts')
+@include('components.redirecciones de cruds.redirecciones')
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-<!-- Filtros compactos en una sola línea horizontal -->
-<div class="card shadow-sm mt-4">
-    <div class="card-body p-2">
-        <form method="GET" action="{{ route('usuarios.buscar') }}">
-            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <!-- Filtros compactos en una sola línea horizontal -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-body p-2">
+                        <form method="GET" action="{{ route('usuarios.buscar') }}">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
 
                 <!-- Nombre -->
                 <input type="text" name="nombre" class="form-control form-control-sm w-auto"
@@ -129,7 +130,6 @@
                                         <th>Apellido materno</th>
                                         <th>Teléfono</th>
                                         <th>Correo</th>
-                                        <th>Contraseña</th>
                                         <th>Foto</th>
                                         <th>Estación</th>
                                         <th>Subestación</th>
@@ -146,7 +146,6 @@
                                             <td>{{ $user->apm }}</td>
                                             <td>{{ $user->telefono }}</td>
                                             <td>{{ $user->correo }}</td>
-                                            <td>{{ $user->password }}</td>
                                             <td><img src="{{ asset('storage/' . $user->foto) }}" width="80" height="80"></td>
                                             <td>{{ $user->estacion->nombre ?? 'Sin estación' }}</td>
                                             <td>{{ $user->subEstacion->nombre ?? 'Sin sub-estación' }}</td>

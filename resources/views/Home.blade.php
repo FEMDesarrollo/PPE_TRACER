@@ -62,7 +62,7 @@
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="#">INICIO</a>
+            <a class="nav-link" href="/">INICIO</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -83,29 +83,28 @@
     <div class="hero-image"></div>
     <div class="hero-text mt-5">
       <h1 class="title mt-5">
-        SISTEMA PARA LA ADMINISTRACIÓN DE INVENTARIOS DE EQUIPOS DE BOMBERO
+         SISTEMA PARA LA ADMINISTRACIÓN DE INVENTARIOS DE EQUIPOS DE BOMBERO
       </h1>
       <div class="red-line h-2 w-70 my-5" style="max-width: 600px;"></div>
       <p class="subtitle">Control eficiente, operaciones confiables.</p>
-     <div class="btn-container mt-5">
-  <a href="..\login" 
-     class="btn mx-auto text-decoration-none py-2 px-4" 
-     style="
-       background-color: #cf0a2c; 
-       color: white; 
-       border: none; 
-       border-radius: 30px; 
-       font-weight: 600; 
-       font-family: 'Montserrat', sans-serif; 
-       text-transform: uppercase; 
-       letter-spacing: 0.5px; 
-       transition: all 0.3s ease; 
-       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-       min-width: 180px;
-     ">
-    Iniciar sesión
-  </a>
-</div>
+    <div class="btn-container mt-5">
+        <a href="..\login" 
+            class="btn mx-auto text-decoration-none py-2 px-4" 
+            style="
+              background-color: #cf0a2c; 
+              color: white; 
+              border: none; 
+              border-radius: 30px; 
+              font-weight: 600; 
+              font-family: 'Montserrat', sans-serif; 
+              text-transform: uppercase; 
+              letter-spacing: 0.5px; 
+              transition: all 0.3s ease; 
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+              min-width: 180px;">
+          Iniciar sesión
+        </a>
+      </div>
     </div>
   </div>
 

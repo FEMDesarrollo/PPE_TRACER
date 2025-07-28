@@ -173,7 +173,7 @@ class UsuariosController extends Controller
             $query->apm = $request->apm;
             $query->telefono = $request->telefono;
             $query->correo = $request->correo;
-             $query->password = $request->password;
+            $query->password = Hash::make($request->password);
             $query->foto = $img2;
             $query->id_estacion = $request->id_estacion;
             $query->id_subestacion = $request->id_subestacion;

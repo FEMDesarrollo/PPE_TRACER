@@ -93,7 +93,8 @@
                                             <td>{{ $verico->id }}</td>
                                             <td>{{ $verico->codigo_verificacion }}</td>
                                             <td>{{ $verico->fecha }}</td>
-                                            <td>{{ $verico->usuarios->nombre ?? 'Sin usuario' }}</td>
+                                            
+                                            <td>{{ $permisouser->usuario->nombre ?? 'Sin usuario' }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <!-- Botón Editar -->

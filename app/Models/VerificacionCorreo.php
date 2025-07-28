@@ -20,7 +20,7 @@ class verificacionCorreo extends Model
 
         public function usuarios(): mixed
     {
-        return $this->belongsTo(usuarios::class, 'id_usuario');
+        return $this->belongsTo(usuarios::class, 'id_usuario', 'id');
     }
 
     public static function validationRules(): array

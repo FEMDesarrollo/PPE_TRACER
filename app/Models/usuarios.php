@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Validation\Rule;
 
-class usuarios extends Model
+class usuarios extends  Authenticatable
 {
     use HasFactory;
 
@@ -24,6 +24,7 @@ class usuarios extends Model
         'id_estacion',
         'id_subestacion',
         'id_perfil',
+        'correo_verificado',
     ];
 
     public function estacion(): mixed
@@ -40,7 +41,13 @@ class usuarios extends Model
     {
         return $this->belongsTo(perfiles::class, 'id_perfil');
     }
+    
+    public function verificacionCorreo()
+    {
+        return $this->hasOne(VerificacionCorreo::class, 'id_usuario', 'id');
+    }
 
+    
     public static function validationRules($id = null): array
     {
         return [

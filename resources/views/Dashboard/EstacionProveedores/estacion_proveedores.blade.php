@@ -6,8 +6,6 @@
 @include('components.alertas de cruds.alerts')
 @include('components.alertas de validaciones.alerts')
 @include('components.redirecciones de cruds.redirecciones')
-
-@include('components.redirecciones de cruds.redirecciones')
     <section class="section">
         <div class="row">
             <div class="col-lg-12">

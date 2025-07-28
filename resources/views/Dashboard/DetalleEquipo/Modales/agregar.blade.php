@@ -4,11 +4,12 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="staticBackdropLabel" style="color: #222944;">Agregar nuevo detalle de equipo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <a href="{{ route('detalles_equipos') }}" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
 
                 <form action="{{ route('detalles_equipos_registrar') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+                    <input type="hidden" name="modal" value="añadir">
                     {{ csrf_field() }}
 
 
@@ -70,7 +71,9 @@
 
                     <div class="modal-footer d-flex justify-content-center w-100">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                        <a href="{{ route('detalles_equipos') }}" class="btn"
+                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
+
                     </div>
                 </form>
             </div>

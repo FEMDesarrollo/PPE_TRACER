@@ -142,6 +142,10 @@
                                     Importar Información
                                 </button>
 
+                            <!-- Botón Plantilla Excel -->
+                            <a href="{{ url('/plantilla-permisos-usuarios') }}" class="btn btn-success">Descargar Plantilla Excel</a>
+
+
                                 <!-- Botón para  Exportar información -->
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Exportar información
@@ -169,15 +173,6 @@
                                 </form>
                                 </div>
                             </div>
-                            <!-- Botón Plantilla Excel -->
-                            <a href="{{ url('/plantilla-permisos-usuarios') }}" class="btn btn-success">Descargar Plantilla Excel</a>
-
-                            <!-- Botón Exportar de tabla -->
-                            <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                                Exportar información
-                            </button>
-                        </div>
-                    </div>
 
                         <!-- Paginación -->
                         <div class="d-flex justify-content-center mt-3 pagination-container">

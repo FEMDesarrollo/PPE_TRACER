@@ -5,7 +5,7 @@
                 <div class="modal-content">
                     <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                         <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $estacion->id }}" style="color: #222944;">Editar estación</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <a href="{{ route('estaciones') }}" class="btn-close" aria-label="Close"></a>
                     </div>
                     <div class="modal-body">
                         <form action="{{ route('estaciones_salvar', $estacion->id) }}" method="post">
@@ -67,9 +67,9 @@
                                 <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Editar
                                 </button>
-                                <button type="button" class="btn" data-bs-dismiss="modal"
-                                    style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">
-                                    Cancelar
+                                <a href="{{ route('estaciones') }}" class="btn"
+                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
+
                                 </button>
                             </div>
                         </form>

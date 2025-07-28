@@ -3,6 +3,9 @@
 @section('page_title', 'PANEL ADMINISTRATIVO')
 @section('subtitle', 'Categorías')
 @section('content')
+@include('components.alertas de cruds.alerts')
+@include('components.alertas de validaciones.alerts')
+@include('components.redirecciones de cruds.redirecciones')
      <section class="section">
         <div class="row">
             <div class="col-lg-12">

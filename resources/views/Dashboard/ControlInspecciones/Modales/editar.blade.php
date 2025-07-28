@@ -5,7 +5,7 @@
             <div class="modal-content">
                 <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                     <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $controlins->id }}" style="color: #222944;">Editar control de inspecciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <a href="{{ route('control_inspecciones') }}" class="btn-close" aria-label="Close"></a>
                 </div>
 
                 <div class="modal-body">
@@ -30,8 +30,11 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
-                                    <input type="date" class="form-control w-100 @error('fecha') is-invalid @enderror" name="fecha" id="fecha{{ $controlins->id }}" placeholder="Fecha" value="{{ old('fecha',$controlins->fecha )}}">
+                                    <input type="date" class="form-control w-100 @error('fecha') is-invalid @enderror" name="fecha" id="fecha{{ $controlins->id }}" placeholder="Fecha" value="{{ old('fecha', $controlins->fecha )}}">
                                     <label for="fecha{{ $controlins->id }}">Fecha</label>
+                                    @error('fecha')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -41,6 +44,9 @@
                                 <input type="hidden" name="imagen2" value="{{ $controlins->imagen }}">
                                 <label for="floatingimagen">imagen</label>
                                 <div id="imagenHelp" class="form-text">Suba una imagen para el control de inspecciones ( <i>Formatos</i>: jpg/png/bmp)</div>
+                                @error('imagen')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -48,6 +54,9 @@
                                 <div class="form-floating">
                                     <input type="text" class="form-control w-100 @error('descripcion') is-invalid @enderror" name="descripcion" id="descripcion{{ $controlins->id }}" placeholder="Descripcion" value="{{ old('descripcion', $controlins->descripcion )}}">
                                     <label for="descripcion{{ $controlins->id }}">Descripcion</label>
+                                    @error('descripcion')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -55,12 +64,16 @@
                                 <div class="form-floating">
                                     <select class="form-select" name="id_usuario" id="id_usuario{{ $controlins->id }}">
                                         @foreach($usuarios as $user)
-                                            <option value="{{ $user->id }}" {{ $controlins->id_usuario == $user->id ? 'selected' : '' }}>
+                                            <option value="{{ $user->id }}" 
+                                            {{ old('id_usuario', $controlins->id_usuario) == $user->id ? 'selected' : '' }}>
                                                 {{ $user->nombre }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <label for="id_usuario{{ $controlins->id }}">Nombre de usuario</label>
+                                    <label for="id_usuario{{ $controlins->id }}">Usuarios</label>
+                                    @error('id_usuario')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -68,13 +81,17 @@
                             <div class="col-12 col-md-6">
                                 <div class="form-floating">
                                     <select class="form-select" name="id_gestion_inspeccion" id="id_gestion_inspecciones{{ $controlins->id }}">
+                                        <option selected disabled>Seleccione una gestion de inspecciones...</option>
                                         @foreach($gestion_inspecciones as $gestionInspeccion)
                                             <option value="{{ $gestionInspeccion->id }}" {{ $controlins->id_gestion_inspecciones == $gestionInspeccion->id ? 'selected' : '' }}>
                                                 {{ $gestionInspeccion->observaciones }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <label for="id_gestion_inspecciones{{ $controlins->id }}">Observaciones</label>
+                                    <label for="id_gestion_inspecciones{{ $controlins->id }}">Gestion de inspecciones</label>
+                                    @error('id_gestion_inspeccion')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -82,8 +99,9 @@
 
                         <div class="modal-footer d-flex justify-content-center w-100 mt-4">
                             <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Editar</button>
-                            <button type="button" class="btn" data-bs-dismiss="modal"
-                                style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                            <a href="{{ route('control_inspecciones') }}" class="btn"
+                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
+
                         </div>
                     </form>
                 </div>

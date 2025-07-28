@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $accesorio->id }}" style="color: #222944;">Editar Accesorio</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <a href="{{ route('accesorios') }}" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
                 <form action="{{ route('accesorios_salvar', ['id' => $accesorio->id]) }}" method="post" enctype="multipart/form-data">
@@ -51,7 +51,8 @@
                             <div class="form-floating">
                                 <input type="text" class="form-control @error('modelo') is-invalid @enderror" name="modelo"
                                        id="modelo{{ $accesorio->id }}" placeholder="Modelo"
-                                       value="{{ old('id') == $accesorio->id ? old('modelo') : $accesorio->modelo }}">
+                                      value="{{old('modelo', $accesorio->modelo )}}"
+
                                 <label for="modelo{{ $accesorio->id }}">Modelo</label>
                                 @error('modelo')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -79,7 +80,7 @@
                                     <option disabled selected>Selecciona una opción...</option>
                                     @foreach($equipos as $equip)
                                         <option value="{{ $equip->id }}"
-                                            {{ (old('id') == $accesorio->id && old('id_equipo') == $equip->id) || $accesorio->id_equipo == $equip->id ? 'selected' : '' }}>
+                                            {{ old('id_equipo', $accesorio->id_equipo) == $equip->id ? 'selected' : '' }}>
                                             {{ $equip->equipo }}
                                         </option>
                                     @endforeach

@@ -5,13 +5,13 @@
         <div class="modal-content">
             <div class="modal-header d-grid" style="grid-template-columns: 1fr auto;">
                 <h5 class="modal-title text-center fw-bold" id="modalEditarLabel{{ $categoria->id }}" style="color: #222944;">Editar Categoria</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <a href="{{ route('categorias') }}" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
                 <form action="{{ route('categorias_salvar', ['id' => $categoria->id]) }}" method="post">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
-
+                    
                     <!-- Campo oculto para identificar el ID enviado -->
                     <input type="hidden" name="id" value="{{ $categoria->id }}">
 
@@ -48,8 +48,9 @@
 
                     <div class="modal-footer d-flex justify-content-center w-100 mt-4">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Editar</button>
-                        <button type="button" class="btn" data-bs-dismiss="modal"
-                            style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                        <!-- Redirección limpia para evitar reabrir modal -->
+                        <a href="{{ route('categorias') }}" class="btn"
+                           style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
                     </div>
                 </form>
             </div>

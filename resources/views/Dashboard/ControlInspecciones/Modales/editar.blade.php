@@ -64,7 +64,7 @@
                                 <div class="form-floating">
                                     <select class="form-select" name="id_usuario" id="id_usuario{{ $controlins->id }}">
                                         @foreach($usuarios as $user)
-                                            <option value="{{ $user->id }}" 
+                                            <option value="{{ $user->id }}"
                                             {{ old('id_usuario', $controlins->id_usuario) == $user->id ? 'selected' : '' }}>
                                                 {{ $user->nombre }}
                                             </option>
@@ -83,7 +83,7 @@
                                     <select class="form-select" name="id_gestion_inspeccion" id="id_gestion_inspecciones{{ $controlins->id }}">
                                         <option selected disabled>Seleccione una gestion de inspecciones...</option>
                                         @foreach($gestion_inspecciones as $gestionInspeccion)
-                                            <option value="{{ $gestionInspeccion->id }}" {{ $controlins->id_gestion_inspecciones == $gestionInspeccion->id ? 'selected' : '' }}>
+                                                <option value="{{ $gestionInspeccion->id }}" {{ old('id_gestion_inspeccion', $controlins->id_gestion_inspeccion) == $gestionInspeccion->id ? 'selected' : '' }}>
                                                 {{ $gestionInspeccion->observaciones }}
                                             </option>
                                         @endforeach

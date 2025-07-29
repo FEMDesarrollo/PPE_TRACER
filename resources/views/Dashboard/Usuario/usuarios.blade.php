@@ -75,7 +75,7 @@
                                     <label for="entries" class="mb-0">Entradas por página</label>
                                 </form>
                             </div>
-                            
+
                             <!-- Filtros combinados -->
                             <div class="col-12 col-md-6">
                                 <form method="GET" action="{{ route('usuarios') }}">

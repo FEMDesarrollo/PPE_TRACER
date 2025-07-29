@@ -21,7 +21,7 @@
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                         <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                                     </select>
-                                    
+
                                     @if(request('search'))
                                         <input type="hidden" name="search" value="{{ request('search') }}">
                                     @endif
@@ -46,7 +46,7 @@
                                                     placeholder="Buscar por ID, codigo de verificación o usuario" value="{{ request('search') }}">
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Filtro de tiempo -->
                                         <div class="col-md-6">
                                             <select name="time_filter" class="form-select border-0 border-bottom" onchange="this.form.submit()">
@@ -62,7 +62,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <!-- Botón Agregar en tabla -->
                             <div class="col-12 col-md-3 text-md-end">
                                 <a href="{{ route('verificacion_correo') }}" class="btn btn-secondary me-md-2">
@@ -93,8 +93,8 @@
                                             <td>{{ $verico->id }}</td>
                                             <td>{{ $verico->codigo_verificacion }}</td>
                                             <td>{{ $verico->fecha }}</td>
-                                            
-                                            <td>{{ $permisouser->usuario->nombre ?? 'Sin usuario' }}</td>
+
+                                            <td>{{ $verico->usuarios->nombre ?? 'Sin usuario' }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <!-- Botón Editar -->
@@ -142,16 +142,16 @@
                                     Importar Información
                                 </button>
 
-                                <!-- Botón Plantilla Excel --> 
+                                <!-- Botón Plantilla Excel -->
                                 <a href="{{ url('/plantilla-verificacion-correo') }}" class="btn btn-success">Descargar Plantilla Excel</a>
-                            
+
                             <!-- Botón Exportar de tabla -->
                             <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                 Exportar información
                             </button>
                         </div>
                     </div>
-                         
+
                     <!-- Modal -->
                         <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -208,10 +208,10 @@
         function changeEntries(select) {
             const perPage = select.value;
             const url = new URL(window.location.href);
-            
+
             // Actualiza el parámetro per_page en la URL
             url.searchParams.set('per_page', perPage);
-            
+
             // Recarga la página con el nuevo parámetro
             window.location.href = url.toString();
         }
@@ -232,5 +232,5 @@
         @endif
     </script>
     @endpush
-    
+
 @endsection

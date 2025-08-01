@@ -191,7 +191,7 @@ class UsuariosController extends Controller
         return redirect()->route('usuarios')->with('success', 'El usuario se ha eliminado correctamente.');
     }
 
-    //..................................................Grupo: Importar.....
+    //..................................................Usuarios: Importar.....
     public function usuarios_importar(Request $request)
     {
     $request->validate([
@@ -218,10 +218,10 @@ class UsuariosController extends Controller
         }
     }
 
+    //..................................................Usuarios: BUSCAR.....
     public function buscar(Request $request)
     {
         $usuarios = usuarios::with(['perfil:id,nombre', 'subEstacion:id,nombre'])
-    ->select('id', 'nombre', 'app', 'id_perfil', 'id_subestacion')
     ->when($request->filled('nombre'), fn($q) =>
         $q->where('nombre', 'like', '%' . $request->nombre . '%'))
     ->when($request->filled('apm'), fn($q) =>
@@ -244,6 +244,24 @@ class UsuariosController extends Controller
             'perfiles' => perfiles::all(),
             'subestaciones' => subEstacion::all()
         ]);
+    }
+
+    //.....................................................Usuarios: CAMBIAR FOTO.....
+    public function cambiar_foto(Request $request, $id)
+    {
+        $usuario = usuarios::findOrFail($id);
+
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $nombreArchivo = date('Ymd_His') . '_' . $file->getClientOriginalName();
+            $file->storeAs('', $nombreArchivo, 'public');
+            $usuario->foto = $nombreArchivo;
+            $usuario->save();
+
+            return redirect()->route('usuarios')->with('success', 'Foto actualizada correctamente.');
+        }
+
+        return redirect()->route('usuarios')->with('error', 'No se seleccionó ninguna imagen.');
     }
 
 }

@@ -104,7 +104,7 @@
                                                 @endif
                                             </td>
                                             <td>{{ $controlins->descripcion }}</td>
-                                            <td>{{ $controlins->usuarios->nombre }}</td>
+                                            <td>{{ $controlins->usuarios?->nombre ?? 'Sin usuario' }}</td>
                                             <td>{{ $controlins->gestionInspecciones->observaciones }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">

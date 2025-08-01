@@ -1419,7 +1419,7 @@ h6 {
     font-size: 2rem;
 }
 
-/* Estilopara tooltip */
+/* Estilo para tooltip */
 .tooltip-inner {
     background-color: #ffffff;
     color: #222944;
@@ -1434,5 +1434,46 @@ h6 {
     display: none !important;
 }
 
+/*Estilos para la barra de perfil*/
+
+.profile-pic-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .profile-pic-wrapper img {
+  border: 2px solid #222944;
+  object-fit: cover;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+}
+
+.camera-icon {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 28px;
+  height: 28px;
+  background-color: white;
+  border-radius: 50%;
+  border: 2px solid #222944; 
+  color: #222944;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.camera-icon:hover {
+  background-color: #222944;
+  color: white;
+}
+
+  #foto {
+    display: none;
+  }
 
 

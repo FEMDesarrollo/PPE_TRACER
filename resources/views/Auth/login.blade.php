@@ -53,7 +53,7 @@
     {{-- Navbar login responsive --}}
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow p-3 mb-5 bg-body rounded">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold ps-4" href="#" style="color: #222944">PPE TRACER</a>
+            <a class="navbar-brand fw-bold ps-4" href="/" style="color: #222944">PPE TRACER</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -61,7 +61,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active fw-bold" href="#" style="color: #222944">Inicio</a>
+                        <a class="nav-link active fw-bold" href="/" style="color: #222944">Inicio</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle fw-bold" style="color: #222944" href="#"
@@ -69,8 +69,8 @@
                             Sobre el sistema
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="color: #222944">
-                            <li><a class="dropdown-item fw-bold" href="..\">Información</a></li>
-                            <li><a class="dropdown-item fw-bold" href="#">Soporte</a></li>
+                            <li><a class="dropdown-item fw-bold" href="/#seccion-seguimiento">Información</a></li>
+                            <li><a class="dropdown-item fw-bold" href="/#final-pagina">Soporte</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -85,7 +85,7 @@
                 {{-- Logo en card login, ajustar si es necesario --}}
                 <img src="{{ asset('img/logotipo.png') }}" alt="Logo" class="mb-3"
                     style="width: 100px; height: 100px;">
-                <h3 class="full-width-text p-2 py-3" style="color: #222944">Bienvenidos a <strong>PPE TRACER</strong>
+                <h3 class="full-width-text p-2 py-3" style="color: #222944">Bienvenidos a <br> <strong>PPE TRACER</strong>
                 </h3>
             </div>
             @if(session('error'))
@@ -102,20 +102,20 @@
                 <div class="mb-3">
                     <label for="correo" class="form-labelc fw-bold py-2" style="color: #222944">Correo
                         electrónico</label>
-                    <input type="email" class="form-control" name="correo" id="correo" placeholder="usuario@example.com" value="{{old('correo')}}" class="@error('correo') is-invalid @enderror">
+                    <input type="email" class="form-control"  style="border: 1px solid #b6bac6ff;" name="correo" id="correo" placeholder="usuario@example.com" value="{{old('correo')}}" class="@error('correo') is-invalid @enderror">
                     @error('correo')
                     <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                         </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label fw-bold" style="color: #222944">Contraseña</label>
-                    <input type="password" class="form-control" name="password" id="password" value="{{old('password')}}" class="@error('password') is-invalid @enderror">
+                    <label for="password" class="form-label fw-bold" style= "color: #222944">Contraseña</label>
+                    <input type="password" class="form-control" style="border: 1px solid #b6bac6ff;" name="password" id="password" value="{{old('password')}}" class="@error('password') is-invalid @enderror">
                     @error('password')
                     <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                 </div>
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button type="submit" class="btn fw-bold submit-prevent-button" 
+                    <button type="submit" class="btn fw-bold submit-prevent-button"
                         style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Ingresar</button>
                 </div>
             </form>

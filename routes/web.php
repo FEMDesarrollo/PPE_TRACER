@@ -54,6 +54,14 @@ use App\Exports\PlantillaUsuariosEquipos;
 use App\Exports\PlantillaVerificacionCorreo;
 use App\Models\permisos;
 
+// ------------------------------- Roles -------------------------------------------
+
+use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UsuarioController;
+
+
+
 Route::get('/dashboard', function () {
     $Permisos = permisos::all();
     return view('welcome', compact('Permisos'));
@@ -65,6 +73,24 @@ Route::get('/', function () {
     return view('home');
 });
 
+//---------------------------------RUTAS: Roles Middleware----------------------------------------
+
+Route::middleware(['auth', 'rol:2'])->group(function () {
+Route::get('/servicios', [ServiciosController::class, 'servicios'])->name('servicios');
+Route::post('/servicio_registrar', [ServiciosController::class, 'servicio_registrar'])->name('servicio_registrar');
+Route::get('/servicio_registrar', function () { return redirect('/servicios'); });
+
+Route::get('/servicio_editar/{id}', [ServiciosController::class, 'servicio_editar'])->name('servicio_editar');
+Route::put('/servicio_salvar/{id}', [ServiciosController::class, 'servicio_salvar'])->name('servicio_salvar');
+Route::delete('/servicio_borrar/{id}', [ServiciosController::class, 'servicio_borrar'])->name('servicio_borrar');
+Route::post('/servicios/importar', [ServiciosController::class, 'servicios_importar'])->name('servicios.importar');
+Route::get('/servicios_importar', function () { return redirect('/servicios'); });
+
+});
+
+
+
+
 
 //---------------------------------RUTAS: Login----------------------------------------
 
@@ -75,15 +101,6 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //---------------------------------RUTAS: Servicios------------------------------------
 
-Route::get('/servicios', [ServiciosController::class, 'servicios'])->name('servicios')->middleware('auth.custom');
-Route::post('/servicio_registrar', [ServiciosController::class, 'servicio_registrar'])->name('servicio_registrar');
-Route::get('/servicio_registrar', function () { return redirect('/servicios'); });
-
-Route::get('/servicio_editar/{id}', [ServiciosController::class, 'servicio_editar'])->name('servicio_editar');
-Route::put('/servicio_salvar/{id}', [ServiciosController::class, 'servicio_salvar'])->name('servicio_salvar');
-Route::delete('/servicio_borrar/{id}', [ServiciosController::class, 'servicio_borrar'])->name('servicio_borrar');
-Route::post('/servicios/importar', [ServiciosController::class, 'servicios_importar'])->name('servicios.importar');
-Route::get('/servicios_importar', function () { return redirect('/servicios'); });
 
 
 //---------------------------------RUTAS: Proveedores----------------------------------

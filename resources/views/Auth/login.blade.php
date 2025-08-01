@@ -90,13 +90,13 @@
             </div>
             @if(session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
+            @endif
 
-        @php
-    if(session('debug_data')) {
-        dump(session('debug_data'));
-    }
-@endphp
+            @php
+                if(session('debug_data')) {
+                    dump(session('debug_data'));
+                }
+            @endphp
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="mb-3">

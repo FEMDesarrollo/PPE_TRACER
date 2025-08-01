@@ -111,7 +111,7 @@
               transition: all 0.3s ease;
               box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
               min-width: 180px;">
-          Registrar
+          Iniciar sesión
         </a>
 
       </div>

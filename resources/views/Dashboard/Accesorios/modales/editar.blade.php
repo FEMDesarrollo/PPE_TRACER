@@ -95,7 +95,7 @@
 
                     <div class="modal-footer d-flex justify-content-center w-100 mt-4">
                         <button type="submit" class="btn"
-                                style="background-color: #222944; color: white; border-color:#222944">Guardar</button>
+                                style="background-color: #222944; color: white; border-color:#222944">Editar</button>
 
                         <!-- Redirección limpia para evitar reabrir modal -->
                         <a href="{{ route('accesorios') }}" class="btn"

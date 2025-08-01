@@ -43,7 +43,7 @@
   <nav class="navbar navbar-expand-lg transparent">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <img src="{{ asset('img/logow.png') }}" alt="Logo" style="width: 21%; height: auto;" />
+        <img src="{{ asset('img/logow.png') }}" alt="Logo" style="width: 18%; height: auto;" />
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,19 +61,25 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/">INICIO</a>
-          </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              SOBRE EL SISTEMA
+            <a class="nav-link dropdown active" href="#section1" role="button">
+              NOSOTROS
             </a>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/login">INGRESAR</a>
+            </li>
+
             <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="#section1">Desafío</a></li>
               <li><a class="dropdown-item" href="#section2">Seguimiento</a></li>
             </ul>
           </li>
         </ul>
+
+
+
+
       </div>
     </div>
   </nav>
@@ -86,24 +92,28 @@
          SISTEMA PARA LA ADMINISTRACIÓN DE INVENTARIOS DE EQUIPOS DE BOMBERO
       </h1>
       <div class="red-line h-2 w-70 my-5" style="max-width: 600px;"></div>
-      <p class="subtitle">Control eficiente, operaciones confiables.</p>
-    <div class="btn-container mt-5">
-        <a href="..\login" 
-            class="btn mx-auto text-decoration-none py-2 px-4" 
+      <p class="subtitle">Control eficiente con
+        <br> operaciones confiables.</p>
+
+<div class="btn-container mt-5">
+
+  <!-- ruta de login cambiarla por la de regitrar -->     <a href="..\login"
+            class="btn mx-auto text-decoration-none py-2 px-4"
             style="
-              background-color: #cf0a2c; 
-              color: white; 
-              border: none; 
-              border-radius: 30px; 
-              font-weight: 600; 
-              font-family: 'Montserrat', sans-serif; 
-              text-transform: uppercase; 
-              letter-spacing: 0.5px; 
-              transition: all 0.3s ease; 
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+              background-color: #cf0a2c;
+              color: white;
+              border: none;
+              border-radius: 30px;
+              font-weight: 600;
+              font-family: 'Montserrat', sans-serif;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              transition: all 0.3s ease;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
               min-width: 180px;">
-          Iniciar sesión
+          Registrar
         </a>
+
       </div>
     </div>
   </div>
@@ -157,9 +167,12 @@
     </div>
   </section>
 
-  <!-- Seccion Seguimiento -->
+
+ <!-- Seccion Seguimiento -->
+<section id="seccion-seguimiento">
   <section id="section2" class="section seguimiento-section py-5">
     <div class="container mt-5 mb-1">
+
       <h2 class="section-title mb-4">Seguimiento</h2>
       <div class="row g-3 g-md-4 justify-content-center mt-5">
         <!-- Registro de tu EPP -->
@@ -255,6 +268,7 @@
       </div>
     </div>
   </section>
+  </seccion>
 
   <!-- Icono de regresar al inico -->
   <a href="#inicio" id="backToTop" class="position-fixed bottom-0 end-0 m-4"
@@ -270,6 +284,8 @@
     </svg>
   </a>
 </body>
+
+
 
 <!-- Pie de pagina -->
 <footer class="bg-dark text-white py-4">
@@ -289,7 +305,9 @@
       </div>
 
       <!-- Información de contacto -->
+
       <div class="col-md-6 mb-0">
+        <section id="final-pagina">
         <h6 class="fw-bold mb-3">Contacto y Soporte</h6>
         <div class="row">
           <div class="col-sm-6 mb-2">
@@ -309,8 +327,10 @@
             <span class="small">Ayuda en línea</span>
           </div>
         </div>
+    </section>
       </div>
     </div>
+
 
     <!-- Línea divisoria -->
     <hr class="my-3 opacity-25" />

@@ -105,3 +105,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 });
+
+// Al recargar, vuelve siempre al top
+  document.addEventListener("DOMContentLoaded", function () {
+    const links = document.querySelectorAll(".scroll-link");
+    window.scrollTo(0, 0);
+  });
+
+

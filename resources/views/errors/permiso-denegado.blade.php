@@ -39,9 +39,9 @@
 <body class="d-flex justify-content-center align-items-center">
     <div class="bg-white p-5 rounded shadow error-card text-center">
         <div class="mb-3">
-            <i class="fas fa-ban error-icon"></i>
+           <img src="{{ asset('storage/error403.png') }}" alt="Acceso denegado" class="img-fluid" style="max-width: 180px;">
         </div>
-        <h1 class="display-4 text-danger">403</h1>
+        <h1 class="display-4 fw-bold text-danger">403</h1>
         <h2 class="fw-bold">Acceso Denegado</h2>
         <p class="text-muted">No tienes los permisos necesarios para acceder a esta sección del sistema.</p>
         <a href="{{ url()->previous() }}" class="btn btn-custom mt-4">

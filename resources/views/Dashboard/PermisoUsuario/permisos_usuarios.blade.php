@@ -84,7 +84,6 @@
                                         <th>Usuario</th>
                                         <th>Permiso</th>
                                         <th>Activo</th>
-
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>

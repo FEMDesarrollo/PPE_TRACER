@@ -21,7 +21,7 @@
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                         <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                                     </select>
-                                    
+
                                     @if(request('search'))
                                         <input type="hidden" name="search" value="{{ request('search') }}">
                                     @endif
@@ -61,7 +61,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <!-- Botón Agregar en tabla -->
                             <div class="col-12 col-md-3 text-md-end">
                                 <a href="{{ route('estacion_proveedores') }}" class="btn btn-secondary me-md-2">

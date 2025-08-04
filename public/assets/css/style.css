@@ -1458,7 +1458,7 @@ h6 {
   height: 28px;
   background-color: white;
   border-radius: 50%;
-  border: 2px solid #222944; 
+  border: 2px solid #222944;
   color: #222944;
   font-size: 14px;
   display: flex;
@@ -1509,3 +1509,29 @@ h6 {
 html {
   scroll-behavior: smooth;
 }
+
+
+/*Estilos de los recuadros de reportes--------------------------------*/
+
+/* Sombra suave por defecto */
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Animación al pasar el mouse */
+.card-hover:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
+
+/*Boton de generar reporte*/
+.btn-reporte {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-reporte:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+

@@ -1,9 +1,9 @@
 <header id="header" class="header fixed-top d-flex align-items-center">
   <div class="d-flex align-items-center justify-content-between">
+  <i class="bi bi-list toggle-sidebar-btn me-3"></i>
     <a href="{{ url('/') }}" class="logo d-flex align-items-center">
-      <span class="d-none d-lg-block">PPE TRACER</span>
+      <span class="nav-link dropdown active">PPE TRACER</span>
     </a>
-    <i class="bi bi-list toggle-sidebar-btn"></i>
   </div>
 
   <nav class="header-nav ms-auto">

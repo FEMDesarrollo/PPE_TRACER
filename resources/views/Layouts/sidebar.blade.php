@@ -190,12 +190,15 @@
             </ul>
         </li>
     </ul>
-    
+
     <!-- Botón Generar Reporte -->
     <div class="col-12 mt-4 px-3">
-    <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill" style="background-color: #222944; border: none;">
+    <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill btn-reporte" style="background-color: #222944; border: none;">
         <i class="bi bi-file-earmark-bar-graph"></i>
         <span>Generar Reporte</span>
     </button>
 </div>
 </aside>
+
+
+

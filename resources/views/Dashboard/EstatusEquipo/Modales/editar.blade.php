@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center w-100 mt-3">
-                        <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944;">Guardar</button>
+                        <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944;">Editar</button>
                         <!-- Redirección limpia para evitar reabrir modal -->
                         <a href="{{ route('estatus_equipos') }}" class="btn"
                            style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>

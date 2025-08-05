@@ -150,7 +150,7 @@ class UsuariosController extends Controller
     //.....................................................Usuarios: SALVAR.....
     public function usuarios_salvar(usuarios $id, Request $request)
     {
-       
+
         $this->validate(
             $request,
             usuarios::validationRules($id->id),
@@ -232,7 +232,7 @@ class UsuariosController extends Controller
     ->when($request->filled('subestacion'), fn($q) =>
         $q->whereHas('subEstacion', fn($q2) =>
             $q2->where('nombre', $request->subestacion)))
-    ->paginate(10); 
+    ->paginate(10);
 
 
         $perfiles = perfiles::select('nombre')->get();

@@ -12,7 +12,7 @@
                         <input type="hidden" name="modal" value="añadir">
                     @csrf
                         <div class="col-12 col-sm-6 col-md-6 form-floating">
-                            <input type="text" name="observaciones" class="form-control @error('observaciones') is-invalid @enderror"" id="observaciones" placeholder="Observaciones" value="{{ old('observaciones') }}">
+                            <input type="text" name="observaciones" class="form-control @error('observaciones') is-invalid @enderror" id="observaciones" placeholder="Observaciones" value="{{ old('observaciones') }}">
                             <label for="observaciones" class="ps-4">Observaciones</label>
                             @error('observaciones')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>

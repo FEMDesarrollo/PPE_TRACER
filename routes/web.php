@@ -73,6 +73,9 @@ Route::get('/', function () {
     return view('home');
 });
 
+//-------------------------- Ruta de reportes -------------------
+Route::get('/dashboard', function () {return view('dashboard');});
+
 //---------------------------------RUTAS: Roles Middleware----------------------------------------
 
 Route::middleware(['auth', 'rol:2'])->group(function () {

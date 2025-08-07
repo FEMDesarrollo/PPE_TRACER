@@ -174,7 +174,7 @@ Route::name('estatus_equipos_borrar')->delete('/estatus_equipos_borrar/{id}',[Es
 Route::post('/estatus_equipos/importar', [EstatusEquiposController::class, 'estatus_equipos_importar'])->name('estatus_equipos.importar');
 Route::get('/estatus_equipos_importar', function () { return redirect('/estatus_equipos'); });
 
-//--------------------------------- RUTAS: Sub Estacion -------------------------------
+//--------------------------------- RUTAS: Subestaciones -------------------------------
 
 Route::name('subestaciones')->get('/subestaciones',[SubEstacionController::class, 'subestaciones'])->middleware('auth.custom');
 Route::name('subestaciones_registrar')->post('/subestaciones_registrar',[SubEstacionController::class, 'subestaciones_registrar']);
@@ -186,6 +186,7 @@ Route::name('subestaciones_salvar')->put('/subestaciones_salvar/{id}',[SubEstaci
 Route::name('subestaciones_borrar')->delete('/subestaciones_borrar/{id}',[SubEstacionController::class, 'subestaciones_borrar']);
 Route::post('/subestaciones/importar', [SubEstacionController::class, 'subestacion_importar'])->name('subestacion.importar');
 Route::get('/subestacion_importar', function () { return redirect('/subestaciones'); });
+Route::get('/subestaciones/buscar', [SubEstacionController::class, 'buscar'])->name('subestaciones.buscar');
 
 //--------------------------------- RUTAS: Estacion Proveedores -----------------------
 
@@ -224,6 +225,8 @@ Route::name('usuarios_detalle')->get('/usuarios_detalle/{id}',[UsuariosControlle
 Route::name('usuarios_editar')->get('/usuarios_editar/{id}',[UsuariosController::class, 'usuarios_editar']);
 Route::name('cambiar_foto')->put('/cambiar_foto/{id}',[UsuariosController::class, 'cambiar_foto']);
 Route::name('usuarios_salvar')->put('/usuarios_salvar/{id}',[UsuariosController::class, 'usuarios_salvar']);
+Route::name('datos_personales')->put('/datos_personales/{id}',[UsuariosController::class, 'datos_personales']);
+Route::name('cambiar_password')->put('/cambiar_password/{id}',[UsuariosController::class, 'cambiar_password']);
 Route::name('usuarios_borrar')->delete('/usuarios_borrar/{id}',[UsuariosController::class, 'usuarios_borrar']);
 Route::post('/usuarios/importar', [UsuariosController::class, 'usuarios_importar'])->name('usuarios.importar');
 Route::get('/usuarios_importar', function () { return redirect('/usuarios'); });

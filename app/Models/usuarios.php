@@ -51,17 +51,28 @@ class usuarios extends  Authenticatable
     public static function validationRules($id = null): array
     {
         return [
-            'nombre'         => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s().]+$/u', 'max:50'],
-            'app'            => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s.]+$/u', 'max:50'],
-            'apm'            => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s.]+$/u', 'max:50'],
+            'nombre'         => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s().]+$/u', 'max:30'],
+            'app'            => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s.]+$/u', 'max:30'],
+            'apm'            => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s.]+$/u', 'max:30'],
             'telefono'       => ['required', 'regex:/^[0-9\s\-\(\)\+]{7,20}$/'],
             'correo'         => ['required', 'email', 'max:100', 'unique:usuarios,correo,' . $id],
-            'password'       => ['required', 'min:4', 'max:20'],
+            'password'  => $id ? ['nullable', 'min:4', 'max:20'] : ['required', 'min:4', 'max:20'],
             'id_estacion'    => ['required', 'digits_between:1,10', 'regex:/^\d+$/'],
             'id_subestacion' => ['required', 'digits_between:1,10', 'regex:/^\d+$/'],
             'id_perfil'      => ['required', 'digits_between:1,10', 'regex:/^\d+$/'],
         ];
     }
+
+    public static function personalDataValidationRules($id = null): array
+    {
+        return [
+            'nombre'    => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s().]+$/u', 'max:30'],
+            'app'       => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s.]+$/u', 'max:30'],
+            'apm'       => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s.]+$/u', 'max:30'],
+            'telefono'  => ['required', 'regex:/^[0-9\s\-\(\)\+]{7,20}$/'],
+        ];
+    }
+
 
     public static function validationMessages(): array
     {

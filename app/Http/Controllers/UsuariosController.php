@@ -246,6 +246,59 @@ class UsuariosController extends Controller
         ]);
     }
 
+    //.....................................................Usuarios: CAMBIAR DATOS PERSONALES.....
+    public function datos_personales(usuarios $id, Request $request)
+    {
+        $this->validate(
+            $request,
+            usuarios::personalDataValidationRules($id->id),
+            usuarios::validationMessages()
+        );
+ 
+        $query = usuarios::find($id->id);
+        $query->nombre = $request->nombre;
+        $query->app = $request->app;
+        $query->apm = $request->apm;
+        $query->telefono = $request->telefono;
+        $query->save();
+
+        return back()
+        ->with('success', 'Datos personales actualizados correctamente.')
+        ->with('modal', 'configuracion')
+        ->with('activeTab', 'datos');
+
+    }
+
+    //.....................................................Usuarios: CAMBIAR CONTRASEÑA.....
+
+    public function cambiar_password(Request $request, $id)
+    {
+        $request->validate([
+            'password'      => 'required',
+            'new_password'  => 'required|min:4|confirmed',
+        ]);
+
+        $usuario = Auth::user();
+
+        if (!Hash::check($request->password, $usuario->password)) {
+            return back()
+                ->withErrors(['password' => 'La contraseña actual no es correcta.'])
+                ->withInput()
+                ->with('modal', 'configuracion')
+                ->with('activeTab', 'seguridad');
+        }
+
+        $usuario->password = Hash::make($request->new_password);
+        $usuario->save();
+
+        return back()
+            ->with('success', 'Contraseña actualizada correctamente.')
+            ->with('modal', 'configuracion')
+            ->with('activeTab', 'seguridad');
+    }
+
+
+
     //.....................................................Usuarios: CAMBIAR FOTO.....
     public function cambiar_foto(Request $request, $id)
     {

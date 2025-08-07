@@ -1,10 +1,10 @@
 @include('components.reedirecciones del offcanvas.offcanvas')
 <header id="header" class="header fixed-top d-flex align-items-center">
   <div class="d-flex align-items-center justify-content-between">
+  <i class="bi bi-list toggle-sidebar-btn me-3"></i>
     <a href="{{ url('/') }}" class="logo d-flex align-items-center">
-      <span class="d-none d-lg-block">PPE TRACER</span>
+      <span class="nav-link dropdown active">PPE TRACER</span>
     </a>
-    <i class="bi bi-list toggle-sidebar-btn"></i>
   </div>
 
   <nav class="header-nav ms-auto">
@@ -74,11 +74,11 @@
       <li class="nav-item dropdown pe-3">
         @if(Auth::check())
         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-          <img 
-            src="{{ Auth::user()->foto 
-              ? asset('storage/' . Auth::user()->foto) 
-              : asset('assets/img/profile-img.jpg') }}" 
-            alt="Profile" 
+          <img
+            src="{{ Auth::user()->foto
+              ? asset('storage/' . Auth::user()->foto)
+              : asset('assets/img/profile-img.jpg') }}"
+            alt="Profile"
             class="rounded-circle"
             style="width: 40px; height: 40px; object-fit: cover;">
           <span class="d-none d-md-block dropdown-toggle ps-2">
@@ -130,7 +130,7 @@
   </nav>
 
   <!-- Offcanvas perfil -->
-   
+
   <div class="offcanvas offcanvas-end shadow-lg" tabindex="-1" id="perfilOffcanvas" aria-labelledby="perfilOffcanvasLabel" style="width: 380px; background: #fff; color: #222944; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
     <div class="offcanvas-header border-bottom" style="border-color: #ddd;">
       <h5 class="offcanvas-title fw-bold d-flex align-items-center" id="perfilOffcanvasLabel" style="color: #222944;">
@@ -144,8 +144,8 @@
           @csrf
           @method('PUT')
           <label for="foto" class="profile-pic-wrapper" title="Cambiar foto de perfil">
-            <img  src="{{ Auth::user()->foto 
-                ? asset('storage/' . Auth::user()->foto) 
+            <img  src="{{ Auth::user()->foto
+                ? asset('storage/' . Auth::user()->foto)
                 : asset('assets/img/profile-img.jpg') }}"  alt="Foto de perfil" />
             <span class="camera-icon">
               <i class="bi bi-camera"></i>
@@ -171,8 +171,8 @@
         </ul>
       </div>
       <div class="mt-5 text-center">
-        <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill" 
-          style="background-color: #222944; border: none; box-shadow: 0 4px 12px rgb(34 41 68 / 0.3);" 
+        <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill"
+          style="background-color: #222944; border: none; box-shadow: 0 4px 12px rgb(34 41 68 / 0.3);"
           data-bs-dismiss="offcanvas" style="background-color: #222944; border: none;">
           Cerrar
         </button>

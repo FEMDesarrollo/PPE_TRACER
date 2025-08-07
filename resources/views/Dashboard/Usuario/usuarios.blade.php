@@ -150,7 +150,7 @@
                                             <td>{{ $user->apm }}</td>
                                             <td>{{ $user->telefono }}</td>
                                             <td>{{ $user->correo }}</td>
-                                            <td><img src="{{ asset('storage/' . $user->foto) }}" width="80" height="80"></td>
+                                            <td><img src="{{ asset('storage/' . $user->foto) }}" width="80" height="80" class="rounded-circle" style="object-fit: cover;"></td>
                                             <td>{{ $user->estacion->nombre ?? 'Sin estación' }}</td>
                                             <td>{{ $user->subEstacion->nombre ?? 'Sin sub-estación' }}</td>
                                             <td>{{ $user->perfil->nombre ?? 'Sin perfil' }}</td>

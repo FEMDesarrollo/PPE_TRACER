@@ -19,7 +19,7 @@
 
   <!-- FontAwesome para iconos personalizados -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  
+
 
   <!-- Google Fonts: Montserrat para tipografía personalizada -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
@@ -98,22 +98,7 @@
 
 <div class="btn-container mt-5">
 
-  <!-- ruta de login cambiarla por la de regitrar -->     <a href="..\login"
-            class="btn mx-auto text-decoration-none py-2 px-4"
-            style="
-              background-color: #cf0a2c;
-              color: white;
-              border: none;
-              border-radius: 30px;
-              font-weight: 600;
-              font-family: 'Montserrat', sans-serif;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-              transition: all 0.3s ease;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-              min-width: 180px;">
-          Registrar
-        </a>
+  
 
       </div>
     </div>

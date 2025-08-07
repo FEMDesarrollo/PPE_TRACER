@@ -98,13 +98,13 @@
                                             <td>{{ $controlins->fecha }}</td>
                                             <td>
                                                 @if($controlins->imagen)
-                                                    <img src="{{ asset('storage/' . $controlins->imagen) }}" width="80" height="80" class="img-thumbnail">
+                                                    <img src="{{ asset('storage/' . $controlins->imagen) }}" width="80" height="80" class="rounded-circle" style="object-fit: cover;">
                                                 @else
                                                     Sin imagen
                                                 @endif
                                             </td>
                                             <td>{{ $controlins->descripcion }}</td>
-                                            <td>{{ $controlins->usuarios->nombre }}</td>
+                                            <td>{{ $controlins->usuarios?->nombre ?? 'Sin usuario' }}</td>
                                             <td>{{ $controlins->gestionInspecciones->observaciones }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
@@ -153,14 +153,14 @@
                                     Importar Información
                                 </button>
 
-                                <!-- Botón Plantilla Excel --> 
+                                <!-- Botón Plantilla Excel -->
                                 <a href="{{ url('/plantilla-control-inspecciones') }}" class="btn btn-success">Descargar Plantilla Excel</a>
 
                                 <!-- Botón para  Exportar información -->
                                 <button class="btn" style="background-color: #222944; color: white; border-color:#222944">
                                     Exportar información
                                 </button>
-                           </div> 
+                           </div>
                         </div>
 
                         <!-- Modal -->

@@ -109,7 +109,7 @@
                         </div>
                 <div class="mb-3">
                     <label for="password" class="form-label fw-bold" style= "color: #222944">Contraseña</label>
-                    <input type="password" class="form-control" style="border: 1px solid #b6bac6ff;" name="password" id="password" value="{{old('password')}}" class="@error('password') is-invalid @enderror">
+                    <input type="password" class="form-control" style="border: 1px solid #b6bac6ff;" name="password" id="password" placeholder="Password" value="{{old('password')}}" class="@error('password') is-invalid @enderror">
                     @error('password')
                     <div class="alert alert-danger">{{ $message }}</div>
                         @enderror

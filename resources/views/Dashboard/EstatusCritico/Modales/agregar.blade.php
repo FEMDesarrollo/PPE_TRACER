@@ -22,7 +22,7 @@
                         </div>
                         <div class="modal-footer d-flex justify-content-center w-100">
                             <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">
-                                Guardar
+                                Agregar
                             </button>
                             <!-- Redirección limpia para evitar reabrir modal -->
                         <a href="{{ route('estatus_critico') }}" class="btn"

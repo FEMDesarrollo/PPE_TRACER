@@ -77,6 +77,8 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {return view('dashboard');})->middleware('auth.custom');
 
 
+Route::get('/datos-personales', [UsuarioController::class, 'datosPersonales'])->name('datos_personales');
+Route::get('/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('cambiar_password');
 //---------------------------------RUTAS: Login----------------------------------------
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -225,8 +227,8 @@ Route::name('cambiar_foto')->put('/cambiar_foto/{id}',[UsuariosController::class
 Route::name('usuarios_salvar')->put('/usuarios_salvar/{id}',[UsuariosController::class, 'usuarios_salvar']);
 Route::name('usuarios_borrar')->delete('/usuarios_borrar/{id}',[UsuariosController::class, 'usuarios_borrar']);
 Route::post('/usuarios/importar', [UsuariosController::class, 'usuarios_importar'])->name('usuarios.importar');
-Route::get('/usuarios_importar', function () { return redirect('/usuarios'); });
-Route::get('/usuarios/buscar', [UsuariosController::class, 'buscar'])->name('usuarios.buscar'); 
+Route::get('/usuarios_importar', function () { return redirect('/usuarios'); 
+Route::get('/usuarios/buscar', [UsuariosController::class, 'buscar'])->name('usuarios.buscar'); });
 
 //Usuarios equipo
 Route::name('usuarios_equipos')->get('/usuarios_equipos',[UsuariosEquiposController::class, 'usuarios_equipos'])->middleware('auth.custom');

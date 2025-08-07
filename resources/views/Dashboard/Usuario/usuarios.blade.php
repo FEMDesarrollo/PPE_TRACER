@@ -11,49 +11,53 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                <!-- Filtros compactos en una sola línea horizontal -->
-                <div class="card shadow-sm mt-4">
-                    <div class="card-body p-2">
-                        <form method="GET" action="{{ route('usuarios.buscar') }}">
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <!-- Filtros compactos (busqueda de inf más profunda) -->
+                        <div class="card shadow-sm mt-4" style="background-color: #f9f9f9;">
+                            <div class="card-body p-3">
+                                <form method="GET" action="{{ route('usuarios.buscar') }}">
+                                    <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
 
-                <!-- Nombre -->
-                <input type="text" name="nombre" class="form-control form-control-sm w-auto"
-                    placeholder="Nombre" value="{{ request('nombre') }}" style="min-width: 140px;">
+                                        <input type="text" name="nombre"
+                                            class="form-control form-control-sm w-auto"
+                                            placeholder="Nombre" value="{{ request('nombre') }}"
+                                            style="min-width: 140px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 
-                <!-- Apellido materno -->
-                <input type="text" name="apm" class="form-control form-control-sm w-auto"
-                    placeholder="Apellido materno" value="{{ request('apm') }}" style="min-width: 140px;">
+                                        <input type="text" name="apm"
+                                            class="form-control form-control-sm w-auto"
+                                            placeholder="Apellido materno" value="{{ request('apm') }}"
+                                            style="min-width: 140px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 
-                <!-- Perfil -->
-                <select name="perfil" class="form-select form-select-sm w-auto" style="min-width: 130px;">
-                    <option value="">Perfil</option>
-                    @foreach($perfiles as $perfil)
-                        <option value="{{ $perfil->nombre }}" {{ request('perfil') == $perfil->nombre ? 'selected' : '' }}>
-                            {{ $perfil->nombre }}
-                        </option>
-                    @endforeach
-                </select>
+                                        <select name="perfil" class="form-select form-select-sm w-auto"
+                                            style="min-width: 130px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                            <option value="">Perfil</option>
+                                            @foreach($perfiles as $perfil)
+                                                <option value="{{ $perfil->nombre }}" {{ request('perfil') == $perfil->nombre ? 'selected' : '' }}>
+                                                    {{ $perfil->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
 
-                <!-- Subestación -->
-                <select name="subestacion" class="form-select form-select-sm w-auto" style="min-width: 130px;">
-                    <option value="">Subestación</option>
-                    @foreach($subestaciones as $sub)
-                        <option value="{{ $sub->nombre }}" {{ request('subestacion') == $sub->nombre ? 'selected' : '' }}>
-                            {{ $sub->nombre }}
-                        </option>
-                    @endforeach
-                </select>
+                                        <select name="subestacion" class="form-select form-select-sm w-auto"
+                                            style="min-width: 130px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                            <option value="">Subestación</option>
+                                            @foreach($subestaciones as $sub)
+                                                <option value="{{ $sub->nombre }}" {{ request('subestacion') == $sub->nombre ? 'selected' : '' }}>
+                                                    {{ $sub->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
 
-                <!-- Botón -->
-                <button type="submit" class="btn btn-sm btn-primary">
-                    <i class="bi bi-search"></i>
-                </button>
+                                        <button type="submit" class="btn btn-sm"
+                                            style="background-color: #222944; color: white;">
+                                            <i class="bi bi-search"></i>
+                                        </button>
 
-            </div>
-        </form>
-    </div>
-</div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Fin de filtros compactos (busqueda de inf más profunda) -->
+
 
                         <!-- Contenedor superior de tabla -->
                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 p-4 gap-3">

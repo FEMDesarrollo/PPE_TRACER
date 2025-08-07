@@ -1,4 +1,4 @@
-@if ($errors->any())
+ @if ($errors->any())
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const oldId = @json(old('id'));

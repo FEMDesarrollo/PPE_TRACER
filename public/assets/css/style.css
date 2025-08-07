@@ -1293,7 +1293,7 @@ h6 {
     opacity: 0.8;
 }
 
-/* Íconos elegantes */
+/* Íconos elegantes--------------------------------------------------*/
 .pagination .page-link .bi {
     font-size: 0.9rem;
     transition: transform 0.2s ease;
@@ -1303,7 +1303,7 @@ h6 {
     transform: scale(1.1);
 }
 
-/* Efecto sutil al hacer hover */
+/* Efecto sutil al hacer hover--------------------------------------*/
 .pagination .page-link::after {
     content: '';
     position: absolute;
@@ -1320,7 +1320,7 @@ h6 {
     width: 50%;
 }
 
-/* Flechas de navegación con estilo */
+/* Flechas de navegación con estilo-------------------------------*/
 .pagination .page-item:first-child .page-link,
 .pagination .page-item:last-child .page-link {
     min-width: 2.5rem;
@@ -1328,7 +1328,7 @@ h6 {
     border-color: #e2e8f0;
 }
 
-/* Separador de puntos */
+/* Separador de puntos-------------------------------------------*/
 .pagination .disabled .page-link.dots {
     border: none;
     background: transparent;
@@ -1336,7 +1336,7 @@ h6 {
     pointer-events: none;
 }
 
-/* Versión responsive */
+/* Versión responsive-------------------------------------------*/
 @media (max-width: 768px) {
     .pagination {
         gap: 0.3rem;
@@ -1356,7 +1356,7 @@ h6 {
 }
 
 /*Estilos de la imagen----------------------------------------*/
-/* Micro-interacción al hacer clic */
+/* 1.-Micro-interacción al hacer clic*/
 .pagination .page-link:active {
     transform: translateY(0) scale(0.98);
     transition-duration: 0.05s;
@@ -1419,7 +1419,7 @@ h6 {
     font-size: 2rem;
 }
 
-/* Estilo para tooltip */
+/* Estilo para tooltip-------------------------------------------------*/
 .tooltip-inner {
     background-color: #ffffff;
     color: #222944;
@@ -1434,7 +1434,7 @@ h6 {
     display: none !important;
 }
 
-/*Estilos para la barra de perfil*/
+/*Estilos para la barra de perfil--------------------------------------*/
 
 .profile-pic-wrapper {
     position: relative;
@@ -1513,19 +1513,19 @@ html {
 
 /*Estilos de los recuadros de reportes--------------------------------*/
 
-/* Sombra suave por defecto */
+/* 1.- Sombra suave por defecto*/
 .card-hover {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 
-/* Animación al pasar el mouse */
+/* 2.- Animación al pasar el mouse*/
 .card-hover:hover {
     transform: scale(1.05);
     box-shadow: 0 10px 20px rgba(0,0,0,0.25);
 }
 
-/*Boton de generar reporte*/
+/*Boton de generar reporte-------------------------------------------*/
 .btn-reporte {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

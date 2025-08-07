@@ -292,7 +292,8 @@ Route::name('estatus_equipos_borrar')->delete('/estatus_equipos_borrar/{id}',[Es
 Route::post('/estatus_equipos/importar', [EstatusEquiposController::class, 'estatus_equipos_importar'])->name('estatus_equipos.importar');
 Route::get('/estatus_equipos_importar', function () { return redirect('/estatus_equipos'); });
 
-//Subestaciones
+//Subestacion
+
 Route::name('subestaciones')->get('/subestaciones',[SubEstacionController::class, 'subestaciones'])->middleware('auth.custom');
 Route::name('subestaciones_registrar')->post('/subestaciones_registrar',[SubEstacionController::class, 'subestaciones_registrar']);
 Route::get('/subestaciones_registrar', function () { return redirect('/subestaciones'); });
@@ -303,8 +304,48 @@ Route::name('subestaciones_salvar')->put('/subestaciones_salvar/{id}',[SubEstaci
 Route::name('subestaciones_borrar')->delete('/subestaciones_borrar/{id}',[SubEstacionController::class, 'subestaciones_borrar']);
 Route::post('/subestaciones/importar', [SubEstacionController::class, 'subestacion_importar'])->name('subestacion.importar');
 Route::get('/subestacion_importar', function () { return redirect('/subestaciones'); });
+Route::get('/subestaciones/buscar', [SubEstacionController::class, 'buscar'])->name('subestaciones.buscar');
 
-//control_inspecciones
+//Estacion Proveedores
+Route::name('estacion_proveedores')->get('/estacion_proveedores',[EstacionProveedoresController::class, 'estacion_proveedores'])->middleware('auth.custom');
+Route::name('estacion_proveedores_registrar')->post('/estacion_proveedores_registrar',[EstacionProveedoresController::class, 'estacion_proveedores_registrar']);
+Route::get('/estacion_proveedores_registrar', function () { return redirect('/estacion_proveedores'); });
+
+Route::name('estacion_proveedores_detalle')->get('/estacion_proveedores_detalle/{id}',[EstacionProveedoresController::class, 'estacion_proveedores_detalle']);
+Route::name('estacion_proveedores_editar')->get('/estacion_proveedores_editar/{id}',[EstacionProveedoresController::class, 'estacion_proveedores_editar']);
+Route::name('estacion_proveedores_salvar')->put('/estacion_proveedores_salvar/{id}',[EstacionProveedoresController::class, 'estacion_proveedores_salvar']);
+Route::name('estacion_proveedores_borrar')->delete('/estacion_proveedores_borrar/{id}',[EstacionProveedoresController::class, 'estacion_proveedores_borrar']);
+Route::post('/estacion_proveedores/importar', [EstacionProveedoresController::class, 'estacion_proveedores_importar'])->name('estacion_proveedores.importar');
+Route::get('/estacion_proveedores_importar', function () { return redirect('/estacion_proveedores'); });
+
+//Proveedor Servicios
+Route::name('proveedor_servicios')->get('/proveedor_servicios',[ProveedorServiciosController::class, 'proveedor_servicios'])->middleware('auth.custom');
+Route::name('proveedor_servicios_registrar')->post('/proveedor_servicios_registrar',[ProveedorServiciosController::class, 'proveedor_servicios_registrar']);
+Route::get('/proveedor_servicios_registrar', function () { return redirect('/proveedor_servicios'); });
+
+Route::name('proveedor_servicios_detalle')->get('/proveedor_servicios_detalle/{id}',[ProveedorServiciosController::class, 'proveedor_servicios_detalle']);
+Route::name('proveedor_servicios_editar')->get('/proveedor_servicios_editar/{id}',[ProveedorServiciosController::class, 'proveedor_servicios_editar']);
+Route::name('proveedor_servicios_salvar')->put('/proveedor_servicios_salvar/{id}',[ProveedorServiciosController::class, 'proveedor_servicios_salvar']);
+Route::name('proveedor_servicios_borrar')->delete('/proveedor_servicios_borrar/{id}',[ProveedorServiciosController::class, 'proveedor_servicios_borrar']);
+Route::post('/proveedor_servicios/importar', [ProveedorServiciosController::class, 'proveedor_servicios_importar'])->name('proveedor_servicios.importar');
+Route::get('/proveedor_servicios_importar', function () { return redirect('/proveedor_servicios'); });
+
+
+//Usuarios
+Route::name('usuarios')->get('/usuarios',[UsuariosController::class, 'usuarios'])->middleware('auth.custom');
+Route::name('usuarios_registrar')->post('/usuarios_registrar',[UsuariosController::class, 'usuarios_registrar']);
+Route::get('/usuarios_registrar', function () { return redirect('/usuarios'); });
+
+Route::name('usuarios_detalle')->get('/usuarios_detalle/{id}',[UsuariosController::class, 'usuarios_detalle']);
+Route::name('usuarios_editar')->get('/usuarios_editar/{id}',[UsuariosController::class, 'usuarios_editar']);
+Route::name('cambiar_foto')->put('/cambiar_foto/{id}',[UsuariosController::class, 'cambiar_foto']);
+Route::name('usuarios_salvar')->put('/usuarios_salvar/{id}',[UsuariosController::class, 'usuarios_salvar']);
+Route::name('usuarios_borrar')->delete('/usuarios_borrar/{id}',[UsuariosController::class, 'usuarios_borrar']);
+Route::post('/usuarios/importar', [UsuariosController::class, 'usuarios_importar'])->name('usuarios.importar');
+Route::get('/usuarios_importar', function () { return redirect('/usuarios'); });
+Route::get('/usuarios/buscar', [UsuariosController::class, 'buscar'])->name('usuarios.buscar');
+
+//Control inspecciones
 Route::name('control_inspecciones')->get('/control_inspecciones',[ControlInspeccionesController::class, 'control_inspecciones'])->middleware('auth.custom');
 Route::name('control_inspecciones_registrar')->post('/control_inspecciones_registrar',[ControlInspeccionesController::class, 'control_inspecciones_registrar']);
 Route::get('/control_inspecciones_registrar', function () { return redirect('/control_inspecciones'); });

@@ -174,4 +174,25 @@ class SubEstacionController extends Controller
                 ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
         }
     }
+
+    //..................................................Subestaciones: BUSCAR .....
+    public function buscar(Request $request)
+    {
+        $subestaciones = SubEstacion::with(['estacion:id,nombre'])
+            ->when($request->filled('nombre'), fn($q) =>
+                $q->where('nombre', 'like', '%' . $request->nombre . '%'))
+            ->when($request->filled('direccion'), fn($q) =>
+                $q->where('direccion', 'like', '%' . $request->direccion . '%'))
+            ->when($request->filled('telefono'), fn($q) =>
+                $q->where('telefono', 'like', '%' . $request->telefono . '%'))
+            ->when($request->filled('id_estacion'), fn($q) =>
+                $q->where('id_estacion', $request->id_estacion))
+            ->paginate(10);
+
+        return view('Dashboard.SubEstacion.subestaciones', [
+            'subestaciones' => $subestaciones,
+            'estaciones' => Estaciones::all()
+        ]);
+    }
+
 }

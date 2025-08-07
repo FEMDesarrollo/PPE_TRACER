@@ -161,12 +161,20 @@
       <div class="card border-0 shadow-sm" style="background-color: #f9fafb; border-radius: 12px;">
         <ul class="list-group list-group-flush rounded-3">
           <li class="list-group-item px-4 py-3" style="background-color: #f9fafb; border-bottom: 1px solid #e4e7eb;">
-            <strong style="color: #222944;">Correo:</strong>
-            <p class="mb-0" style="color: #555;">{{ Auth::user()->correo }}</p>
+            <strong style="color: #222944;">Identificación de usuario:</strong>
+            <p class="mb-0" style="color: #555;">{{ Auth::user()->id }}</p>
           </li>
           <li class="list-group-item px-4 py-3" style="background-color: #f9fafb; border-radius: 0 0 12px 12px;">
-            <strong style="color: #222944;">Fecha de registro:</strong>
-            <p class="mb-0" style="color: #555;">{{ Auth::user()->created_at->format('d/m/Y') }}</p>
+            <strong style="color: #222944;">Estación:</strong>
+            <p class="mb-0" style="color: #555;">{{ Auth::user()->estacion->nombre }}</p>
+          </li>
+          <li class="list-group-item px-4 py-3" style="background-color: #f9fafb; border-radius: 0 0 12px 12px;">
+            <strong style="color: #222944;">Subestación:</strong>
+            <p class="mb-0" style="color: #555;">{{ Auth::user()->subEstacion->nombre }}</p>
+          </li>
+          <li class="list-group-item px-4 py-3" style="background-color: #f9fafb; border-bottom: 1px solid #e4e7eb;">
+            <strong style="color: #222944;">Correo:</strong>
+            <p class="mb-0" style="color: #555;">{{ Auth::user()->correo }}</p>
           </li>
         </ul>
       </div>

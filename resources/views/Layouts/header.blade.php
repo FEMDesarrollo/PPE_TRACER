@@ -283,7 +283,7 @@
             </div>
           </form>
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -415,8 +415,8 @@
 
       </div>
       <div class="mt-5 text-center">
-        <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill" 
-          style="background-color: #222944; border: none; box-shadow: 0 4px 12px rgb(34 41 68 / 0.3);" 
+        <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill"
+          style="background-color: #222944; border: none; box-shadow: 0 4px 12px rgb(34 41 68 / 0.3);"
           data-bs-dismiss="offcanvas" style="background-color: #222944; border: none;">
           Cerrar
         </button>

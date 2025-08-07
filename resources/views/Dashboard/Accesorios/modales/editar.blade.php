@@ -11,6 +11,7 @@
                 <form action="{{ route('accesorios_salvar', ['id' => $accesorio->id]) }}" method="post" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
+                    
                     <input type="hidden" name="id" value="{{ $accesorio->id }}">
 
                     <div class="row g-3">

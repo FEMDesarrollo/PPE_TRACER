@@ -1535,27 +1535,8 @@ html {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/*Icono de notificacion----------------------------------------------*/
-.nav-icon {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease;
-  }
-
-  .nav-icon i,
-  .nav-icon .badge-number {
-    transition: transform 0.3s ease;
-  }
-
-  .nav-icon:hover i,
-  .nav-icon:hover .badge-number {
-    transform: scale(1.4);
-    z-index: 10;
-  }
-
-  .nav-icon:hover .badge-number {
-    background-color: #0d6efd;
-    color: #fff;
-  }
+.link-deshabilitado {
+    color: #a5a9b3 !important; /* El !important ayuda a sobreescribir estilos del tema */
+    cursor: not-allowed;
+    pointer-events: none;
+}

@@ -9,6 +9,7 @@
             <div class="modal-body">
 
                 <form action="{{ route('detalles_estatus_registrar') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+                    <input type="hidden" name="modal" value="añadir">
                     {{ csrf_field() }}
 
                     <div class="col-12 col-sm-6 col-md-6 form-floating">
@@ -47,7 +48,9 @@
 
                     <div class="modal-footer d-flex justify-content-center w-100">
                         <button type="submit" class="btn" style="background-color: #222944; color: white; border-color:#222944">Agregar</button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</button>
+                        <a href="{{ route('detalles_estatus') }}" class="btn"
+                        style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">Cancelar</a>
+
                     </div>
                 </form>
             </div>

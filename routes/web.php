@@ -95,6 +95,8 @@ Route::get('/servicios_importar', function () { return redirect('/servicios'); }
 
 
 
+Route::get('/datos-personales', [UsuarioController::class, 'datosPersonales'])->name('datos_personales');
+Route::get('/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('cambiar_password');
 //---------------------------------RUTAS: Login----------------------------------------
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -119,6 +121,61 @@ Route::post('/proveedores/importar', [ProveedoresController::class, 'proveedores
 Route::get('/proveedores_importar', function () { return redirect('/proveedores'); });
 
 //--------------------------------- RUTAS: Estaciones ---------------------------------
+
+//Servicios
+Route::get('/servicios', [ServiciosController::class, 'servicios'])->name('servicios');
+Route::post('/servicio_registrar', [ServiciosController::class, 'servicio_registrar'])->name('servicio_registrar');
+Route::get('/servicio_registrar', function () { return redirect('/servicios'); });
+
+Route::get('/servicio_editar/{id}', [ServiciosController::class, 'servicio_editar'])->name('servicio_editar');
+Route::put('/servicio_salvar/{id}', [ServiciosController::class, 'servicio_salvar'])->name('servicio_salvar');
+Route::delete('/servicio_borrar/{id}', [ServiciosController::class, 'servicio_borrar'])->name('servicio_borrar');
+Route::post('/servicios/importar', [ServiciosController::class, 'servicios_importar'])->name('servicios.importar');
+Route::get('/servicios_importar', function () { return redirect('/servicios'); });
+
+//Subestaciones Equipos
+Route::name('subestacion_equipos')->get('/subestacion_equipos',[SubEstacionEquiposController::class, 'subestacion_equipos'])->middleware('auth.custom');
+Route::name('subestacion_equipos_registrar')->post('/subestacion_equipos_registrar',[SubEstacionEquiposController::class, 'subestacion_equipos_registrar']);
+Route::get('/subestacion_equipos_registrar', function () { return redirect('/subestacion_equipos'); });
+
+Route::name('subestacion_equipos_detalle')->get('/subestacion_equipos_detalle/{id}',[SubEstacionEquiposController::class, 'subestacion_equipos_detalle']);
+Route::name('subestacion_equipos_editar')->get('/subestacion_equipos_editar/{id}',[SubEstacionEquiposController::class, 'subestacion_equipos_editar']);
+Route::name('subestacion_equipos_salvar')->put('/subestacion_equipos_salvar/{id}',[SubEstacionEquiposController::class, 'subestacion_equipos_salvar']);
+Route::name('subestacion_equipos_borrar')->delete('/subestacion_equipos_borrar/{id}',[SubEstacionEquiposController::class, 'subestacion_equipos_borrar']);
+Route::post('/subestacion_equipos/importar', [SubEstacionEquiposController::class, 'subestacion_equipos_importar'])->name('subestacion_equipos.importar');
+Route::get('/subestacion_equipos_importar', function () { return redirect('/subestacion_equipos'); });
+
+//Usuarios
+Route::name('usuarios')->get('/usuarios',[UsuariosController::class, 'usuarios'])->middleware('auth.custom');
+Route::name('usuarios_registrar')->post('/usuarios_registrar',[UsuariosController::class, 'usuarios_registrar']);
+Route::get('/usuarios_registrar', function () { return redirect('/usuarios'); });
+
+Route::name('usuarios_detalle')->get('/usuarios_detalle/{id}',[UsuariosController::class, 'usuarios_detalle']);
+Route::name('usuarios_editar')->get('/usuarios_editar/{id}',[UsuariosController::class, 'usuarios_editar']);
+Route::name('cambiar_foto')->put('/cambiar_foto/{id}',[UsuariosController::class, 'cambiar_foto']);
+Route::name('usuarios_salvar')->put('/usuarios_salvar/{id}',[UsuariosController::class, 'usuarios_salvar']);
+Route::name('usuarios_borrar')->delete('/usuarios_borrar/{id}',[UsuariosController::class, 'usuarios_borrar']);
+Route::post('/usuarios/importar', [UsuariosController::class, 'usuarios_importar'])->name('usuarios.importar');
+Route::get('/usuarios_importar', function () { return redirect('/usuarios');
+Route::get('/usuarios/buscar', [UsuariosController::class, 'buscar'])->name('usuarios.buscar'); });
+
+//Usuarios equipo
+Route::name('usuarios_equipos')->get('/usuarios_equipos',[UsuariosEquiposController::class, 'usuarios_equipos'])->middleware('auth.custom');
+Route::name('usuarios_equipos_registrar')->post('/usuarios_equipos_registrar',[UsuariosEquiposController::class, 'usuarios_equipos_registrar']);
+Route::get('/usuarios_equipos_registrar', function () { return redirect('/usuarios_equipos'); });
+
+Route::name('usuarios_equipos_detalle')->get('/usuarios_equipos_detalle/{id}',[UsuariosEquiposController::class, 'usuarios_equipos_detalle']);
+Route::name('usuarios_equipos_editar')->get('/usuarios_equipos_editar/{id}',[UsuariosEquiposController::class, 'usuarios_equipos_editar']);
+Route::name('usuarios_equipos_salvar')->put('/usuarios_equipos_salvar/{id}',[UsuariosEquiposController::class, 'usuarios_equipos_salvar']);
+Route::name('usuarios_equipos_borrar')->delete('/usuarios_equipos_borrar/{id}',[UsuariosEquiposController::class, 'usuarios_equipos_borrar']);
+Route::post('/usuarios_equipos/importar', [UsuariosEquiposController::class, 'usuarios_equipos_importar'])->name('usuarios_equipos.importar');
+Route::get('/usuarios_equipos_importar', function () { return redirect('/usuarios_equipos'); });
+
+
+
+Route::middleware(['auth', 'rol:1,2,3'])->group(function () {
+
+//Estaciones
 Route::name('estaciones')->get('/estaciones',[EstacionesController::class, 'estaciones'])->middleware('auth.custom');
 Route::name('estaciones_registrar')->post('/estaciones_registrar',[EstacionesController::class, 'estaciones_registrar']);
 Route::get('/estaciones_registrar', function () { return redirect('/estaciones'); });

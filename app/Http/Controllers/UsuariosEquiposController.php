@@ -14,6 +14,8 @@ use App\Models\usuarios;
 use App\Models\equipos;
 use Carbon\Carbon;
 
+use App\Models\Notificacion;
+
 class UsuariosEquiposController extends Controller
 {
     //.....................................................Usuarios equipo: LISTA.....
@@ -22,7 +24,7 @@ class UsuariosEquiposController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search');
         $timeFilter = $request->input('time_filter');
-        
+
         $usuariosEquipos = usuariosEquipos::with(['estatus_equipos', 'usuarios', 'equipos'])
             ->when($search, function($query) use ($search) {
                 if (is_numeric($search) && ctype_digit($search)) {
@@ -39,7 +41,7 @@ class UsuariosEquiposController extends Controller
             })
             ->when($timeFilter, function($query) use ($timeFilter) {
                 $now = Carbon::now();
-                
+
                 switch ($timeFilter) {
                     case 'today':
                         $query->whereDate('created_at', $now->toDateString());
@@ -86,7 +88,7 @@ class UsuariosEquiposController extends Controller
                 'per_page' => $perPage,
                 'time_filter' => $timeFilter
             ]);
-            
+
         return view('Dashboard.UsuarioEquipo.usuarios_equipos', [
             'usuarios_equipos' => $usuariosEquipos,
             'estatus_equipo' => estatusEquipos::all(),
@@ -104,13 +106,23 @@ class UsuariosEquiposController extends Controller
             usuariosEquipos::validationMessages()
         );
 
-        usuariosEquipos::create([
-            'fecha_estatus' => $request->fecha_estatus,
-            'comentarios' => $request->comentarios,
-            'id_estatus_equipo' => $request->id_estatus_equipo,
-            'id_usuario' => $request->id_usuario,
-            'id_equipo' => $request->id_equipo
-        ]);
+
+         // Crear registro y asignarlo a la variable
+    $nuevoUsuarioEquipo = usuariosEquipos::create([
+        'fecha_estatus' => $request->fecha_estatus,
+        'comentarios' => $request->comentarios,
+        'id_estatus_equipo' => $request->id_estatus_equipo,
+        'id_usuario' => $request->id_usuario,
+        'id_equipo' => $request->id_equipo
+    ]);
+
+    // Crear notificación usando el registro creado arriba
+    Notificacion::create([
+        'icono' => 'bi bi-check-circle text-success',
+        'titulo' => 'Nuevo usuario-equipos asignado',
+        'mensaje' => 'Se ha asignado un nuevo equipo al usuario ID ' . $nuevoUsuarioEquipo->id_usuario,
+        'user_id' => Auth::id() // Cambiar según a quién quieras notificar
+    ]);
 
         return redirect()->route('usuarios_equipos')->with('success', 'Relación usuario-equipo registrada correctamente');
     }
@@ -158,10 +170,26 @@ class UsuariosEquiposController extends Controller
 
     //.....................................................Usuarios equipo: BORRAR.....
     public function usuarios_equipos_borrar(usuariosEquipos $id)
-    {
-        $id->delete();
-        return redirect()->route('usuarios_equipos')->with('success', 'Relación usuario-equipo eliminada correctamente');
-    }
+{
+    // Guardar datos para la notificación antes de eliminar
+    $idRelacion = $id->id;
+    $usuarioId = $id->id_usuario;
+    $equipoId = $id->id_equipo;
+
+    // Eliminar registro
+    $id->delete();
+
+    // Crear notificación
+    Notificacion::create([
+        'icono' => 'bi bi-trash text-danger',
+        'titulo' => 'Relación usuario-equipo eliminada',
+        'mensaje' => "Se eliminó la relación usuario-equipo con ID $idRelacion (Usuario ID: $usuarioId, Equipo ID: $equipoId)",
+        'user_id' => Auth::id()
+    ]);
+
+    return redirect()->route('usuarios_equipos')->with('success', 'Relación usuario-equipo eliminada correctamente');
+}
+
 
     //.....................................................Usuarios equipos: Importar.....
     public function usuarios_equipos_importar(Request $request)

@@ -14,6 +14,8 @@ use App\Models\controlAsignaciones;
 use App\Models\usuariosEquipos;
 use App\Models\estatusCritico;
 
+use App\Models\Notificacion;
+
 class ControlAsignacionesController extends Controller
 {
     //.....................................................Grupo: Lista.....
@@ -103,13 +105,22 @@ class ControlAsignacionesController extends Controller
             controlAsignaciones::validationMessages()
         );
 
-        controlAsignaciones::create([
-            'observaciones' => $request->observaciones,
-            'fecha_asignacion' => $request->fecha_asignacion,
-            'fecha_devolucion' => $request->fecha_devolucion,
-            'id_usuario_equipo' => $request->id_usuario_equipo,
-            'id_estatus_critico' => $request->id_estatus_critico
-        ]);
+        // Crear el control de asignación y guardar el objeto creado
+    $nuevoControlAsignacion = controlAsignaciones::create([
+        'observaciones' => $request->observaciones,
+        'fecha_asignacion' => $request->fecha_asignacion,
+        'fecha_devolucion' => $request->fecha_devolucion,
+        'id_usuario_equipo' => $request->id_usuario_equipo,
+        'id_estatus_critico' => $request->id_estatus_critico
+    ]);
+
+    // Crear la notificación automáticamente
+    Notificacion::create([
+        'icono' => 'bi bi-check-circle text-success',
+        'titulo' => 'Nuevo control de asignación registrada',
+        'mensaje' => 'Se creó una nueva asignación con ID ' . $nuevoControlAsignacion->id,
+        'user_id' => Auth::id()  // o puedes ajustar según a quién quieras notificar
+    ]);
 
         return redirect()->route('control_asignaciones')->with('success', 'El control de asignaciones fue creado correctamente');
     }
@@ -160,10 +171,26 @@ class ControlAsignacionesController extends Controller
 
     //..................................................Grupo: Borrar.....
     public function control_asignaciones_borrar(controlAsignaciones $id)
-    {
-        $id->delete();
-        return redirect()->route('control_asignaciones')->with('success', 'Control de asignaciones eliminado correctamente');
-    }
+{
+    // Guardar datos que quieras mostrar en la notificación antes de eliminar
+    $idAsignacion = $id->id;
+    $observaciones = $id->observaciones;
+
+    // Eliminar el registro
+    $id->delete();
+
+    // Crear la notificación
+    Notificacion::create([
+        'icono' => 'bi bi-trash text-danger',
+        'titulo' => 'Asignación eliminada',
+        'mensaje' => "Se eliminó la asignación con ID $idAsignacion: $observaciones",
+        'user_id' => Auth::id() // Usuario que hizo la eliminación
+    ]);
+
+    // Redirigir con mensaje de éxito
+    return redirect()->route('control_asignaciones')->with('success', 'Control de asignaciones eliminado correctamente');
+}
+
 
     //..................................................Subestación: Importar.....
     public function control_asignaciones_importar(Request $request)

@@ -12,6 +12,8 @@ use App\Models\usuarios;
 use App\Models\GestionInspecciones;
 use Carbon\Carbon;
 
+use App\Models\Notificacion;
+
 class ControlInspeccionesController extends Controller
 {
     //.....................................................Control_Inspecciones: LISTA.....
@@ -88,33 +90,43 @@ class ControlInspeccionesController extends Controller
     }
 
     //.....................................................Control_Inspecciones: REGISTRAR.....
-    public function control_inspecciones_registrar(Request $request)
-    {
-        $this->validate(
-            $request,
-            ControlInspecciones::validationRules(),
-            ControlInspecciones::validationMessages()
-        );
+   public function control_inspecciones_registrar(Request $request)
+{
+    $this->validate(
+        $request,
+        ControlInspecciones::validationRules(),
+        ControlInspecciones::validationMessages()
+    );
 
-            $img2 = "imagen.jpg";
+    $img2 = "imagen.jpg";
 
+    if ($request->file('imagen') != '') {
+        $file = $request->file('imagen');
+        $img = $file->getClientOriginalName();
+        $ldate = date('Ymd_His_');
+        $img2 = $ldate . $img;
+        \Storage::disk('public')->put($img2, \File::get($file));
+    }
 
-            if($request->file('imagen') != ''){
-                $file = $request->file('imagen');
-                $img = $file->getClientOriginalName();
-                $ldate = date('Ymd_His_');
-                $img2 = $ldate . $img;
-                \Storage::disk('public')->put($img2, \File::get($file));
-            }
+    // Crear registro y asignarlo a la variable ------------ esto se agrego
 
-            ControlInspecciones::create([
-                'respuestas' => $request->respuestas,
-                'fecha' => $request->fecha,
-                'imagen' => $img2,
-                'descripcion' => $request->descripcion,
-                'id_usuario' => $request->id_usuario,
-                'id_gestion_inspeccion' => $request->id_gestion_inspeccion
-            ]);
+    $inspeccion = ControlInspecciones::create([
+        'respuestas' => $request->respuestas,
+        'fecha' => $request->fecha,
+        'imagen' => $img2,
+        'descripcion' => $request->descripcion,
+        'id_usuario' => $request->id_usuario,
+        'id_gestion_inspeccion' => $request->id_gestion_inspeccion
+    ]);
+
+    // Crear notificación relacionada a la inspección creada ------------ esto se agrego
+    Notificacion::create([
+        'icono' => 'bi bi-check-circle text-success',
+        'titulo' => 'Nuevo control de inspección registrado',
+        'mensaje' => 'Se ha creado la inspección con ID ' . $inspeccion->id,
+        'user_id' => Auth::id()
+    ]);
+
 
             return redirect()->route('control_inspecciones')->with('success', 'Control de inspección registrado correctamente');
     }
@@ -162,10 +174,25 @@ class ControlInspeccionesController extends Controller
 
     //..................................................Control_Inspecciones: BORRAR.....
     public function control_inspecciones_borrar(ControlInspecciones $id)
-    {
-        $id->delete();
-        return redirect()->route('control_inspecciones')->with('success', 'Control de inspección eliminado correctamente');
-    }
+{
+    // Guardar datos que quieres mostrar en la notificación antes de eliminar
+    $idInspeccion = $id->id;
+    $descripcion = $id->descripcion;
+
+    // Eliminar el registro
+    $id->delete();
+
+    // Crear la notificación
+    Notificacion::create([
+        'icono' => 'bi bi-trash text-danger',
+        'titulo' => 'Control de inspección eliminado',
+        'mensaje' => "Se eliminó la inspección con ID $idInspeccion: $descripcion",
+        'user_id' => Auth::id()
+    ]);
+
+    return redirect()->route('control_inspecciones')->with('success', 'Control de inspección eliminado correctamente');
+}
+
 
     //..................................................Servicios: Importar.....
     public function control_inspecciones_importar(Request $request)
@@ -193,4 +220,29 @@ class ControlInspeccionesController extends Controller
                 ->with('error', 'Error al importar el archivo: ' . $e->getMessage());
         }
     }
+
+
+    // notificaciones
+    public function store(Request $request)
+{
+    $request->validate([
+        'respuestas' => 'required',
+        'fecha' => 'required|date',
+        'imagen' => 'nullable|mimes:jpg,png,bmp',
+        'descripcion' => 'required',
+        'id_usuario' => 'required',
+        'id_gestion_inspeccion' => 'required'
+    ]);
+
+    ControlInspeccion::create($request->all());
+
+    Notificacion::create([
+        'icono' => 'bi bi-check-circle text-success',
+        'titulo' => 'Nuevo registro',
+        'mensaje' => 'Se agregó un nuevo control de inspecciones',
+        'user_id' => Auth::id()
+    ]);
+
+    return redirect()->route('control_inspecciones');
+}
 }

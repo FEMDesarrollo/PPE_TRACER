@@ -12,63 +12,46 @@
 
       <!-- Notificaciones -->
       <li class="nav-item dropdown">
-        <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-          <i class="bi bi-bell"></i>
-          <span class="badge bg-primary badge-number">4</span>
-        </a>
+    {{-- Icono de campana --}}
+    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+        <i class="bi bi-bell"></i>
+        @if(isset($notificaciones) && $notificaciones->count() > 0)
+            <span class="badge bg-primary badge-number">{{ $notificaciones->count() }}</span>
+        @endif
+    </a>
 
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-          <li class="dropdown-header">
-            You have 4 new notifications
-            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-          </li>
-          <li><hr class="dropdown-divider"></li>
+    {{-- Dropdown de notificaciones --}}
+    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+        <li class="dropdown-header">
+            Tienes {{ $notificaciones->count() }} notificaciones
+            @if($notificaciones->count() > 0)
+                <a href="{{ route('notificaciones.limpiar') }}">
+                    <span class="badge rounded-pill bg-danger p-2 ms-2">Limpiar</span>
+                </a>
+            @endif
+        </li>
 
-          <li class="notification-item">
-            <i class="bi bi-exclamation-circle text-warning"></i>
-            <div>
-              <h4>Lorem Ipsum</h4>
-              <p>Quae dolorem earum veritatis oditseno</p>
-              <p>30 min. ago</p>
-            </div>
-          </li>
-          <li><hr class="dropdown-divider"></li>
+        <li><hr class="dropdown-divider"></li>
 
-          <li class="notification-item">
-            <i class="bi bi-x-circle text-danger"></i>
-            <div>
-              <h4>Atque rerum nesciunt</h4>
-              <p>Quae dolorem earum veritatis oditseno</p>
-              <p>1 hr. ago</p>
-            </div>
-          </li>
-          <li><hr class="dropdown-divider"></li>
+        @forelse($notificaciones as $n)
+            <li class="notification-item">
+                <i class="{{ $n->icono }}"></i>
+                <div>
+                    <h4>{{ $n->titulo }}</h4>
+                    <p>{{ $n->mensaje }}</p>
+                    <p class="small text-muted">{{ $n->created_at->diffForHumans() }}</p>
+                </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+        @empty
+            <li class="notification-item text-center">
+                <p>No tienes notificaciones</p>
+            </li>
+        @endforelse
+    </ul>
+</li>
 
-          <li class="notification-item">
-            <i class="bi bi-check-circle text-success"></i>
-            <div>
-              <h4>Sit rerum fuga</h4>
-              <p>Quae dolorem earum veritatis oditseno</p>
-              <p>2 hrs. ago</p>
-            </div>
-          </li>
-          <li><hr class="dropdown-divider"></li>
 
-          <li class="notification-item">
-            <i class="bi bi-info-circle text-primary"></i>
-            <div>
-              <h4>Dicta reprehenderit</h4>
-              <p>Quae dolorem earum veritatis oditseno</p>
-              <p>4 hrs. ago</p>
-            </div>
-          </li>
-          <li><hr class="dropdown-divider"></li>
-
-          <li class="dropdown-footer">
-            <a href="#">Show all notifications</a>
-          </li>
-        </ul>
-      </li>
 
       <!-- Perfil de usuario -->
       <li class="nav-item dropdown pe-3">
@@ -291,7 +274,7 @@
             </div>
           </form>
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -423,8 +406,8 @@
 
       </div>
       <div class="mt-5 text-center">
-        <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill" 
-          style="background-color: #222944; border: none; box-shadow: 0 4px 12px rgb(34 41 68 / 0.3);" 
+        <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill"
+          style="background-color: #222944; border: none; box-shadow: 0 4px 12px rgb(34 41 68 / 0.3);"
           data-bs-dismiss="offcanvas" style="background-color: #222944; border: none;">
           Cerrar
         </button>

@@ -54,6 +54,12 @@ use App\Exports\PlantillaUsuariosEquipos;
 use App\Exports\PlantillaVerificacionCorreo;
 use App\Models\permisos;
 
+// ----------------------------------- Ruta notificacion-------------------------------------
+use App\Http\Controllers\NotificacionController;
+
+Route::get('/notificaciones/limpiar', [NotificacionController::class, 'limpiar'])->name('notificaciones.limpiar')->middleware('auth');
+
+
 // ------------------------------- Roles -------------------------------------------
 
 use App\Http\Controllers\SuperAdminController;
@@ -92,7 +98,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'rol:1'])->group(function () {
 
-//Permisos     
+//Permisos
 Route::name('permisos')->get('/permisos',[PermisosController::class, 'permisos'])->middleware('auth.custom');
 Route::name('permisos_registrar')->post('/permisos_registrar',[PermisosController::class, 'permisos_registrar']);
 Route::get('/permisos_registrar', function () { return redirect('/permisos'); });

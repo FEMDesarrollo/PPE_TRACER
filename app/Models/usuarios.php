@@ -41,13 +41,13 @@ class usuarios extends  Authenticatable
     {
         return $this->belongsTo(perfiles::class, 'id_perfil');
     }
-    
+
     public function verificacionCorreo()
     {
         return $this->hasOne(VerificacionCorreo::class, 'id_usuario', 'id');
     }
 
-    
+
     public static function validationRules($id = null): array
     {
         return [

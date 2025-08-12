@@ -54,6 +54,12 @@ use App\Exports\PlantillaUsuariosEquipos;
 use App\Exports\PlantillaVerificacionCorreo;
 use App\Models\permisos;
 
+// ----------------------------------- Ruta notificacion-------------------------------------
+use App\Http\Controllers\NotificacionController;
+
+Route::get('/notificaciones/limpiar', [NotificacionController::class, 'limpiar'])->name('notificaciones.limpiar')->middleware('auth');
+
+
 // ------------------------------- Roles -------------------------------------------
 
 use App\Http\Controllers\SuperAdminController;
@@ -95,6 +101,8 @@ Route::get('/servicios_importar', function () { return redirect('/servicios'); }
 
 
 
+Route::get('/datos-personales', [UsuarioController::class, 'datosPersonales'])->name('datos_personales');
+Route::get('/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('cambiar_password');
 //---------------------------------RUTAS: Login----------------------------------------
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -102,7 +110,51 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
+
 //---------------------------------RUTAS: Servicios------------------------------------
+
+
+//---------------------------------RUTAS: Rol Superadministrador Middleware----------------------------------------
+
+Route::middleware(['auth', 'rol:1'])->group(function () {
+
+//Permisos
+Route::name('permisos')->get('/permisos',[PermisosController::class, 'permisos'])->middleware('auth.custom');
+Route::name('permisos_registrar')->post('/permisos_registrar',[PermisosController::class, 'permisos_registrar']);
+Route::get('/permisos_registrar', function () { return redirect('/permisos'); });
+
+Route::name('permisos_detalle')->get('/permisos_detalle/{id}',[PermisosController::class, 'permisos_detalle']);
+Route::name('permisos_editar')->get('/permisos_editar/{id}',[PermisosController::class, 'permisos_editar']);
+Route::name('permisos_salvar')->put('/permisos_salvar/{id}',[PermisosController::class, 'permisos_salvar']);
+Route::name('permisos_borrar')->delete('/permisos_borrar/{id}',[PermisosController::class, 'permisos_borrar']);
+Route::post('/permisos/importar', [PermisosController::class, 'permisos_importar'])->name('permisos.importar');
+Route::get('/permisos_importar', function () { return redirect('/permisos'); });
+
+//Perfiles
+Route::name('perfiles')->get('/perfiles',[PerfilesController::class, 'perfiles'])->middleware('auth.custom');
+Route::name('perfiles_registrar')->post('/perfiles_registrar',[PerfilesController::class, 'perfiles_registrar']);
+Route::get('/perfiles_registrar', function () { return redirect('/perfiles'); });
+
+Route::name('perfiles_detalle')->get('/perfiles_detalle/{id}',[PerfilesController::class, 'perfiles_detalle']);
+Route::name('perfiles_editar')->get('/perfiles_editar/{id}',[PerfilesController::class, 'perfiles_editar']);
+Route::name('perfiles_salvar')->put('/perfiles_salvar/{id}',[PerfilesController::class, 'perfiles_salvar']);
+Route::name('perfiles_borrar')->delete('/perfiles_borrar/{id}',[PerfilesController::class, 'perfiles_borrar']);
+Route::post('/perfiles/importar', [PerfilesController::class, 'perfiles_importar'])->name('perfiles.importar');
+Route::get('/perfiles_importar', function () { return redirect('/perfiles'); });
+
+//Verificacion de correo
+Route::name('verificacion_correo')->get('/verificacion_correo',[VerificacionCorreoController::class, 'verificacion_correo'])->middleware('auth.custom');
+Route::name('verificacion_correo_registrar')->post('/verificacion_correo_registrar',[VerificacionCorreoController::class, 'verificacion_correo_registrar']);
+Route::get('/verificacion_correo_registrar', function () { return redirect('/verificacion_correo'); });
+
+Route::name('verificacion_correo_detalle')->get('/verificacion_correo_detalle/{id}',[VerificacionCorreoController::class, 'verificacion_correo_detalle']);
+Route::name('verificacion_correo_editar')->get('/verificacion_correo_editar/{id}',[VerificacionCorreoController::class, 'verificacion_correo_editar']);
+Route::name('verificacion_correo_salvar')->put('verificacion_correo_salvar/{id}',[VerificacionCorreoController::class, 'verificacion_correo_salvar']);
+Route::name('verificacion_correo_borrar')->delete('/verificacion_correo_borrar/{id}',[VerificacionCorreoController::class, 'verificacion_correo_borrar']);
+Route::post('/verificacion_correo/importar', [VerificacionCorreoController::class, 'verificacion_correo_importar'])->name('VerificacionCorreo.importar');
+Route::get('/verificacion_correo_importar', function () { return redirect('/verificacion_correo'); });
+});
+
 
 
 
@@ -223,6 +275,9 @@ Route::get('/estacion_proveedores_importar', function () { return redirect('/est
 
 //.................................RUTAS: Proveedor_Servicios--------------------------
 
+
+//Proveedor Servicios
+
 Route::name('proveedor_servicios')->get('/proveedor_servicios',[ProveedorServiciosController::class, 'proveedor_servicios'])->middleware('auth.custom');
 Route::name('proveedor_servicios_registrar')->post('/proveedor_servicios_registrar',[ProveedorServiciosController::class, 'proveedor_servicios_registrar']);
 Route::get('/proveedor_servicios_registrar', function () { return redirect('/proveedor_servicios'); });
@@ -254,6 +309,8 @@ Route::get('/usuarios/buscar', [UsuariosController::class, 'buscar'])->name('usu
 
 //.................................RUTAS: control_inspecciones-------------------------
 
+
+//Control inspecciones
 Route::name('control_inspecciones')->get('/control_inspecciones',[ControlInspeccionesController::class, 'control_inspecciones'])->middleware('auth.custom');
 Route::name('control_inspecciones_registrar')->post('/control_inspecciones_registrar',[ControlInspeccionesController::class, 'control_inspecciones_registrar']);
 Route::get('/control_inspecciones_registrar', function () { return redirect('/control_inspecciones'); });

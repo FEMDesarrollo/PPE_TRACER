@@ -7,8 +7,8 @@
 
 
 <div class="row">
-
 <!-- Reporte Accesorios -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Accesorios</div>
@@ -35,8 +35,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Categorias -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Categorías</div>
@@ -63,8 +65,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Control de asignaciones -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Control de asignación</div>
@@ -91,8 +95,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Control de inspecciones -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Control de inspecciones</div>
@@ -119,8 +125,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Detalles de equipos -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Detalles de equipos</div>
@@ -147,8 +155,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Detalles de estatus -->
+@if(in_array(Auth::user()->id_perfil, [1, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Detalles de estatus</div>
@@ -175,8 +185,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Equipos -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Equipos</div>
@@ -201,8 +213,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Estaciones -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Estaciones</div>
@@ -229,8 +243,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Estacion proveedores -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Estacion proveedores</div>
@@ -257,8 +273,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Estatus crítico -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Estatus crítico</div>
@@ -283,8 +301,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Estatus de equipos -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Estatus de equipo</div>
@@ -309,8 +329,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Gestion de inspecciones -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Gestion de inspecciones</div>
@@ -335,8 +357,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Perfiles -->
+@if(Auth::user()->id_perfil == 1)
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Perfiles</div>
@@ -361,8 +385,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Permisos -->
+@if(Auth::user()->id_perfil == 1)
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Permisos</div>
@@ -389,8 +415,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Permisos usuarios -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Permisos de usuario</div>
@@ -417,8 +445,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Proveedores -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Proveedores</div>
@@ -445,8 +475,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Proveedor servicios -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Proveedores servicios</div>
@@ -473,8 +505,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Repuestos -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Repuestos</div>
@@ -501,8 +535,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Servicios -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Servicios</div>
@@ -527,8 +563,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Subestaciones -->
+@if(in_array(Auth::user()->id_perfil, [1, 2, 3]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Subestaciones</div>
@@ -555,8 +593,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Subestacion equipos -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Subestaciones de equipos</div>
@@ -583,8 +623,10 @@
             </div>
         </div>
     </div>
+@endif
 
-<!-- Reporte Subestacion equipos -->
+<!-- Reporte Usuarios -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Usuarios</div>
@@ -613,8 +655,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Usuarios de equipo -->
+@if(in_array(Auth::user()->id_perfil, [1, 2]))
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Usuarios de equipo</div>
@@ -643,8 +687,10 @@
             </div>
         </div>
     </div>
+@endif
 
 <!-- Reporte Verificacion de correo -->
+@if(Auth::user()->id_perfil == 1)
     <div class="col-md-4 mb-4">
         <div class="card card-hover">
             <div class="card-header text-center fw-bold">Reporte de Verificacion de correo</div>
@@ -673,7 +719,7 @@
             </div>
         </div>
     </div>
-
+@endif
 
 </div>
 @endsection

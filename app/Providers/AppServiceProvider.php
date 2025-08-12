@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Notificacion;
+use Illuminate\Support\Facades\View;
+
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,8 +26,16 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
-        //
-    }
+    public function boot(): void
+{
+     View::composer('*', function ($view) {
+        $notificaciones = Auth::check()
+            ? Notificacion::where('user_id', Auth::id())
+                ->orderBy('created_at', 'desc')
+                ->get()
+            : collect();
+
+        $view->with('notificaciones', $notificaciones);
+    });
+}
 }

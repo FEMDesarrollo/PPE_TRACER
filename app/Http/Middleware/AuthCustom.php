@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Session;
 class AuthCustom
 {
     public function handle($request, Closure $next)
-{
-    if (!session()->has('usuario_id')) {
-        return redirect('/login')->with('error', 'Debes iniciar sesión.');
-    }
+    {
+        if (!session()->has('usuario_id')) {
+            return redirect('/login')->with('error', 'Debes iniciar sesión.');
+        }
 
-    return $next($request);
-}
+        return $next($request);
+    }
 }

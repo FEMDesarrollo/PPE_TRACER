@@ -26,6 +26,7 @@ use App\Http\Controllers\ControlAsignacionesController;
 use App\Http\Controllers\DetallesEquipoController;
 use App\Http\Controllers\DetallesEstatusController;
 use App\Http\Controllers\VerificacionCorreoController;
+use App\Models\permisos;
 
 // ------------------------------- Ruta para descargar la plantilla de excel -------------------------------------------
 use App\Exports\PlantillaAccesorios;
@@ -52,7 +53,7 @@ use App\Exports\PlantillaSubestacionEquipos;
 use App\Exports\PlantillaUsuarios;
 use App\Exports\PlantillaUsuariosEquipos;
 use App\Exports\PlantillaVerificacionCorreo;
-use App\Models\permisos;
+
 
 // ----------------------------------- Ruta notificacion-------------------------------------
 use App\Http\Controllers\NotificacionController;
@@ -250,7 +251,7 @@ Route::get('/usuarios_equipos_importar', function () { return redirect('/usuario
 
 Route::middleware(['auth', 'rol:1,2,3'])->group(function () {
 
-    Route::name('cambiar_foto')->put('/cambiar_foto/{id}',[UsuariosController::class, 'cambiar_foto']);
+Route::name('cambiar_foto')->put('/cambiar_foto/{id}',[UsuariosController::class, 'cambiar_foto']);
 //Estaciones
 Route::name('estaciones')->get('/estaciones',[EstacionesController::class, 'estaciones'])->middleware('auth.custom');
 Route::name('estaciones_registrar')->post('/estaciones_registrar',[EstacionesController::class, 'estaciones_registrar']);

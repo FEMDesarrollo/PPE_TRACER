@@ -13,7 +13,6 @@
                 <div class="modal-body">
                     <i class="bi bi-exclamation-triangle fs-1 text-danger"></i>
                     <p class="mt-3 fw-bold" style="color: #222944">¿Estás seguro de que deseas eliminar esta estación ({{ $estacion->nombre }})?</p>
-                    <p class="text-muted">Creado el: {{ $estacion->created_at->format('d/m/Y H:i') }}</p>
                 </div>
                 <div class="modal-footer border-0 justify-content-center">
                     <button type="submit" class="btn" style="background-color: #cf0a2c; color: white; border-color:#cf0a2c">

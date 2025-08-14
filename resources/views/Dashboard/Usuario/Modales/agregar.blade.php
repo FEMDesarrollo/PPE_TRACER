@@ -59,14 +59,18 @@
                         @enderror
                     </div>
 
-                    <div class="col-12 col-sm-6 col-md-6 form-floating">
-                        <input type="file" name="foto" class="form-control @error('foto') is-invalid @enderror" id="foto" accept=".jpg,.png,.bmp">
-                        <label for="foto" class="ps-4">Foto</label>
-                        <div id="fotoHelp" class="form-text">Suba una foto para el usuario (<i>Formatos</i>: jpg/png/bmp)</div>
-                        @error('foto') 
-                            <div class="invalid-feedback">{{ $message }}</div> 
-                        @enderror
-                    </div>
+                    <div class="col-12 col-md-6">
+                            <div class="form-floating">
+                                <input type="file" class="form-select @error('foto') is-invalid @enderror" name="foto" id="floatingfoto" accept=".jpg,.png,.bmp">
+                                <label for="floatingfoto">Foto</label>
+                                 <div id="fotoHelp" class="form-text">Suba una foto para el usuario (<i>Formatos</i>: jpg/png/bmp)</div>
+                                @error('foto') 
+                                    <div class="invalid-feedback">{{ $message }}</div> 
+                                @enderror
+                            </div>
+                        </div>
+
+                
 
                     <div class="col-12 col-sm-6 col-md-6">
                         <div class="form-floating">

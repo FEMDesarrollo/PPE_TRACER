@@ -11,7 +11,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <!-- Filtros compactos (busqueda de inf más profunda) -->
+                        <!-- Filtros compactos (Busqueda de datos más avanzada) -->
                         <div class="card shadow-sm mt-4" style="background-color: #f9f9f9;">
                             <div class="card-body p-3">
                                 <form method="GET" action="{{ route('usuarios.buscar') }}">
@@ -156,19 +156,23 @@
                                             <td>{{ $user->perfil->nombre ?? 'Sin perfil' }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <!-- Botón Editar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal"
-                                                        data-bs-target="#modalEditar{{ $user->id }}"
-                                                        style="color: #222944">
-                                                        <i class="bi bi-pencil-square fs-5"></i>
-                                                    </button>
+                                                    @can('update', $user) 
+                                                        <button type="button" class="btn" data-bs-toggle="modal"
+                                                            data-bs-target="#modalEditar{{ $user->id }}"
+                                                            style="color: #222944">
+                                                            <i class="bi bi-pencil-square fs-5"></i>
+                                                        </button>
+
+                                                    @endcan
 
                                                     <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal"
-                                                        data-bs-target="#modalEliminar{{ $user->id }}"
-                                                        style="color: #cf0a2c">
-                                                        <i class="bi bi-trash fs-5"></i>
-                                                    </button>
+                                                    @can('delete', $user)
+                                                        <button type="button" class="btn" data-bs-toggle="modal"
+                                                                data-bs-target="#modalEliminar{{ $user->id }}"
+                                                                style="color: #dc3545;">
+                                                            <i class="bi bi-trash fs-5"></i>
+                                                        </button>
+                                                    @endcan
 
                                                     <!-- Botón Ver -->
                                                     <button type="button" class="btn" data-bs-toggle="modal"

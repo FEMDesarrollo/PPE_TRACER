@@ -12,46 +12,46 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Filtros compactos (búsqueda avanzada) -->
-<div class="card shadow-sm mt-4" style="background-color: #f9f9f9;">
-    <div class="card-body p-3">
-        <form method="GET" action="{{ route('subestaciones.buscar') }}">
-            <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+                        <div class="card shadow-sm mt-4" style="background-color: #f9f9f9;">
+                            <div class="card-body p-3">
+                                <form method="GET" action="{{ route('subestaciones.buscar') }}">
+                                    <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
 
-                <input type="text" name="nombre"
-                    class="form-control form-control-sm w-auto"
-                    placeholder="Nombre" value="{{ request('nombre') }}"
-                    style="min-width: 140px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                        <input type="text" name="nombre"
+                                            class="form-control form-control-sm w-auto"
+                                            placeholder="Nombre" value="{{ request('nombre') }}"
+                                            style="min-width: 140px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 
-                <input type="text" name="direccion"
-                    class="form-control form-control-sm w-auto"
-                    placeholder="Dirección" value="{{ request('direccion') }}"
-                    style="min-width: 140px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                        <input type="text" name="direccion"
+                                            class="form-control form-control-sm w-auto"
+                                            placeholder="Dirección" value="{{ request('direccion') }}"
+                                            style="min-width: 140px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 
-                <input type="text" name="telefono"
-                    class="form-control form-control-sm w-auto"
-                    placeholder="Teléfono" value="{{ request('telefono') }}"
-                    style="min-width: 130px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                        <input type="text" name="telefono"
+                                            class="form-control form-control-sm w-auto"
+                                            placeholder="Teléfono" value="{{ request('telefono') }}"
+                                            style="min-width: 130px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 
-                <select name="id_estacion" class="form-select form-select-sm w-auto"
-                    style="min-width: 130px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                    <option value="">Estación</option>
-                    @foreach($estaciones as $estacion)
-                        <option value="{{ $estacion->id }}" {{ request('id_estacion') == $estacion->id ? 'selected' : '' }}>
-                            {{ $estacion->nombre }}
-                        </option>
-                    @endforeach
-                </select>
+                                        <select name="id_estacion" class="form-select form-select-sm w-auto"
+                                            style="min-width: 130px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                            <option value="">Estación</option>
+                                            @foreach($estaciones as $estacion)
+                                                <option value="{{ $estacion->id }}" {{ request('id_estacion') == $estacion->id ? 'selected' : '' }}>
+                                                    {{ $estacion->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
 
-                <button type="submit" class="btn btn-sm"
-                    style="background-color: #222944; color: white;">
-                    <i class="bi bi-search"></i>
-                </button>
+                                        <button type="submit" class="btn btn-sm"
+                                            style="background-color: #222944; color: white;">
+                                            <i class="bi bi-search"></i>
+                                        </button>
 
-            </div>
-        </form>
-    </div>
-</div>
-<!-- Fin de filtros compactos (búsqueda avanzada) -->
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Fin de filtros compactos (búsqueda avanzada) -->
 
                         <!-- Contenedor superior de tabla -->
                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 p-4 gap-3">
@@ -139,19 +139,21 @@
                                             <td>{{ $sestacion->estacion->nombre ?? 'Sin estación' }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
+                                                    @can('update', $sestacion)
                                                     <!-- Botón Editar -->
                                                     <button type="button" class="btn" data-bs-toggle="modal"
                                                         data-bs-target="#modalEditar{{ $sestacion->id }}"
                                                         style="color: #222944">
                                                         <i class="bi bi-pencil-square fs-5"></i>
                                                     </button>
+                                                    @endcan
 
-                                                    <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                    @can('delete', $sestacion)
+                                                     <button type="button" class="btn" data-bs-toggle="modal"
                                                         data-bs-target="#modalEliminar{{ $sestacion->id }}"
                                                         style="color: #cf0a2c">
                                                         <i class="bi bi-trash fs-5"></i>
-                                                    </button>
+                                                    @endcan
 
                                                     <!-- Botón Ver -->
                                                     <button type="button" class="btn" data-bs-toggle="modal"

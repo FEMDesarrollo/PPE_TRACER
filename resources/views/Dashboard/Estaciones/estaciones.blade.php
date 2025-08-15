@@ -9,22 +9,6 @@
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
-
-
-@if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>{{ session('error') }}</strong>
-        @if(session('errorDetails'))
-            <ul class="mb-0 mt-2">
-                @foreach(session('errorDetails') as $detail)
-                    <li>{{ $detail }}</li>
-                @endforeach
-            </ul>
-        @endif
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
                 <div class="card">
                     <div class="card-body">
                         <!-- Contenedor superior de tabla -->
@@ -114,19 +98,21 @@
                                             <td>{{ $estacion->total_trajes }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <!-- Botón Editar -->
+                                                      @can('update', $estacion)
                                                     <button type="button" class="btn" data-bs-toggle="modal"
                                                         data-bs-target="#modalEditar{{ $estacion->id }}"
                                                         style="color: #222944">
                                                         <i class="bi bi-pencil-square fs-5"></i>
                                                     </button>
+                                                    @endcan
 
-                                                    <!-- Botón Eliminar -->
+                                                    @can('delete', $estacion)
                                                     <button type="button" class="btn" data-bs-toggle="modal"
                                                         data-bs-target="#modalEliminar{{ $estacion->id }}"
                                                         style="color: #cf0a2c">
                                                         <i class="bi bi-trash fs-5"></i>
                                                     </button>
+                                                    @endcan
 
                                                     <!-- Botón Ver -->
                                                     <button type="button" class="btn" data-bs-toggle="modal"

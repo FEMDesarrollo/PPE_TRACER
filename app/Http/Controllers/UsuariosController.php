@@ -15,6 +15,7 @@ use App\Models\subEstacion;
 use App\Models\perfiles;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Gate;
 
 
 class UsuariosController extends Controller
@@ -148,41 +149,40 @@ class UsuariosController extends Controller
     }
 
     //.....................................................Usuarios: SALVAR.....
-    public function usuarios_salvar(usuarios $id, Request $request)
+    public function usuarios_salvar(Request $request, Usuarios $usuario)
     {
+        Gate::authorize('editar-usuario', $usuario);
 
         $this->validate(
             $request,
-            usuarios::validationRules($id->id),
-            usuarios::validationMessages()
+            Usuarios::validationRules($usuario->id),
+            Usuarios::validationMessages()
         );
 
-            $img2 = $request->foto2;
+        $usuario->nombre = $request->nombre;
+        $usuario->app = $request->app;
+        $usuario->apm = $request->apm;
+        $usuario->telefono = $request->telefono;
+        $usuario->correo = $request->correo;
+        $usuario->id_estacion = $request->id_estacion;
+        $usuario->id_subestacion = $request->id_subestacion;
+        $usuario->id_perfil = $request->id_perfil;
 
-            if($request->file('foto1') != '') {
-            $file = $request->file('foto1');
-            $img = $file->getClientOriginalName();
-            $ldate = date('Ymd_His_');
-            $img2 = $ldate . $img;
-            \Storage::disk('public')->put($img2, \File::get($file));
+        if ($request->filled('password')) {
+            $usuario->password = Hash::make($request->password);
         }
 
-            $query = usuarios::find($id->id);
-            $query->nombre = $request->nombre;
-            $query->app = $request->app;
-            $query->apm = $request->apm;
-            $query->telefono = $request->telefono;
-            $query->correo = $request->correo;
-            $query->password = Hash::make($request->password);
-            $query->foto = $img2;
-            $query->id_estacion = $request->id_estacion;
-            $query->id_subestacion = $request->id_subestacion;
-            $query->id_perfil = $request->id_perfil;
-            $query->save();
+        if ($request->hasFile('foto1')) {
+            $file = $request->file('foto1');
+            $imageName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('fotos_usuarios', $imageName, 'public');
+            $usuario->foto = $imageName;
+        }
 
-            return redirect()->route("usuarios")->with('success', 'Usuario actualizado correctamente');
+        $usuario->save();
+
+        return redirect()->route("usuarios")->with('success', 'Usuario actualizado correctamente.');
     }
-
 
     //..................................................Usuarios: BORRAR.....
     public function usuarios_borrar(usuarios $id)

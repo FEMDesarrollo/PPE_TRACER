@@ -156,19 +156,23 @@
                                             <td>{{ $user->perfil->nombre ?? 'Sin perfil' }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <!-- Botón Editar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal"
-                                                        data-bs-target="#modalEditar{{ $user->id }}"
-                                                        style="color: #222944">
-                                                        <i class="bi bi-pencil-square fs-5"></i>
-                                                    </button>
+                                                    @can('update', $user) 
+                                                        <button type="button" class="btn" data-bs-toggle="modal"
+                                                            data-bs-target="#modalEditar{{ $user->id }}"
+                                                            style="color: #222944">
+                                                            <i class="bi bi-pencil-square fs-5"></i>
+                                                        </button>
+
+                                                    @endcan
 
                                                     <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal"
-                                                        data-bs-target="#modalEliminar{{ $user->id }}"
-                                                        style="color: #cf0a2c">
-                                                        <i class="bi bi-trash fs-5"></i>
-                                                    </button>
+                                                    @can('delete', $user)
+                                                        <button type="button" class="btn" data-bs-toggle="modal"
+                                                                data-bs-target="#modalEliminar{{ $user->id }}"
+                                                                style="color: #dc3545;">
+                                                            <i class="bi bi-trash fs-5"></i>
+                                                        </button>
+                                                    @endcan
 
                                                     <!-- Botón Ver -->
                                                     <button type="button" class="btn" data-bs-toggle="modal"

@@ -82,9 +82,8 @@ Route::get('/', function () {
 //-------------------------- Ruta de reportes -------------------
 Route::get('/dashboard', function () {return view('dashboard');})->middleware('auth.custom');
 
-
-Route::get('/datos-personales', [UsuarioController::class, 'datosPersonales'])->name('datos_personales');
-Route::get('/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('cambiar_password');
+Route::name('datos_personales')->put('/datos_personales/{id}',[UsuariosController::class, 'datos_personales']);
+Route::name('cambiar_password')->put('/cambiar_password/{id}',[UsuariosController::class, 'cambiar_password']);
 //---------------------------------RUTAS: Login----------------------------------------
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

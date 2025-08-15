@@ -139,19 +139,21 @@
                                             <td>{{ $sestacion->estacion->nombre ?? 'Sin estación' }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
+                                                    @can('update', $sestacion)
                                                     <!-- Botón Editar -->
                                                     <button type="button" class="btn" data-bs-toggle="modal"
                                                         data-bs-target="#modalEditar{{ $sestacion->id }}"
                                                         style="color: #222944">
                                                         <i class="bi bi-pencil-square fs-5"></i>
                                                     </button>
+                                                    @endcan
 
-                                                    <!-- Botón Eliminar -->
-                                                    <button type="button" class="btn" data-bs-toggle="modal"
+                                                    @can('delete', $sestacion)
+                                                     <button type="button" class="btn" data-bs-toggle="modal"
                                                         data-bs-target="#modalEliminar{{ $sestacion->id }}"
                                                         style="color: #cf0a2c">
                                                         <i class="bi bi-trash fs-5"></i>
-                                                    </button>
+                                                    @endcan
 
                                                     <!-- Botón Ver -->
                                                     <button type="button" class="btn" data-bs-toggle="modal"

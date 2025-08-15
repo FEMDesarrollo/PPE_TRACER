@@ -295,7 +295,7 @@ class UsuariosController extends Controller
             ->with('success', 'Contraseña actualizada correctamente.')
             ->with('modal', 'configuracion')
             ->with('activeTab', 'seguridad');
-    }
+        }
 
 
 
@@ -311,10 +311,11 @@ class UsuariosController extends Controller
             $usuario->foto = $nombreArchivo;
             $usuario->save();
 
-            return redirect()->route('usuarios')->with('success', 'Foto actualizada correctamente.');
+             return back()
+            ->with('success', 'Foto actualizada correctamente.')
+            ->with('openOffcanvas', 'perfilOffcanvas');
+            
         }
-
-        return redirect()->route('usuarios')->with('error', 'No se seleccionó ninguna imagen.');
     }
 
 }

@@ -228,7 +228,6 @@ Route::get('/usuarios_registrar', function () { return redirect('/usuarios'); })
 
 Route::name('usuarios_detalle')->get('/usuarios_detalle/{id}',[UsuariosController::class, 'usuarios_detalle']);
 Route::name('usuarios_editar')->get('/usuarios_editar/{id}',[UsuariosController::class, 'usuarios_editar']);
-Route::name('cambiar_foto')->put('/cambiar_foto/{id}',[UsuariosController::class, 'cambiar_foto']);
 Route::name('usuarios_salvar')->put('/usuarios_salvar/{id}',[UsuariosController::class, 'usuarios_salvar']);
 Route::name('usuarios_borrar')->delete('/usuarios_borrar/{id}',[UsuariosController::class, 'usuarios_borrar']);
 Route::post('/usuarios/importar', [UsuariosController::class, 'usuarios_importar'])->name('usuarios.importar');
@@ -251,6 +250,7 @@ Route::get('/usuarios_equipos_importar', function () { return redirect('/usuario
 
 Route::middleware(['auth', 'rol:1,2,3'])->group(function () {
 
+    Route::name('cambiar_foto')->put('/cambiar_foto/{id}',[UsuariosController::class, 'cambiar_foto']);
 //Estaciones
 Route::name('estaciones')->get('/estaciones',[EstacionesController::class, 'estaciones'])->middleware('auth.custom');
 Route::name('estaciones_registrar')->post('/estaciones_registrar',[EstacionesController::class, 'estaciones_registrar']);
@@ -408,6 +408,7 @@ Route::name('repuestos_salvar')->put('/repuestos_salvar/{id}',[RepuestosControll
 Route::name('repuestos_borrar')->delete('/repuestos_borrar/{id}',[RepuestosController::class, 'repuestos_borrar']);
 Route::post('/repuestos/importar', [RepuestosController::class, 'repuestos_importar'])->name('repuestos.importar');
 Route::get('/repuestos_importar', function () { return redirect('/repuestos'); });
+
 
 });
 

@@ -12,16 +12,16 @@
 
       <!-- Notificaciones -->
       <li class="nav-item dropdown">
-    {{-- Icono de campana --}}
-    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-        <i class="bi bi-bell"></i>
-        @if(isset($notificaciones) && $notificaciones->count() > 0)
-            <span class="badge bg-primary badge-number">{{ $notificaciones->count() }}</span>
-        @endif
-    </a>
+      {{-- Icono de campana --}}
+      <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+          <i class="bi bi-bell"></i>
+          @if(isset($notificaciones) && $notificaciones->count() > 0)
+              <span class="badge bg-primary badge-number">{{ $notificaciones->count() }}</span>
+          @endif
+      </a>
 
-    {{-- Dropdown de notificaciones --}}
-    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+      {{-- Dropdown de notificaciones --}}
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
         <li class="dropdown-header">
             Tienes {{ $notificaciones->count() }} notificaciones
             @if($notificaciones->count() > 0)
@@ -30,28 +30,26 @@
                 </a>
             @endif
         </li>
+      <li><hr class="dropdown-divider"></li>
 
-        <li><hr class="dropdown-divider"></li>
-
-        @forelse($notificaciones as $n)
-            <li class="notification-item">
-                <i class="{{ $n->icono }}"></i>
-                <div>
-                    <h4>{{ $n->titulo }}</h4>
-                    <p>{{ $n->mensaje }}</p>
-                    <p class="small text-muted">{{ $n->created_at->diffForHumans() }}</p>
-                </div>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-        @empty
-            <li class="notification-item text-center">
-                <p>No tienes notificaciones</p>
-            </li>
-        @endforelse
-    </ul>
-</li>
-
-
+      @forelse($notificaciones as $n)
+      <li class="notification-item">
+          <i class="{{ $n->icono }}"></i>
+          <div>
+              <h4>{{ $n->titulo }}</h4>
+              <p>{{ $n->mensaje }}</p>
+              <p class="small text-muted">{{ $n->created_at->diffForHumans() }}</p>
+          </div>
+      </li>
+      <li>
+        <hr class="dropdown-divider"></li>
+              @empty
+                  <li class="notification-item text-center">
+                      <p>No tienes notificaciones</p>
+                  </li>
+              @endforelse
+          </ul>
+      </li>
 
       <!-- Perfil de usuario -->
       <li class="nav-item dropdown pe-3">
@@ -415,6 +413,4 @@
     </div>
   </div>
 </header>
-
-
 

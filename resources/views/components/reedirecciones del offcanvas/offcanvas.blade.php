@@ -21,3 +21,13 @@
   });
 </script>
 @endif
+
+
+@if(session('openOffcanvas') === 'perfilOffcanvas')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let perfilOffcanvas = new bootstrap.Offcanvas(document.getElementById('perfilOffcanvas'));
+    perfilOffcanvas.show();
+});
+</script>
+@endif
